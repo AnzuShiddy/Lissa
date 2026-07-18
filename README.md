@@ -92,9 +92,10 @@ sudo apt install -y pulseaudio-utils
   back to text-only when it runs out, and the web app doesn't use it at
   all.
 - **Streaming**: replies print chunk-by-chunk for a natural chat feel.
-- **Model**: `gemini-flash-latest` — an alias that always points at Google's
-  newest Flash model (currently Gemini 3.5 Flash), so Lissa keeps working
-  when older models are retired. Thinking is disabled for quick, snappy
+- **Model**: `gemini-flash-lite-latest` — an alias that always points at
+  Google's newest Flash-Lite model, so Lissa keeps working when older models
+  are retired. Lite is used because its free-tier daily quota is much higher
+  than the full Flash model's. Thinking is disabled for quick, snappy
   conversational replies.
 
 ## Free-tier limits
