@@ -1,5 +1,7 @@
 # Deploying Lissa to Render
 
+**Live app:** <https://lissa-02zl.onrender.com>
+
 ## Quick Deploy (Recommended)
 
 1. **Go to [render.com](https://render.com)** and sign up or log in
@@ -11,7 +13,7 @@
    - Value: Your Gemini API key (from https://aistudio.google.com/apikey)
 6. **Click "Create Web Service"** — deploys in ~2 minutes
 
-Your app will be live at: `https://lissa-XXXX.onrender.com`
+Your app will be live at a URL like `https://lissa-XXXX.onrender.com` — this deployment lives at <https://lissa-02zl.onrender.com>.
 
 ## Manual Setup (Alternative)
 
