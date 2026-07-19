@@ -10,9 +10,16 @@ const check = (cond, name) => {
 
 (async () => {
   const browser = await chromium.launch({
-    args: ["--autoplay-policy=user-gesture-required"], // force the fix-6 path
+    args: [
+      "--autoplay-policy=user-gesture-required", // force the fix-6 path
+      "--use-fake-ui-for-media-stream",          // auto-grant the mic prompt
+      "--use-fake-device-for-media-stream",      // synthetic mic input
+    ],
   });
-  const page = await browser.newPage();
+  const context = await browser.newContext({
+    permissions: ["microphone", "clipboard-read", "clipboard-write"],
+  });
+  const page = await context.newPage();
   // headless chromium ignores the autoplay policy flag, so emulate real
   // Chrome: play() rejects with NotAllowedError until the first pointerdown
   await page.addInitScript(() => {
@@ -262,6 +269,49 @@ const check = (cond, name) => {
   check(
     (await page.$$(".timestamp")).length === 2,
     "fix9: label appears after a >5-minute gap"
+  );
+
+  /* ---- fix 11: copy button on Lissa's bubbles ---- */
+  const lastLissa = page.locator(".bubble.lissa").last();
+  const lastText = await lastLissa.textContent();
+  await lastLissa.hover();
+  await lastLissa.locator(".copyBtn").click();
+  await page.waitForFunction(
+    () => document.getElementById("toast").textContent === "copied",
+    null, { timeout: 5000 }
+  );
+  check(true, "fix11: copy button shows 'copied' toast");
+  const clip = await page.evaluate(() => navigator.clipboard.readText());
+  check(clip === lastText, "fix11: clipboard holds the bubble's text");
+
+  /* ---- fix 10 + 12: hold-to-talk on the AudioWorklet capture path ---- */
+  const micBox = await page.locator("#mic").boundingBox();
+  await page.mouse.move(micBox.x + micBox.width / 2, micBox.y + micBox.height / 2);
+  await page.mouse.down();
+  await page.waitForSelector("#recorder:not([hidden])", { timeout: 5000 });
+  check(true, "fix10: recorder opens on mic press");
+  const capture = await page.evaluate(() => rec && rec.proc.constructor.name);
+  check(capture === "AudioWorkletNode",
+    "fix12: capture uses AudioWorklet (got " + capture + ")");
+  await page.waitForTimeout(900); // hold past the walkie-talkie threshold
+  await page.mouse.up();
+  await page.waitForFunction(
+    () => document.getElementById("recorder").hidden, null, { timeout: 5000 });
+  check(true, "fix10: releasing the hold ends the recording");
+  // let the transcription attempt (and any resulting reply) finish
+  await page.waitForFunction(
+    () => !busy && !document.getElementById("mic").classList.contains("busy"),
+    null, { timeout: 60000 }
+  );
+
+  /* quick tap still opens the recorder for hands-free finish */
+  await page.locator("#mic").click();
+  await page.waitForSelector("#recorder:not([hidden])", { timeout: 5000 });
+  check(true, "fix10: quick tap opens the recorder");
+  await page.locator("#recCancel").click();
+  check(
+    await page.$eval("#recorder", (el) => el.hidden),
+    "fix10: cancel closes the recorder"
   );
 
   await browser.close();

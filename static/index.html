@@ -248,7 +248,26 @@
     border-bottom-left-radius: 7px;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    position: relative; /* anchors the copy button */
   }
+
+  .copyBtn {
+    position: absolute;
+    top: 4px;
+    right: -36px;
+    width: 28px; height: 28px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    color: var(--muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+  }
+  .bubble.lissa:hover .copyBtn, .copyBtn:focus-visible { opacity: 1; }
+  .copyBtn:hover { background: var(--glass-strong); color: var(--text); }
+  .copyBtn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .user {
     align-self: flex-end;
     background: linear-gradient(135deg, var(--rose), #d84176);
@@ -345,6 +364,7 @@
   #send .stop-icon { display: none; }
   #send.stop .send-icon { display: none; }
   #send.stop .stop-icon { display: block; }
+  #mic { touch-action: none; -webkit-user-select: none; user-select: none; }
   #mic.busy { animation: fade 1.1s infinite; }
   @keyframes fade { 50% { opacity: 0.35; } }
 
@@ -601,7 +621,7 @@
   <div id="bar">
     <div id="composer">
       <textarea id="msg" rows="1" placeholder="Say something to Lissa…" autocomplete="off" aria-label="Message to Lissa"></textarea>
-      <button id="mic" class="roundBtn" title="Speak instead of typing" aria-label="Speak instead of typing">
+      <button id="mic" class="roundBtn" title="Tap to record, hold to talk" aria-label="Tap to record, hold to talk">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
       <button id="send" class="roundBtn" title="Send" aria-label="Send">
@@ -743,6 +763,7 @@ function addBubble(who, text) {
   const div = document.createElement("div");
   div.className = "bubble " + who;
   div.textContent = text;
+  if (who === "lissa") addCopy(div, text);
   chat.appendChild(div);
   scrollChat(who === "user"); // sending your own message always snaps down
   return div;
@@ -756,6 +777,38 @@ function typingBubble() {
   chat.appendChild(div);
   scrollChat();
   return div;
+}
+
+function copyText(text) {
+  if (navigator.clipboard) return navigator.clipboard.writeText(text);
+  // non-secure origins (plain http on a LAN) have no clipboard API
+  return new Promise((res, rej) => {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand("copy");
+    ta.remove();
+    ok ? res() : rej();
+  });
+}
+
+/* hover/tap copy button on a finished Lissa bubble — only add once the
+   text is final, streaming rewrites textContent and would wipe it */
+function addCopy(bubble, text) {
+  if (!text || bubble.querySelector(".copyBtn")) return;
+  const btn = document.createElement("button");
+  btn.className = "copyBtn";
+  btn.title = "Copy message";
+  btn.setAttribute("aria-label", "Copy message");
+  btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  btn.onclick = () => copyText(text).then(
+    () => toast("copied"),
+    () => toast("couldn't copy — select the text instead")
+  );
+  bubble.appendChild(btn);
 }
 
 /* append a "try again" button to an error bubble; clicking it removes the
@@ -845,8 +898,12 @@ async function send(text, isRetry) {
     announce(bubble.textContent);
     return;
   }
-  if (pipe && !pipe.dead) feedSpeech(pipe, full, true);
-  else bubble.textContent = full;
+  if (pipe && !pipe.dead) {
+    feedSpeech(pipe, full, true); // adds the copy button when speech ends
+  } else {
+    bubble.textContent = full;
+    addCopy(bubble, full);
+  }
   announce("Lissa: " + full);
 }
 
@@ -952,6 +1009,7 @@ async function pipePlay(p) {
     if (p.dead) return;
     if (p.bubble) {
       p.bubble.textContent = p.fullText; // make sure nothing was missed
+      addCopy(p.bubble, p.fullText);
       scrollChat();
     }
     speakingUI(false);
@@ -1042,7 +1100,10 @@ function feedSpeech(p, full, done) {
     if (rest.trim()) pipeAdd(p, rest);
     p.finished = true;
     if (!p.playing && p.items.length === 0) {
-      if (p.bubble) p.bubble.textContent = p.fullText;
+      if (p.bubble) {
+        p.bubble.textContent = p.fullText;
+        addCopy(p.bubble, p.fullText);
+      }
       speakingUI(false);
     }
   }
@@ -1106,6 +1167,18 @@ avatarWrap.addEventListener("keydown", (e) => {
 
 /* ---------- voice input ---------- */
 
+/* AudioWorklet processor: forwards raw mic samples to the main thread */
+const MIC_WORKLET = `
+class MicCapture extends AudioWorkletProcessor {
+  process(inputs) {
+    const ch = inputs[0] && inputs[0][0];
+    if (ch) this.port.postMessage(new Float32Array(ch));
+    return true;
+  }
+}
+registerProcessor("mic-capture", MicCapture);
+`;
+
 function setRecordingUI(on) {
   composer.hidden = on;
   recorder.hidden = !on;
@@ -1135,23 +1208,39 @@ async function startRecording() {
     // consumes the click's user activation) — resume or nothing is captured.
     if (ctx.state !== "running") await ctx.resume();
     const source = ctx.createMediaStreamSource(stream);
-    const proc = ctx.createScriptProcessor(4096, 1, 1);
     const chunks = [];
     const levels = [];
-    proc.onaudioprocess = (e) => {
-      const data = e.inputBuffer.getChannelData(0);
-      chunks.push(new Float32Array(data));
-      let sum = 0;
-      for (let i = 0; i < data.length; i += 16) sum += data[i] * data[i];
-      levels.push(Math.sqrt(sum / (data.length / 16)));
-      if (levels.length > BAR_COUNT) levels.shift();
-      bars.forEach((b, i) => {
-        const v = levels[levels.length - 1 - i] || 0;
-        b.style.height = Math.min(96, 10 + v * 480) + "%";
-      });
+    // worklet chunks are tiny (128 samples), so aggregate ~2048 samples
+    // between meter updates instead of redrawing per chunk
+    let sum = 0, n = 0;
+    const handleChunk = (data) => {
+      chunks.push(data);
+      for (let i = 0; i < data.length; i += 16) { sum += data[i] * data[i]; n++; }
+      if (n >= 128) {
+        levels.push(Math.sqrt(sum / n));
+        sum = 0; n = 0;
+        if (levels.length > BAR_COUNT) levels.shift();
+        bars.forEach((b, i) => {
+          const v = levels[levels.length - 1 - i] || 0;
+          b.style.height = Math.min(96, 10 + v * 480) + "%";
+        });
+      }
     };
+    let proc;
+    try {
+      const url = URL.createObjectURL(new Blob([MIC_WORKLET], { type: "application/javascript" }));
+      await ctx.audioWorklet.addModule(url);
+      URL.revokeObjectURL(url);
+      proc = new AudioWorkletNode(ctx, "mic-capture");
+      proc.port.onmessage = (e) => handleChunk(e.data);
+    } catch (err) {
+      // older browsers: fall back to the deprecated ScriptProcessorNode
+      proc = ctx.createScriptProcessor(4096, 1, 1);
+      proc.onaudioprocess = (ev) =>
+        handleChunk(new Float32Array(ev.inputBuffer.getChannelData(0)));
+    }
     source.connect(proc);
-    proc.connect(ctx.destination); // required for processing; outputs silence
+    proc.connect(ctx.destination); // keeps the graph pulling; outputs silence
     const started = Date.now();
     const timer = setInterval(() => {
       const s = Math.floor((Date.now() - started) / 1000);
@@ -1234,7 +1323,30 @@ function encodeWav(chunks, total, rate) {
   return buf;
 }
 
-micBtn.onclick = () => { if (!rec && !busy) startRecording(); };
+/* tap = open the recorder (finish with the check/cancel buttons);
+   press-and-hold = walkie-talkie, releasing sends the recording */
+const HOLD_MS = 400;
+let micDownAt = 0;
+
+micBtn.addEventListener("pointerdown", (e) => {
+  if (busy || rec) return;
+  e.preventDefault();
+  micDownAt = Date.now();
+  startRecording();
+  const release = () => {
+    document.removeEventListener("pointerup", release);
+    document.removeEventListener("pointercancel", release);
+    if (rec && Date.now() - micDownAt >= HOLD_MS) stopRecording();
+  };
+  document.addEventListener("pointerup", release);
+  document.addEventListener("pointercancel", release);
+});
+// keyboard activation (Enter/Space) fires click without a pointerdown;
+// the timestamp guard keeps pointer taps from double-starting
+micBtn.addEventListener("click", () => {
+  if (!rec && !busy && Date.now() - micDownAt > 500) startRecording();
+});
+micBtn.addEventListener("contextmenu", (e) => e.preventDefault());
 document.getElementById("recDone").onclick = () => { if (rec) stopRecording(); };
 document.getElementById("recCancel").onclick = () => { if (rec) { teardownRecording(); toast("recording discarded"); } };
 
@@ -1343,8 +1455,12 @@ async function boot() {
   const bubble = typingBubble();
   try {
     const { text } = await (await fetch("/api/greeting")).json();
-    if (voiceOn) speak(text, bubble, true); // Edge voice: don't spend Gemini quota on greetings
-    else bubble.textContent = text;
+    if (voiceOn) {
+      speak(text, bubble, true); // Edge voice: don't spend Gemini quota on greetings
+    } else {
+      bubble.textContent = text;
+      addCopy(bubble, text);
+    }
     announce("Lissa: " + text);
   } catch (e) {
     bubble.textContent = "(couldn't reach the server — is it running?)";
