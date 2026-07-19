@@ -235,6 +235,21 @@
     box-shadow: 0 6px 20px rgba(255, 92, 143, 0.25);
   }
 
+  .bubble .retryBtn {
+    display: block;
+    margin-top: 10px;
+    padding: 7px 14px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 146, 165, 0.35);
+    background: none;
+    color: #ff92a5;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .bubble .retryBtn:hover { background: rgba(255, 77, 109, 0.12); }
+
   .typing-dots { display: inline-flex; gap: 5px; padding: 4px 2px; }
   .typing-dots i {
     width: 7px; height: 7px;
@@ -635,7 +650,9 @@ function nearBottom() {
 
 function scrollChat(force) {
   if (force) autoScroll = true;
-  if (autoScroll) chat.scrollTop = chat.scrollHeight;
+  // instant, not smooth: a lingering smooth animation fights the user's
+  // upward scroll and re-arms following when it lands at the bottom
+  if (autoScroll) chat.scrollTo({ top: chat.scrollHeight, behavior: "instant" });
   else jumpBtn.classList.add("show");
 }
 
@@ -646,15 +663,21 @@ chat.addEventListener("scroll", () => {
   }
 });
 // only real user gestures pause following (programmatic smooth-scrolls also
-// fire "scroll" events mid-flight, so they can't be trusted for this)
-for (const ev of ["wheel", "touchmove"]) {
-  chat.addEventListener(ev, () => { if (!nearBottom()) autoScroll = false; }, { passive: true });
-}
+// fire "scroll" events mid-flight, so they can't be trusted for this).
+// wheel fires BEFORE the scroll position moves, so an upward wheel must
+// pause immediately — nearBottom() is still true at that instant
+chat.addEventListener("wheel", (e) => {
+  const scrollable = chat.scrollHeight > chat.clientHeight + 10;
+  if (scrollable && (e.deltaY < 0 || !nearBottom())) autoScroll = false;
+}, { passive: true });
+chat.addEventListener("touchmove", () => {
+  if (!nearBottom()) autoScroll = false;
+}, { passive: true });
 
 jumpBtn.onclick = () => {
   autoScroll = true;
   jumpBtn.classList.remove("show");
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
 };
 
 function toast(text) {
@@ -688,6 +711,16 @@ function typingBubble() {
   return div;
 }
 
+/* append a "try again" button to an error bubble; clicking it removes the
+   bubble and runs `action` (call AFTER setting the bubble's textContent) */
+function addRetry(bubble, action) {
+  const btn = document.createElement("button");
+  btn.className = "retryBtn";
+  btn.textContent = "↻ try again";
+  btn.onclick = () => { bubble.remove(); action(); };
+  bubble.appendChild(btn);
+}
+
 function setBusy(b) {
   busy = b;
   micBtn.disabled = b;
@@ -699,18 +732,21 @@ function setBusy(b) {
 
 /* ---------- chat ---------- */
 
-async function send(text) {
+async function send(text, isRetry) {
   text = text.trim();
   if (!text || busy) return;
   stopSpeaking();
-  addBubble("user", text);
-  msg.value = "";
-  msg.style.height = "";
+  if (!isRetry) { // a retry's user bubble is already in the chat
+    addBubble("user", text);
+    msg.value = "";
+    msg.style.height = "";
+  }
   setBusy(true);
 
   const bubble = typingBubble();
   let full = "";
   let aborted = false;
+  let connErr = false;
   const ac = new AbortController();
   chatAbort = ac;
   // With voice on, the pipeline types the reply into the bubble in sync
@@ -740,9 +776,7 @@ async function send(text) {
     if (e.name === "AbortError") {
       aborted = true; // user hit stop — keep whatever already arrived
     } else {
-      full = full || "(connection lost — is the server still running?)";
-      if (pipe) pipe.fullText = full;
-      if (!pipe || pipe.dead) bubble.textContent = full;
+      connErr = true;
     }
   }
   chatAbort = null;
@@ -751,6 +785,15 @@ async function send(text) {
     stopSpeaking(); // cut the voice too; flushes partial text into the bubble
     if (!full.trim()) bubble.remove();
     else if (!pipe || pipe.dead) bubble.textContent = full;
+    return;
+  }
+  if (connErr) {
+    stopSpeaking(); // no point speaking an error message
+    bubble.textContent = full
+      ? full + "\n\n(connection lost mid-reply)"
+      : "(couldn't reach the server — is it still running?)";
+    addRetry(bubble, () => send(text, true));
+    scrollChat();
     return;
   }
   if (pipe && !pipe.dead) feedSpeech(pipe, full, true);
@@ -764,6 +807,7 @@ async function send(text) {
    server falls back to the Edge voice when that quota is spent). */
 
 let pipeline = null;   // active speech pipeline
+let nudgeAudio = null; // greeting clip replayed after an autoplay block
 
 function speakingUI(on) {
   avatarWrap.classList.toggle("speaking", on);
@@ -771,6 +815,7 @@ function speakingUI(on) {
 }
 
 function stopSpeaking() {
+  if (nudgeAudio) { nudgeAudio.pause(); nudgeAudio = null; }
   if (pipeline) {
     const p = pipeline;
     pipeline = null;
@@ -886,8 +931,30 @@ function playClip(p, raw, blob) {
       queueReveal(p, raw, ms);
     };
     speakingUI(true);
-    a.play().catch(finish); // autoplay blocked (greeting before a click) — skip
+    a.play().catch((err) => {
+      // autoplay blocked (greeting before any interaction) — reveal the
+      // text right away and offer to replay the clip on the first tap
+      if (err && err.name === "NotAllowedError") nudgeAutoplay(blob);
+      finish();
+    });
   });
+}
+
+let autoplayNudged = false;
+
+function nudgeAutoplay(blob) {
+  if (autoplayNudged) return;
+  autoplayNudged = true;
+  toast("your browser muted her 🔇 — tap anywhere to hear her voice");
+  document.addEventListener("pointerdown", () => {
+    if (pipeline || busy || rec) return; // don't talk over anything live
+    const url = URL.createObjectURL(blob);
+    nudgeAudio = new Audio(url);
+    nudgeAudio.onplaying = () => speakingUI(true);
+    nudgeAudio.onended = () => { speakingUI(false); URL.revokeObjectURL(url); };
+    nudgeAudio.onerror = () => { speakingUI(false); URL.revokeObjectURL(url); };
+    nudgeAudio.play().catch(() => URL.revokeObjectURL(url));
+  }, { once: true });
 }
 
 /* Word-by-word typing of `text` into the bubble over ~ms, kept in order
@@ -1200,7 +1267,7 @@ msg.addEventListener("input", () => {
 
 // No memory persistence — each conversation is independent.
 
-(async () => {
+async function boot() {
   // a refresh shouldn't look like the conversation was lost — the server
   // keeps the session alive for a few hours, so restore it silently
   try {
@@ -1221,9 +1288,11 @@ msg.addEventListener("input", () => {
     else bubble.textContent = text;
   } catch (e) {
     bubble.textContent = "(couldn't reach the server — is it running?)";
+    addRetry(bubble, boot);
   }
   msg.focus();
-})();
+}
+boot();
 </script>
 </body>
 </html>
