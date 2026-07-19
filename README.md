@@ -4,6 +4,9 @@ A charming, warm companion chatbot for social conversation, powered by the
 **Google Gemini API free tier** — streaming responses and multi-turn memory,
 at no cost.
 
+**Try her live:** <https://lissa-02zl.onrender.com> (free tier — the first
+visit after a quiet spell takes ~30s to wake).
+
 ## Setup
 
 ```bash
@@ -31,9 +34,28 @@ browser):
 ```
 
 Then open <http://localhost:8000>. The browser handles the microphone and
-speakers itself, so nothing extra needs to be installed. Click 🎤 to speak a
-message (click again to finish), 🔊 to toggle spoken replies, 🧠 to see (or
-wipe) her memory, and 🔄 to start a fresh conversation.
+speakers itself, so nothing extra needs to be installed. Tap 🎤 to record a
+voice message (or **press and hold** to talk walkie-talkie style — release
+to send), 🔊 to toggle spoken replies, and 🔄 to start a fresh conversation
+(it asks for a second tap so a stray click can't wipe the chat).
+
+The web chat also gives you:
+
+- **Stop button** — the send button turns into a stop square while she's
+  replying; stopping cuts her voice mid-sentence and keeps the text that
+  already arrived.
+- **Multiline input** — the box grows as you type; Enter sends,
+  Shift+Enter makes a newline.
+- **Smart scrolling** — scroll up to re-read and the view stays put while
+  she keeps typing; a "new message" pill jumps you back down.
+- **Survives a refresh** — reload the page and the conversation is
+  restored (the server keeps your session for a few hours).
+- **Copy button** on her messages (hover or tap a bubble).
+- **Retry on connection errors** — a "try again" button resends your last
+  message instead of dead-ending.
+- **Time labels** appear between messages when more than 5 minutes pass.
+- **Screen-reader and keyboard friendly** — replies are announced, every
+  control is labelled and focusable, Escape closes dialogs.
 
 **Terminal version**:
 
@@ -64,8 +86,10 @@ sudo apt install -y pulseaudio-utils
 - **Two front ends, one brain**: `lissa.py` holds the persona, memory,
   transcription and TTS logic and is also the terminal app; `app.py` is a
   small FastAPI server that exposes the same logic to the web page in
-  `static/index.html`. Both share `lissa_memory.json`, so she remembers you
-  across either.
+  `static/index.html`. The terminal app persists memory to
+  `lissa_memory.json`; the web app is multi-user and stateless — each
+  visitor gets an isolated in-memory session (kept ~4 hours) and nothing
+  persists between sessions.
 - **Persona** lives in the system prompt in `lissa.py` — edit it to tune
   Lissa's personality, style, and boundaries.
 - **Long-term memory**: when a chat ends (`/quit`, Ctrl-D, or `/reset`),
@@ -80,23 +104,35 @@ sudo apt install -y pulseaudio-utils
   PulseAudio), sent to Gemini for transcription, and the transcript is
   chatted to Lissa exactly as if you had typed it. Works in any language
   you speak.
-- **Voice (web)**: she speaks *while she types* — as each sentence of the
-  reply streams in, it's synthesized immediately with Edge's free neural
-  voice (`en-US-AvaMultilingualNeural`, via `edge-tts`) and the clips play
-  in order, so her first sentence is audible while the rest is still being
-  written. If the voice server is unreachable, the browser's built-in
-  speech is the last resort.
+- **Voice (web)**: each reply is synthesized as one clip and she *types
+  the text out in sync with her speech*. The server tries Gemini's TTS
+  ("Leda" voice) while its small free-tier quota lasts, then falls back to
+  Edge's free neural voice (`en-US-AvaMultilingualNeural`, via
+  `edge-tts`); greetings always use the Edge voice to save Gemini quota.
+  If the voice server is unreachable, the browser's built-in speech is the
+  last resort. Voice capture runs on an `AudioWorklet` (with a
+  `ScriptProcessorNode` fallback for older browsers).
 - **Voice (terminal)**: replies are spoken with Gemini's free TTS
   (`gemini-3.1-flash-tts-preview`, "Leda" voice) through PulseAudio. Note
-  the Gemini TTS free tier is only ~10 requests/day; the terminal falls
-  back to text-only when it runs out, and the web app doesn't use it at
-  all.
+  the Gemini TTS free tier is only ~10 requests/day; both apps fall back
+  (terminal to text-only, web to the Edge voice) when it runs out.
 - **Streaming**: replies print chunk-by-chunk for a natural chat feel.
 - **Model**: `gemini-flash-lite-latest` — an alias that always points at
   Google's newest Flash-Lite model, so Lissa keeps working when older models
   are retired. Lite is used because its free-tier daily quota is much higher
   than the full Flash model's. Thinking is disabled for quick, snappy
   conversational replies.
+
+## Tests
+
+`tests/ui_test.js` drives the web app end-to-end in headless Chromium
+(Playwright) — 39 checks covering streaming, stop/retry, scrolling, voice
+recording through a fake mic, clipboard, and accessibility. With the
+server running on port 8765:
+
+```bash
+NODE_PATH=$(npm root -g) node tests/ui_test.js
+```
 
 ## Free-tier limits
 
