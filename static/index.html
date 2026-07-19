@@ -181,6 +181,11 @@
   .iconBtn:hover { background: var(--glass-strong); }
   .iconBtn:active { transform: scale(0.93); }
   .iconBtn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .iconBtn.confirm {
+    background: rgba(255, 77, 109, 0.18);
+    border-color: #ff4d6d;
+    color: #ffb3c0;
+  }
   #voiceBtn.off { opacity: 0.4; }
   #voiceBtn .on-icon { display: block; }
   #voiceBtn .off-icon { display: none; }
@@ -253,6 +258,7 @@
     -webkit-backdrop-filter: blur(18px);
   }
   #composer, #recorder { display: flex; gap: 10px; align-items: center; }
+  #composer { align-items: flex-end; }
   #composer[hidden], #recorder[hidden] { display: none; }
 
   #msg {
@@ -264,8 +270,11 @@
     color: var(--text);
     font-size: 15px;
     font-family: inherit;
+    line-height: 1.45;
     padding: 12px 18px;
     outline: none;
+    resize: none;
+    max-height: 120px;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   #msg::placeholder { color: var(--muted); }
@@ -296,6 +305,9 @@
     box-shadow: 0 6px 18px rgba(255, 92, 143, 0.35);
   }
   #send:hover { filter: brightness(1.08); background: linear-gradient(135deg, var(--rose), #d84176); }
+  #send .stop-icon { display: none; }
+  #send.stop .send-icon { display: none; }
+  #send.stop .stop-icon { display: block; }
   #mic.busy { animation: fade 1.1s infinite; }
   @keyframes fade { 50% { opacity: 0.35; } }
 
@@ -343,6 +355,34 @@
     border: none;
     color: #fff;
   }
+
+  /* "new message" pill shown when the user has scrolled up */
+  #jump {
+    position: absolute;
+    left: 50%;
+    bottom: 96px;
+    transform: translateX(-50%) translateY(8px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: rgba(46, 24, 38, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--rose-soft);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 5;
+    box-shadow: var(--shadow);
+  }
+  #jump.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+  #jump svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
   /* ---------- toast ---------- */
   #toast {
@@ -515,14 +555,20 @@
 
   <main id="chat"></main>
 
+  <button id="jump" title="Scroll to the latest message">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="5 12 12 19 19 12"/></svg>
+    new message
+  </button>
+
   <div id="bar">
     <div id="composer">
-      <input id="msg" type="text" placeholder="Say something to Lissa…" autocomplete="off">
+      <textarea id="msg" rows="1" placeholder="Say something to Lissa…" autocomplete="off"></textarea>
       <button id="mic" class="roundBtn" title="Speak instead of typing">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
       <button id="send" class="roundBtn" title="Send">
-        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg class="send-icon" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg class="stop-icon" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
       </button>
     </div>
     <div id="recorder" hidden>
@@ -574,6 +620,42 @@ let voiceOn = true;
 let busy = false;          // a reply is streaming
 let rec = null;            // active recording state
 let toastTimer = null;
+let chatAbort = null;      // AbortController for the in-flight reply
+
+/* ---------- smart auto-scroll ----------
+   Follow new content only while the user is at (or near) the bottom.
+   Scrolling up pauses following; a "new message" pill jumps back down. */
+
+const jumpBtn = document.getElementById("jump");
+let autoScroll = true;
+
+function nearBottom() {
+  return chat.scrollHeight - chat.scrollTop - chat.clientHeight < 60;
+}
+
+function scrollChat(force) {
+  if (force) autoScroll = true;
+  if (autoScroll) chat.scrollTop = chat.scrollHeight;
+  else jumpBtn.classList.add("show");
+}
+
+chat.addEventListener("scroll", () => {
+  if (nearBottom()) {
+    autoScroll = true;
+    jumpBtn.classList.remove("show");
+  }
+});
+// only real user gestures pause following (programmatic smooth-scrolls also
+// fire "scroll" events mid-flight, so they can't be trusted for this)
+for (const ev of ["wheel", "touchmove"]) {
+  chat.addEventListener(ev, () => { if (!nearBottom()) autoScroll = false; }, { passive: true });
+}
+
+jumpBtn.onclick = () => {
+  autoScroll = true;
+  jumpBtn.classList.remove("show");
+  chat.scrollTop = chat.scrollHeight;
+};
 
 function toast(text) {
   const t = document.getElementById("toast");
@@ -593,7 +675,7 @@ function addBubble(who, text) {
   div.className = "bubble " + who;
   div.textContent = text;
   chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  scrollChat(who === "user"); // sending your own message always snaps down
   return div;
 }
 
@@ -602,14 +684,16 @@ function typingBubble() {
   div.className = "bubble lissa";
   div.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>';
   chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  scrollChat();
   return div;
 }
 
 function setBusy(b) {
   busy = b;
-  sendBtn.disabled = b;
   micBtn.disabled = b;
+  // while a reply streams, the send button becomes a stop button
+  sendBtn.classList.toggle("stop", b);
+  sendBtn.title = b ? "Stop the reply" : "Send";
   setStatus(b ? "typing…" : "online", b);
 }
 
@@ -621,10 +705,14 @@ async function send(text) {
   stopSpeaking();
   addBubble("user", text);
   msg.value = "";
+  msg.style.height = "";
   setBusy(true);
 
   const bubble = typingBubble();
   let full = "";
+  let aborted = false;
+  const ac = new AbortController();
+  chatAbort = ac;
   // With voice on, the pipeline types the reply into the bubble in sync
   // with her speech; with voice off, text streams in at full speed.
   const pipe = voiceOn ? newPipeline(bubble) : null;
@@ -633,6 +721,7 @@ async function send(text) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text }),
+      signal: ac.signal,
     });
     const reader = res.body.getReader();
     const dec = new TextDecoder();
@@ -644,15 +733,26 @@ async function send(text) {
         feedSpeech(pipe, full, false); // she speaks + types finished sentences
       } else {
         bubble.textContent = full;
-        chat.scrollTop = chat.scrollHeight;
+        scrollChat();
       }
     }
   } catch (e) {
-    full = full || "(connection lost — is the server still running?)";
-    if (pipe) pipe.fullText = full;
-    if (!pipe || pipe.dead) bubble.textContent = full;
+    if (e.name === "AbortError") {
+      aborted = true; // user hit stop — keep whatever already arrived
+    } else {
+      full = full || "(connection lost — is the server still running?)";
+      if (pipe) pipe.fullText = full;
+      if (!pipe || pipe.dead) bubble.textContent = full;
+    }
   }
+  chatAbort = null;
   setBusy(false);
+  if (aborted) {
+    stopSpeaking(); // cut the voice too; flushes partial text into the bubble
+    if (!full.trim()) bubble.remove();
+    else if (!pipe || pipe.dead) bubble.textContent = full;
+    return;
+  }
   if (pipe && !pipe.dead) feedSpeech(pipe, full, true);
   else bubble.textContent = full;
 }
@@ -680,7 +780,7 @@ function stopSpeaking() {
     if (p.bubble) {
       // show everything received so far — don't lose text mid-reveal
       p.bubble.textContent = p.fullText;
-      chat.scrollTop = chat.scrollHeight;
+      scrollChat();
     }
   }
   if (window.speechSynthesis) speechSynthesis.cancel();
@@ -757,7 +857,7 @@ async function pipePlay(p) {
     if (p.dead) return;
     if (p.bubble) {
       p.bubble.textContent = p.fullText; // make sure nothing was missed
-      chat.scrollTop = chat.scrollHeight;
+      scrollChat();
     }
     speakingUI(false);
   }
@@ -807,7 +907,7 @@ function revealText(p, text, ms) {
     const iv = setInterval(() => {
       if (p.dead) { clearInterval(iv); return res(); }
       p.bubble.textContent += tokens[i++];
-      chat.scrollTop = chat.scrollHeight;
+      scrollChat();
       if (i >= tokens.length) { clearInterval(iv); res(); }
     }, step);
   });
@@ -1054,21 +1154,49 @@ forgetBtn.onclick = async () => {
   toast("new conversation started");
 };
 
-document.getElementById("resetBtn").onclick = async () => {
+const resetBtn = document.getElementById("resetBtn");
+let resetArmTimer = null;
+
+resetBtn.onclick = async () => {
   if (busy) return;
+  // two-step confirm: an accidental tap shouldn't wipe the conversation
+  if (!resetBtn.classList.contains("confirm")) {
+    resetBtn.classList.add("confirm");
+    toast("tap again to start a new conversation");
+    clearTimeout(resetArmTimer);
+    resetArmTimer = setTimeout(() => resetBtn.classList.remove("confirm"), 3500);
+    return;
+  }
+  clearTimeout(resetArmTimer);
+  resetBtn.classList.remove("confirm");
   stopSpeaking();
   setStatus("saving memories…", true);
   const { text } = await (await fetch("/api/reset", { method: "POST" })).json();
   setStatus("online");
   chat.innerHTML = "";
   addBubble("lissa", text);
-  toast("new conversation — long-term memory kept");
+  toast("new conversation started");
 };
 
 /* ---------- wiring ---------- */
 
-sendBtn.onclick = () => send(msg.value);
-msg.addEventListener("keydown", (e) => { if (e.key === "Enter") send(msg.value); });
+sendBtn.onclick = () => {
+  if (busy) { if (chatAbort) chatAbort.abort(); return; } // acting as stop
+  send(msg.value);
+};
+// Enter sends, Shift+Enter makes a newline; ignore Enter while an IME
+// composition is in progress (Japanese/Chinese/Korean input)
+msg.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    send(msg.value);
+  }
+});
+// auto-grow the composer up to its max-height
+msg.addEventListener("input", () => {
+  msg.style.height = "auto";
+  msg.style.height = Math.min(msg.scrollHeight, 120) + "px";
+});
 
 // No memory persistence — each conversation is independent.
 
