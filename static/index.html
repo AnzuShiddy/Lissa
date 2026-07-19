@@ -180,6 +180,12 @@
   }
   .iconBtn:hover { background: var(--glass-strong); }
   .iconBtn:active { transform: scale(0.93); }
+  .iconBtn:focus-visible, .roundBtn:focus-visible, #jump:focus-visible,
+  #avatarWrap:focus-visible, .bubble .retryBtn:focus-visible,
+  #panel .row button:focus-visible {
+    outline: 2px solid var(--rose-soft);
+    outline-offset: 2px;
+  }
   .iconBtn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
   .iconBtn.confirm {
     background: rgba(255, 77, 109, 0.18);
@@ -205,6 +211,22 @@
   #chat::-webkit-scrollbar { width: 8px; }
   #chat::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 8px; }
   #chat::-webkit-scrollbar-track { background: transparent; }
+
+  .timestamp {
+    align-self: center;
+    font-size: 11.5px;
+    color: var(--muted);
+    padding: 4px 0 0;
+    user-select: none;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 
   .bubble {
     max-width: 78%;
@@ -490,7 +512,7 @@
 
 <div id="frame">
   <header>
-    <div id="avatarWrap" title="Click to stop her voice">
+    <div id="avatarWrap" role="button" tabindex="0" title="Click to stop her voice" aria-label="Stop her voice">
       <div id="avatar">
         <svg viewBox="0 0 120 120" role="img" aria-label="Lissa's face">
           <defs>
@@ -556,19 +578,20 @@
       <h1>Lissa</h1>
       <div id="status">online</div>
     </div>
-    <button id="voiceBtn" class="iconBtn" title="Toggle spoken replies">
+    <button id="voiceBtn" class="iconBtn" title="Toggle spoken replies" aria-label="Spoken replies" aria-pressed="true">
       <svg class="on-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.4a9.5 9.5 0 0 1 0 13.2"/></svg>
       <svg class="off-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
     </button>
-    <button id="memBtn" class="iconBtn" title="About this conversation">
+    <button id="memBtn" class="iconBtn" title="About this conversation" aria-label="About this conversation">
       <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
     </button>
-    <button id="resetBtn" class="iconBtn" title="Start a new conversation">
+    <button id="resetBtn" class="iconBtn" title="Start a new conversation" aria-label="Start a new conversation">
       <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
     </button>
   </header>
 
-  <main id="chat"></main>
+  <main id="chat" role="log" aria-label="Conversation with Lissa"></main>
+  <div id="sr" class="visually-hidden" aria-live="polite"></div>
 
   <button id="jump" title="Scroll to the latest message">
     <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="5 12 12 19 19 12"/></svg>
@@ -577,11 +600,11 @@
 
   <div id="bar">
     <div id="composer">
-      <textarea id="msg" rows="1" placeholder="Say something to Lissa…" autocomplete="off"></textarea>
-      <button id="mic" class="roundBtn" title="Speak instead of typing">
+      <textarea id="msg" rows="1" placeholder="Say something to Lissa…" autocomplete="off" aria-label="Message to Lissa"></textarea>
+      <button id="mic" class="roundBtn" title="Speak instead of typing" aria-label="Speak instead of typing">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
-      <button id="send" class="roundBtn" title="Send">
+      <button id="send" class="roundBtn" title="Send" aria-label="Send">
         <svg class="send-icon" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         <svg class="stop-icon" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
       </button>
@@ -590,21 +613,21 @@
       <div id="recDot"></div>
       <span id="recTime">0:00</span>
       <div id="meter"></div>
-      <button id="recCancel" class="roundBtn" title="Cancel">
+      <button id="recCancel" class="roundBtn" title="Cancel" aria-label="Cancel recording">
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <button id="recDone" class="roundBtn" title="Send it">
+      <button id="recDone" class="roundBtn" title="Send it" aria-label="Send recording">
         <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
       </button>
     </div>
   </div>
 </div>
 
-<div id="toast"></div>
+<div id="toast" role="status"></div>
 
 <div id="overlay">
-  <div id="panel">
-    <h2>About this conversation</h2>
+  <div id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+    <h2 id="panelTitle">About this conversation</h2>
     <div class="sub">Each chat is separate — nothing is saved between sessions.</div>
     <ul id="facts"></ul>
     <div class="row">
@@ -693,7 +716,30 @@ function setStatus(text, active) {
   statusEl.classList.toggle("active", !!active);
 }
 
+/* muted time label inserted when messages are more than 5 minutes apart */
+let lastStamp = 0;
+
+function maybeStamp() {
+  const now = Date.now();
+  if (now - lastStamp > 5 * 60 * 1000) {
+    const d = document.createElement("div");
+    d.className = "timestamp";
+    d.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    chat.appendChild(d);
+  }
+  lastStamp = now;
+}
+
+/* announce `text` to screen readers once, without the word-by-word noise
+   the streaming reveal would produce in a live chat region */
+const sr = document.getElementById("sr");
+function announce(text) {
+  sr.textContent = "";
+  setTimeout(() => { sr.textContent = text; }, 60);
+}
+
 function addBubble(who, text) {
+  maybeStamp();
   const div = document.createElement("div");
   div.className = "bubble " + who;
   div.textContent = text;
@@ -703,6 +749,7 @@ function addBubble(who, text) {
 }
 
 function typingBubble() {
+  maybeStamp();
   const div = document.createElement("div");
   div.className = "bubble lissa";
   div.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>';
@@ -727,6 +774,7 @@ function setBusy(b) {
   // while a reply streams, the send button becomes a stop button
   sendBtn.classList.toggle("stop", b);
   sendBtn.title = b ? "Stop the reply" : "Send";
+  sendBtn.setAttribute("aria-label", sendBtn.title);
   setStatus(b ? "typing…" : "online", b);
 }
 
@@ -794,10 +842,12 @@ async function send(text, isRetry) {
       : "(couldn't reach the server — is it still running?)";
     addRetry(bubble, () => send(text, true));
     scrollChat();
+    announce(bubble.textContent);
     return;
   }
   if (pipe && !pipe.dead) feedSpeech(pipe, full, true);
   else bubble.textContent = full;
+  announce("Lissa: " + full);
 }
 
 /* ---------- spoken replies ----------
@@ -1044,11 +1094,15 @@ function speakBrowser(text) {
 voiceBtn.onclick = () => {
   voiceOn = !voiceOn;
   voiceBtn.classList.toggle("off", !voiceOn);
+  voiceBtn.setAttribute("aria-pressed", String(voiceOn));
   if (!voiceOn) stopSpeaking();
   toast(voiceOn ? "voice on" : "voice off");
 };
 
 avatarWrap.onclick = stopSpeaking;
+avatarWrap.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); stopSpeaking(); }
+});
 
 /* ---------- voice input ---------- */
 
@@ -1207,6 +1261,7 @@ document.getElementById("memBtn").onclick = () => {
 
 document.getElementById("closeBtn").onclick = closePanel;
 overlay.onclick = (e) => { if (e.target === overlay) closePanel(); };
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePanel(); });
 
 forgetBtn.onclick = async () => {
   if (!forgetBtn.classList.contains("confirm")) {
@@ -1217,7 +1272,9 @@ forgetBtn.onclick = async () => {
   const { text } = await (await fetch("/api/reset", { method: "POST" })).json();
   closePanel();
   chat.innerHTML = "";
+  lastStamp = 0;
   addBubble("lissa", text);
+  announce("Lissa: " + text);
   toast("new conversation started");
 };
 
@@ -1241,7 +1298,9 @@ resetBtn.onclick = async () => {
   const { text } = await (await fetch("/api/reset", { method: "POST" })).json();
   setStatus("online");
   chat.innerHTML = "";
+  lastStamp = 0;
   addBubble("lissa", text);
+  announce("Lissa: " + text);
   toast("new conversation started");
 };
 
@@ -1286,9 +1345,11 @@ async function boot() {
     const { text } = await (await fetch("/api/greeting")).json();
     if (voiceOn) speak(text, bubble, true); // Edge voice: don't spend Gemini quota on greetings
     else bubble.textContent = text;
+    announce("Lissa: " + text);
   } catch (e) {
     bubble.textContent = "(couldn't reach the server — is it running?)";
     addRetry(bubble, boot);
+    announce(bubble.textContent);
   }
   msg.focus();
 }

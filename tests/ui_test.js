@@ -211,6 +211,59 @@ const check = (cond, name) => {
     "fix2: confirm state cleared after reset"
   );
 
+  /* ---- fix 8: accessibility ---- */
+  check(
+    await page.$eval("#chat", (el) => el.getAttribute("role") === "log"),
+    "fix8: chat is a log landmark"
+  );
+  await page.waitForTimeout(300); // announce() sets the live region async
+  check(
+    (await page.$eval("#sr", (el) => el.textContent)).startsWith("Lissa:"),
+    "fix8: screen-reader live region announced the reply"
+  );
+  check(
+    await page.$eval("#voiceBtn", (el) => el.getAttribute("aria-pressed") === "false"),
+    "fix8: voice toggle exposes pressed state (off)"
+  );
+  await page.click("#voiceBtn");
+  check(
+    await page.$eval("#voiceBtn", (el) => el.getAttribute("aria-pressed") === "true"),
+    "fix8: aria-pressed follows the toggle"
+  );
+  await page.click("#voiceBtn"); // back off
+  await page.focus("#avatarWrap");
+  check(
+    await page.evaluate(() => document.activeElement.id === "avatarWrap"),
+    "fix8: avatar is keyboard-focusable"
+  );
+  await page.click("#memBtn");
+  check(
+    await page.$eval("#overlay", (el) => el.classList.contains("show")),
+    "fix8: info panel opens"
+  );
+  await page.keyboard.press("Escape");
+  check(
+    await page.$eval("#overlay", (el) => !el.classList.contains("show")),
+    "fix8: Escape closes the panel"
+  );
+
+  /* ---- fix 9: timestamps ---- */
+  check(
+    (await page.$$(".timestamp")).length === 1,
+    "fix9: fresh conversation starts with one time label"
+  );
+  await page.evaluate(() => addBubble("user", "quick follow-up"));
+  check(
+    (await page.$$(".timestamp")).length === 1,
+    "fix9: no label within the 5-minute window"
+  );
+  await page.evaluate(() => { lastStamp = Date.now() - 6 * 60 * 1000; });
+  await page.evaluate(() => addBubble("user", "message after a long silence"));
+  check(
+    (await page.$$(".timestamp")).length === 2,
+    "fix9: label appears after a >5-minute gap"
+  );
+
   await browser.close();
   console.log(failures === 0 ? "\nALL PASSED" : `\n${failures} FAILURE(S)`);
   process.exit(failures === 0 ? 0 : 1);
