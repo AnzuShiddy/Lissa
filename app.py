@@ -99,6 +99,27 @@ def greeting(sid: str | None = Cookie(None)) -> dict:
     return {"text": lissa.greeting([]), "returning": False}
 
 
+@app.get("/api/history")
+def history(sid: str | None = Cookie(None)) -> dict:
+    """Return the conversation so far so a page refresh can restore it.
+    Empty when the session is new (or expired server-side)."""
+    _, sess = get_or_create_session(sid)
+    messages = []
+    with sess.lock:
+        for content in sess.session.get_history():
+            text = "".join(p.text for p in content.parts or [] if p.text)
+            if not text:
+                continue
+            who = "user" if content.role == "user" else "lissa"
+            # streamed replies are recorded chunk by chunk — merge them back
+            # into one message per turn
+            if messages and messages[-1]["who"] == who:
+                messages[-1]["text"] += text
+            else:
+                messages.append({"who": who, "text": text})
+    return {"messages": messages}
+
+
 @app.post("/api/chat")
 def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
     _, sess = get_or_create_session(sid)

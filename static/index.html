@@ -1201,6 +1201,19 @@ msg.addEventListener("input", () => {
 // No memory persistence — each conversation is independent.
 
 (async () => {
+  // a refresh shouldn't look like the conversation was lost — the server
+  // keeps the session alive for a few hours, so restore it silently
+  try {
+    const { messages } = await (await fetch("/api/history")).json();
+    if (messages && messages.length) {
+      for (const m of messages) addBubble(m.who, m.text);
+      scrollChat(true);
+      toast("picked up where you left off");
+      msg.focus();
+      return;
+    }
+  } catch (e) { /* server unreachable — fall through, greeting shows the error */ }
+
   const bubble = typingBubble();
   try {
     const { text } = await (await fetch("/api/greeting")).json();
