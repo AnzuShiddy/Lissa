@@ -314,6 +314,27 @@ const check = (cond, name) => {
     "fix10: cancel closes the recorder"
   );
 
+  /* ---- sentence-by-sentence speech ---- */
+  await page.click("#voiceBtn"); // voice back on
+  const sayTimes = [];
+  const onReq = (r) => { if (r.url().includes("/api/say")) sayTimes.push(Date.now()); };
+  page.on("request", onReq);
+  await page.fill("#msg", "count from one to seven — one short sentence per number, please");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(
+    () => !document.getElementById("send").classList.contains("stop"),
+    null, { timeout: 60000 }
+  );
+  const streamDoneAt = Date.now();
+  await page.waitForTimeout(2500); // let any trailing segments dispatch
+  page.off("request", onReq);
+  check(sayTimes.length >= 2,
+    "speech: reply split into multiple clips (" + sayTimes.length + " requests)");
+  check(sayTimes.length > 0 && sayTimes[0] < streamDoneAt,
+    "speech: first clip requested before the text stream finished");
+  await page.click("#avatarWrap"); // stop any ongoing speech
+  await page.click("#voiceBtn");   // voice off again for the memory tests
+
   /* ---- web memory: facts persist in localStorage across reloads ---- */
   await page.fill("#msg", "By the way, my name is Zanzibar and I love mango juice. Remember that!");
   await page.keyboard.press("Enter");

@@ -104,18 +104,19 @@ sudo apt install -y pulseaudio-utils
   PulseAudio), sent to Gemini for transcription, and the transcript is
   chatted to Lissa exactly as if you had typed it. Works in any language
   you speak.
-- **Voice (web)**: each reply is synthesized as one clip and she *types
-  the text out in sync with her speech*. The server tries Gemini's TTS
-  ("Leda" voice) while its small free-tier quota lasts, then falls back to
-  Edge's free neural voice (`en-US-AvaMultilingualNeural`, via
-  `edge-tts`); greetings always use the Edge voice to save Gemini quota.
-  If the voice server is unreachable, the browser's built-in speech is the
-  last resort. Voice capture runs on an `AudioWorklet` (with a
-  `ScriptProcessorNode` fallback for older browsers).
+- **Voice (web)**: she speaks *while she types* — as each sentence of the
+  reply streams in, it's synthesized immediately with Edge's free neural
+  voice (`en-US-AvaMultilingualNeural`, via `edge-tts`) and the clips play
+  in order, so her first sentence is audible while the rest is still being
+  written, with the text typing out in sync. If the voice server is
+  unreachable, the browser's built-in speech is the last resort. Voice
+  capture runs on an `AudioWorklet` (with a `ScriptProcessorNode` fallback
+  for older browsers).
 - **Voice (terminal)**: replies are spoken with Gemini's free TTS
   (`gemini-3.1-flash-tts-preview`, "Leda" voice) through PulseAudio. Note
-  the Gemini TTS free tier is only ~10 requests/day; both apps fall back
-  (terminal to text-only, web to the Edge voice) when it runs out.
+  the Gemini TTS free tier is only ~10 requests/day; the terminal falls
+  back to text-only when it runs out. The web app sticks to the Edge voice
+  so sentence-level clips never touch that quota.
 - **Streaming**: replies print chunk-by-chunk for a natural chat feel.
 - **Model**: `gemini-flash-lite-latest` — an alias that always points at
   Google's newest Flash-Lite model, so Lissa keeps working when older models

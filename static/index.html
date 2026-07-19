@@ -944,10 +944,11 @@ async function send(text, isRetry) {
 }
 
 /* ---------- spoken replies ----------
-   Each reply is synthesized as ONE clip once it has fully streamed in,
-   and she types the text out in sync with the clip. One clip per reply
-   keeps her Gemini "Leda" voice within its small free-tier quota (the
-   server falls back to the Edge voice when that quota is spent). */
+   As the reply streams in, each completed sentence is dispatched for
+   synthesis immediately (Edge's free neural voice — no quota to manage),
+   so she starts talking while the rest is still being written. Clips are
+   synthesized in parallel but play strictly in order, and the text types
+   out in sync with each clip. */
 
 let pipeline = null;   // active speech pipeline
 let nudgeAudio = null; // greeting clip replayed after an autoplay block
@@ -1007,11 +1008,14 @@ function pipeAdd(p, raw) {
   if (clean) {
     const ac = new AbortController();
     p.aborts.add(ac);
-    // synthesis starts NOW, in parallel with whatever is already playing
+    // synthesis starts NOW, in parallel with whatever is already playing.
+    // Always the Edge voice: sentence-level clips would burn through the
+    // tiny Gemini TTS quota in a couple of replies, and a mid-reply voice
+    // switch when it runs out sounds broken.
     blobP = fetch("/api/say", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: clean, edge: !!p.edgeOnly }),
+      body: JSON.stringify({ text: clean, edge: true }),
       signal: ac.signal,
     })
       .then((r) => (r.ok && r.status !== 204 ? r.blob() : null))
@@ -1124,31 +1128,45 @@ function revealText(p, text, ms) {
   });
 }
 
-/* Feed streamed text to the pipeline. The reply is only dispatched for
-   synthesis once it is complete, as a single clip — one Gemini TTS
-   request per reply. */
+/* index just past the last complete sentence in `text`, or 0 if none */
+function lastSentenceEnd(text) {
+  const m = text.match(/^[\s\S]*[.!?…]["')\]]*\s/);
+  return m ? m[0].length : 0;
+}
+
+/* Feed streamed text to the pipeline. Completed sentences are dispatched
+   for synthesis as they arrive: the first the moment it's done (fastest
+   start), later ones batched a little so long replies don't turn into a
+   flood of tiny clips. */
 function feedSpeech(p, full, done) {
   if (p.dead) return;
   p.fullText = full;
-  if (done) {
-    const rest = full.slice(p.spoken);
-    p.spoken = full.length;
-    if (rest.trim()) pipeAdd(p, rest);
-    p.finished = true;
-    if (!p.playing && p.items.length === 0) {
-      if (p.bubble) {
-        p.bubble.textContent = p.fullText;
-        addCopy(p.bubble, p.fullText);
-      }
-      speakingUI(false);
+  if (!done) {
+    const pending = full.slice(p.spoken);
+    const cut = lastSentenceEnd(pending);
+    const min = p.spoken === 0 ? 1 : 60;
+    if (cut >= min) {
+      p.spoken += cut;
+      pipeAdd(p, pending.slice(0, cut));
     }
+    return;
+  }
+  const rest = full.slice(p.spoken);
+  p.spoken = full.length;
+  if (rest.trim()) pipeAdd(p, rest);
+  p.finished = true;
+  if (!p.playing && p.items.length === 0) {
+    if (p.bubble) {
+      p.bubble.textContent = p.fullText;
+      addCopy(p.bubble, p.fullText);
+    }
+    speakingUI(false);
   }
 }
 
-function speak(text, bubble, edgeOnly) {
+function speak(text, bubble) {
   stopSpeaking();
   const p = newPipeline(bubble);
-  p.edgeOnly = !!edgeOnly; // greetings use the free Edge voice
   feedSpeech(p, text, true);
 }
 
@@ -1516,7 +1534,7 @@ async function boot() {
       body: JSON.stringify({ facts }),
     })).json();
     if (voiceOn) {
-      speak(text, bubble, true); // Edge voice: don't spend Gemini quota on greetings
+      speak(text, bubble);
     } else {
       bubble.textContent = text;
       addCopy(bubble, text);
