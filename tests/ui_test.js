@@ -335,6 +335,29 @@ const check = (cond, name) => {
   await page.click("#avatarWrap"); // stop any ongoing speech
   await page.click("#voiceBtn");   // voice off again for the memory tests
 
+  /* ---- photo understanding ---- */
+  const png1x1 = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+    "base64"); // single green pixel
+  await page.setInputFiles("#file", { name: "dot.png", mimeType: "image/png", buffer: png1x1 });
+  await page.waitForSelector("#attachPreview:not([hidden])", { timeout: 5000 });
+  check(true, "photo: picking a file shows the preview chip");
+  await page.fill("#msg", "what color is this image? one short sentence");
+  await page.keyboard.press("Enter");
+  await page.waitForSelector(".bubble.user img", { timeout: 5000 });
+  check(true, "photo: user bubble shows the image");
+  check(
+    await page.$eval("#attachPreview", (el) => el.hidden),
+    "photo: preview clears after sending"
+  );
+  await page.waitForFunction(
+    () => !document.getElementById("send").classList.contains("stop"),
+    null, { timeout: 60000 }
+  );
+  const visionReply = await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
+  check(visionReply.length > 5 && !visionReply.includes("API error"),
+    "photo: she replied about the image (got: " + visionReply.slice(0, 60) + ")");
+
   /* ---- web memory: facts persist in localStorage across reloads ---- */
   await page.fill("#msg", "By the way, my name is Zanzibar and I love mango juice. Remember that!");
   await page.keyboard.press("Enter");

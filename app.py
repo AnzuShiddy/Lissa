@@ -9,6 +9,7 @@ The browser handles the microphone and speaker; this server keeps the Gemini
 API key private and reuses lissa.py for the persona, transcription and TTS.
 """
 
+import base64
 import os
 import queue
 import secrets
@@ -19,7 +20,7 @@ from pathlib import Path
 import edge_tts
 from fastapi import Cookie, FastAPI, Request
 from fastapi.responses import FileResponse, Response, StreamingResponse
-from google.genai import errors
+from google.genai import errors, types
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
@@ -123,8 +124,27 @@ def get_or_create_session(session_id: str | None) -> tuple[str, UserSession]:
         return sid, sess
 
 
+MAX_IMAGE_BYTES = 4 * 1024 * 1024
+
+
 class ChatIn(BaseModel):
-    message: str
+    message: str = ""
+    image: str | None = None  # optional data URL (image/*)
+
+
+def decode_image(data_url: str) -> tuple[bytes, str] | None:
+    """Decode a data URL into (bytes, mime). None if invalid or too big."""
+    try:
+        head, b64 = data_url.split(",", 1)
+        mime = head.split(":", 1)[1].split(";", 1)[0]
+        if not mime.startswith("image/"):
+            return None
+        raw = base64.b64decode(b64)
+        if not raw or len(raw) > MAX_IMAGE_BYTES:
+            return None
+        return raw, mime
+    except Exception:
+        return None
 
 
 class TTSIn(BaseModel):
@@ -186,6 +206,8 @@ def history(sid: str | None = Cookie(None)) -> dict:
     with sess.lock:
         for content in sess.session.get_history():
             text = "".join(p.text for p in content.parts or [] if p.text)
+            if any(p.inline_data for p in content.parts or []):
+                text = ("📷 " + text).strip() if text else "📷 (photo)"
             if not text:
                 continue
             who = "user" if content.role == "user" else "lissa"
@@ -202,6 +224,17 @@ def history(sid: str | None = Cookie(None)) -> dict:
 def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
     _, sess = get_or_create_session(sid)
 
+    parts: list = []
+    if body.image:
+        img = decode_image(body.image)
+        if img:
+            parts.append(types.Part.from_bytes(data=img[0], mime_type=img[1]))
+    text = body.message.strip()
+    if text:
+        parts.append(text)
+    if not parts:
+        return StreamingResponse(iter([]), media_type="text/plain; charset=utf-8")
+
     limited = take_quota(sess)
     if limited:
         return StreamingResponse(iter([limited]), media_type="text/plain; charset=utf-8")
@@ -216,7 +249,7 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
         try:
             with sess.lock:
                 try:
-                    for chunk in sess.session.send_message_stream(body.message):
+                    for chunk in sess.session.send_message_stream(parts):
                         if chunk.text:
                             q.put(chunk.text)
                 except errors.ClientError as e:
