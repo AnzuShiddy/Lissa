@@ -153,8 +153,10 @@ def transcript_of(session) -> str:
     return "\n".join(lines)
 
 
-def update_memory(client: genai.Client, session, facts: list[str]) -> list[str]:
-    """Distill the conversation into updated long-term facts. Best-effort."""
+def distill_facts(client: genai.Client, session, facts: list[str]) -> list[str]:
+    """Distill the conversation into an updated fact list, with no side
+    effects. Returns the old list unchanged on failure or when the session
+    holds nothing new. Best-effort by design."""
     transcript = transcript_of(session)
     if transcript.count("User:") == 0:
         return facts
@@ -174,11 +176,18 @@ def update_memory(client: genai.Client, session, facts: list[str]) -> list[str]:
         )
         new_facts = [f for f in json.loads(response.text) if isinstance(f, str)]
         if new_facts:
-            save_memory(new_facts[:MAX_FACTS])
             return new_facts[:MAX_FACTS]
     except Exception:
         pass  # memory is a nice-to-have; never let it break the goodbye
     return facts
+
+
+def update_memory(client: genai.Client, session, facts: list[str]) -> list[str]:
+    """Distill and persist to the terminal app's memory file."""
+    new_facts = distill_facts(client, session, facts)
+    if new_facts is not facts:
+        save_memory(new_facts)
+    return new_facts
 
 
 def find_player() -> list[str] | None:

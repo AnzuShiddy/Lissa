@@ -647,11 +647,11 @@
 
 <div id="overlay">
   <div id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
-    <h2 id="panelTitle">About this conversation</h2>
-    <div class="sub">Each chat is separate — nothing is saved between sessions.</div>
+    <h2 id="panelTitle">What Lissa remembers</h2>
+    <div class="sub">Stored in this browser only — memories update as you chat and when you start a new conversation.</div>
     <ul id="facts"></ul>
     <div class="row">
-      <button id="forgetBtn" class="danger">Start over</button>
+      <button id="forgetBtn" class="danger">Forget me</button>
       <button id="closeBtn">Close</button>
     </div>
   </div>
@@ -679,6 +679,41 @@ let busy = false;          // a reply is streaming
 let rec = null;            // active recording state
 let toastTimer = null;
 let chatAbort = null;      // AbortController for the in-flight reply
+
+/* ---------- long-term memory ----------
+   Facts about the visitor live in THIS browser (localStorage) and are sent
+   up only to personalize their own session; the server stores nothing. */
+
+const MEM_KEY = "lissa_facts";
+
+function loadFacts() {
+  try {
+    const f = JSON.parse(localStorage.getItem(MEM_KEY)) || [];
+    return Array.isArray(f) ? f.filter((x) => typeof x === "string") : [];
+  } catch { return []; }
+}
+
+function saveFacts(f) {
+  try { localStorage.setItem(MEM_KEY, JSON.stringify(f)); } catch {}
+}
+
+let facts = loadFacts();
+let exchanges = 0; // completed replies since load — memory refreshes every 4th
+
+async function memorize() {
+  try {
+    const r = await fetch("/api/memorize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ facts }),
+    });
+    const data = await r.json();
+    if (Array.isArray(data.facts) && data.facts.length) {
+      facts = data.facts;
+      saveFacts(facts);
+    }
+  } catch {} // memory is a nice-to-have, never break the chat over it
+}
 
 /* ---------- smart auto-scroll ----------
    Follow new content only while the user is at (or near) the bottom.
@@ -905,6 +940,7 @@ async function send(text, isRetry) {
     addCopy(bubble, full);
   }
   announce("Lissa: " + full);
+  if (++exchanges % 4 === 0) memorize(); // fire-and-forget memory refresh
 }
 
 /* ---------- spoken replies ----------
@@ -1289,7 +1325,8 @@ async function stopRecording() {
       headers: { "Content-Type": "audio/wav" },
       body: encodeWav(chunks, total, rate),
     });
-    const { text } = await res.json();
+    const { text, error } = await res.json();
+    if (error) { toast(error); return; }
     if (!text) { toast("couldn't make out any words — try again"); return; }
     send(text);
   } catch (e) {
@@ -1358,16 +1395,24 @@ const forgetBtn = document.getElementById("forgetBtn");
 function closePanel() {
   overlay.classList.remove("show");
   forgetBtn.classList.remove("confirm");
-  forgetBtn.textContent = "Start over";
+  forgetBtn.textContent = "Forget me";
 }
 
 document.getElementById("memBtn").onclick = () => {
   const ul = document.getElementById("facts");
   ul.innerHTML = "";
-  const li = document.createElement("li");
-  li.className = "empty";
-  li.textContent = "No persistent memory — each conversation is fresh and separate. Click 'Start over' to begin a new chat.";
-  ul.appendChild(li);
+  if (facts.length) {
+    for (const f of facts) {
+      const li = document.createElement("li");
+      li.textContent = f;
+      ul.appendChild(li);
+    }
+  } else {
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = "Nothing yet — she starts remembering after you've chatted a little.";
+    ul.appendChild(li);
+  }
   overlay.classList.add("show");
 };
 
@@ -1381,13 +1426,19 @@ forgetBtn.onclick = async () => {
     forgetBtn.textContent = "Sure? Click again";
     return;
   }
-  const { text } = await (await fetch("/api/reset", { method: "POST" })).json();
+  facts = [];
+  try { localStorage.removeItem(MEM_KEY); } catch {}
+  const { text } = await (await fetch("/api/reset", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ facts: [] }),
+  })).json();
   closePanel();
   chat.innerHTML = "";
   lastStamp = 0;
   addBubble("lissa", text);
   announce("Lissa: " + text);
-  toast("new conversation started");
+  toast("memory wiped — she's meeting you for the first time again");
 };
 
 const resetBtn = document.getElementById("resetBtn");
@@ -1407,13 +1458,18 @@ resetBtn.onclick = async () => {
   resetBtn.classList.remove("confirm");
   stopSpeaking();
   setStatus("saving memories…", true);
-  const { text } = await (await fetch("/api/reset", { method: "POST" })).json();
+  await memorize(); // capture this conversation before it's cleared
+  const { text } = await (await fetch("/api/reset", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ facts }),
+  })).json();
   setStatus("online");
   chat.innerHTML = "";
   lastStamp = 0;
   addBubble("lissa", text);
   announce("Lissa: " + text);
-  toast("new conversation started");
+  toast("new conversation — she'll remember you");
 };
 
 /* ---------- wiring ---------- */
@@ -1454,7 +1510,11 @@ async function boot() {
 
   const bubble = typingBubble();
   try {
-    const { text } = await (await fetch("/api/greeting")).json();
+    const { text } = await (await fetch("/api/hello", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ facts }),
+    })).json();
     if (voiceOn) {
       speak(text, bubble, true); // Edge voice: don't spend Gemini quota on greetings
     } else {

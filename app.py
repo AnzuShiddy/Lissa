@@ -9,6 +9,7 @@ The browser handles the microphone and speaker; this server keeps the Gemini
 API key private and reuses lissa.py for the persona, transcription and TTS.
 """
 
+import os
 import queue
 import secrets
 import threading
@@ -32,7 +33,42 @@ EDGE_VOICE = "en-US-AvaMultilingualNeural"
 # After a Gemini TTS quota 429, don't retry it for this long.
 GEMINI_TTS_COOLDOWN = 30 * 60
 
+# The public deployment serves everyone from one shared API key, so throttle
+# quota-burning calls: a per-visitor token bucket plus a global daily cap.
+RATE_PER_MIN = float(os.environ.get("LISSA_RATE_PER_MIN", "8"))
+DAILY_CALLS = int(os.environ.get("LISSA_DAILY_CALLS", "600"))
+
+_daily_lock = threading.Lock()
+_daily = {"day": "", "count": 0}
+
 app = FastAPI(title="Lissa")
+
+
+def take_quota(sess: "UserSession", per_minute: bool = True) -> str | None:
+    """Spend one quota-burning Gemini call. Returns None when allowed,
+    otherwise an in-character message explaining the wait. Background calls
+    (memory distillation) pass per_minute=False so they only count against
+    the daily cap, never starve the visitor's own chatting."""
+    if per_minute:
+        now = time.time()
+        sess.tokens = min(
+            RATE_PER_MIN, sess.tokens + (now - sess.tokens_at) * (RATE_PER_MIN / 60.0)
+        )
+        sess.tokens_at = now
+        if sess.tokens < 1.0:
+            wait = int((1.0 - sess.tokens) * 60.0 / RATE_PER_MIN) + 1
+            return f"(whoa, you're fast 😅 — give me about {wait}s to catch my breath)"
+    with _daily_lock:
+        today = time.strftime("%Y-%m-%d")
+        if _daily["day"] != today:
+            _daily["day"], _daily["count"] = today, 0
+        if _daily["count"] >= DAILY_CALLS:
+            return ("(I've been chatting all day and I need to rest my voice — "
+                    "come back tomorrow? 💋)")
+        _daily["count"] += 1
+    if per_minute:
+        sess.tokens -= 1.0
+    return None
 
 
 class UserSession:
@@ -43,13 +79,24 @@ class UserSession:
         self.lock = threading.Lock()
         self.tts_retry_at = 0.0
         self.last_used = time.time()
+        self.tokens = RATE_PER_MIN  # rate-limit token bucket
+        self.tokens_at = time.time()
+        self.facts: list[str] = []
         self.session = self.client.chats.create(
-            model=lissa.MODEL, config=lissa.build_config([])  # no memory, fresh start
+            model=lissa.MODEL, config=lissa.build_config([])  # personalized later via /api/hello
         )
 
     def touch(self) -> None:
         """Update last-used timestamp for cleanup."""
         self.last_used = time.time()
+
+    def rebuild(self, facts: list[str]) -> None:
+        """Start a fresh chat session personalized with the given facts.
+        Call with the session lock held."""
+        self.facts = facts
+        self.session = self.client.chats.create(
+            model=lissa.MODEL, config=lissa.build_config(facts)
+        )
 
 
 # Global session store: session_id -> UserSession
@@ -85,6 +132,16 @@ class TTSIn(BaseModel):
     edge: bool = False  # true = don't spend Gemini quota on this (greetings)
 
 
+class FactsIn(BaseModel):
+    facts: list[str] = []
+
+
+def clean_facts(raw: list[str]) -> list[str]:
+    """Sanitize client-supplied memory facts (they live in the visitor's
+    browser and personalize only their own session)."""
+    return [f.strip()[:200] for f in raw if isinstance(f, str) and f.strip()][: lissa.MAX_FACTS]
+
+
 @app.get("/")
 def index(sid: str | None = Cookie(None)) -> Response:
     session_id, _ = get_or_create_session(sid)
@@ -94,10 +151,30 @@ def index(sid: str | None = Cookie(None)) -> Response:
     return r
 
 
-@app.get("/api/greeting")
-def greeting(sid: str | None = Cookie(None)) -> dict:
+@app.post("/api/hello")
+def hello(body: FactsIn, sid: str | None = Cookie(None)) -> dict:
+    """Personalize a fresh session with the visitor's remembered facts
+    (stored in their browser) and return the matching greeting. An ongoing
+    conversation is never rebuilt — the page restores it via /api/history."""
     _, sess = get_or_create_session(sid)
-    return {"text": lissa.greeting([]), "returning": False}
+    facts = clean_facts(body.facts)
+    with sess.lock:
+        if not lissa.transcript_of(sess.session):
+            sess.rebuild(facts)
+    return {"text": lissa.greeting(sess.facts)}
+
+
+@app.post("/api/memorize")
+def memorize(body: FactsIn, sid: str | None = Cookie(None)) -> dict:
+    """Distill the conversation so far into updated facts for the visitor's
+    browser to keep. Counts against the daily quota cap only."""
+    _, sess = get_or_create_session(sid)
+    facts = clean_facts(body.facts)
+    if take_quota(sess, per_minute=False):
+        return {"facts": facts}
+    with sess.lock:
+        facts = lissa.distill_facts(sess.client, sess.session, facts)
+    return {"facts": facts}
 
 
 @app.get("/api/history")
@@ -124,6 +201,10 @@ def history(sid: str | None = Cookie(None)) -> dict:
 @app.post("/api/chat")
 def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
     _, sess = get_or_create_session(sid)
+
+    limited = take_quota(sess)
+    if limited:
+        return StreamingResponse(iter([limited]), media_type="text/plain; charset=utf-8")
 
     # Generate in a dedicated thread that always runs the Gemini stream to
     # completion. If the client disconnects mid-reply (stop button, closed
@@ -160,6 +241,9 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
 @app.post("/api/transcribe")
 async def transcribe(request: Request, sid: str | None = Cookie(None)) -> dict:
     _, sess = get_or_create_session(sid)
+    limited = take_quota(sess)
+    if limited:
+        return {"text": None, "error": limited}
     wav_bytes = await request.body()
     if len(wav_bytes) < 4000:  # far too short to contain speech
         return {"text": None}
@@ -209,10 +293,11 @@ async def say(body: TTSIn, sid: str | None = Cookie(None)) -> Response:
 
 
 @app.post("/api/reset")
-def reset(sid: str | None = Cookie(None)) -> dict:
+def reset(body: FactsIn | None = None, sid: str | None = Cookie(None)) -> dict:
+    """Start a new conversation, personalized with whatever facts the
+    visitor's browser sends (none = she meets them fresh)."""
     _, sess = get_or_create_session(sid)
+    facts = clean_facts(body.facts) if body else []
     with sess.lock:
-        sess.session = sess.client.chats.create(
-            model=lissa.MODEL, config=lissa.build_config([])
-        )
-    return {"text": lissa.greeting([])}
+        sess.rebuild(facts)
+    return {"text": lissa.greeting(facts)}

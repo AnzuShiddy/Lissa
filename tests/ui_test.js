@@ -314,6 +314,29 @@ const check = (cond, name) => {
     "fix10: cancel closes the recorder"
   );
 
+  /* ---- web memory: facts persist in localStorage across reloads ---- */
+  await page.fill("#msg", "By the way, my name is Zanzibar and I love mango juice. Remember that!");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() => !busy, null, { timeout: 60000 });
+  await page.click("#resetBtn");
+  await page.click("#resetBtn"); // confirm — distills memory, then resets
+  await page.waitForFunction(
+    () => document.querySelectorAll(".bubble").length === 1, null, { timeout: 60000 });
+  const stored = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("lissa_facts") || "[]"));
+  check(stored.length > 0, "memory: facts distilled into localStorage on reset");
+  check(stored.join(" ").toLowerCase().includes("zanzibar"),
+    "memory: facts captured the name (got: " + stored.join(" | ").slice(0, 80) + ")");
+
+  await page.reload();
+  await page.waitForFunction(() => {
+    const b = document.querySelector(".bubble.lissa");
+    return b && !b.querySelector(".typing-dots") && b.textContent.length > 5;
+  }, null, { timeout: 30000 });
+  const greet2 = await page.$eval(".bubble.lissa", (el) => el.textContent);
+  check(!greet2.includes("what's on your mind"),
+    "memory: reload greets like a returning visitor");
+
   await browser.close();
   console.log(failures === 0 ? "\nALL PASSED" : `\n${failures} FAILURE(S)`);
   process.exit(failures === 0 ? 0 : 1);
