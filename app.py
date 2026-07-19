@@ -9,6 +9,7 @@ The browser handles the microphone and speaker; this server keeps the Gemini
 API key private and reuses lissa.py for the persona, transcription and TTS.
 """
 
+import queue
 import secrets
 import threading
 import time
@@ -124,19 +125,34 @@ def history(sid: str | None = Cookie(None)) -> dict:
 def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
     _, sess = get_or_create_session(sid)
 
+    # Generate in a dedicated thread that always runs the Gemini stream to
+    # completion. If the client disconnects mid-reply (stop button, closed
+    # tab), the abandoned response generator would otherwise stay suspended
+    # inside `with sess.lock:` forever and deadlock the whole session.
+    q: queue.Queue[str | None] = queue.Queue()
+
+    def produce() -> None:
+        try:
+            with sess.lock:
+                try:
+                    for chunk in sess.session.send_message_stream(body.message):
+                        if chunk.text:
+                            q.put(chunk.text)
+                except errors.ClientError as e:
+                    if e.code == 429:
+                        q.put("\n\n(Free-tier rate limit hit — wait a few seconds and try again.)")
+                    else:
+                        q.put(f"\n\n(API error {e.code}: {e.message})")
+                except errors.APIError as e:
+                    q.put(f"\n\n(Gemini had a hiccup ({e.code}) — try again in a moment.)")
+        finally:
+            q.put(None)  # end of stream
+
+    threading.Thread(target=produce, daemon=True).start()
+
     def gen():
-        with sess.lock:
-            try:
-                for chunk in sess.session.send_message_stream(body.message):
-                    if chunk.text:
-                        yield chunk.text
-            except errors.ClientError as e:
-                if e.code == 429:
-                    yield "\n\n(Free-tier rate limit hit — wait a few seconds and try again.)"
-                else:
-                    yield f"\n\n(API error {e.code}: {e.message})"
-            except errors.APIError as e:
-                yield f"\n\n(Gemini had a hiccup ({e.code}) — try again in a moment.)"
+        while (text := q.get()) is not None:
+            yield text
 
     return StreamingResponse(gen(), media_type="text/plain; charset=utf-8")
 
