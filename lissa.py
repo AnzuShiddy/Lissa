@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tempfile
 import wave
+from datetime import datetime
 from pathlib import Path
 
 from google import genai
@@ -92,7 +93,20 @@ TRANSCRIBE_PROMPT = (
     "exactly: NO_SPEECH"
 )
 
-FIRST_GREETING = "Hey you 😊 I'm Lissa. I was hoping someone interesting would show up — what's on your mind tonight?"
+def get_time_of_day_phrase() -> str:
+	"""Return an appropriate time-of-day phrase based on current hour."""
+	hour = datetime.now().hour
+	if 6 <= hour < 12:
+		return "this morning"
+	elif 12 <= hour < 17:
+		return "this afternoon"
+	elif 17 <= hour < 21:
+		return "this evening"
+	else:  # 21 to 6
+		return "tonight"
+
+
+FIRST_GREETING = "Hey you 😊 I'm Lissa. I was hoping someone interesting would show up — what's on your mind {time_phrase}?"
 
 
 class VoiceQuotaError(Exception):
@@ -378,9 +392,9 @@ def make_client() -> genai.Client:
 
 
 def greeting(facts: list[str]) -> str:
-    if not facts:
-        return FIRST_GREETING
-    return "Hey, look who's back 😊 I was just thinking about you. How have you been?"
+	if not facts:
+		return FIRST_GREETING.format(time_phrase=get_time_of_day_phrase())
+	return "Hey, look who's back 😊 I was just thinking about you. How have you been?"
 
 
 def chat() -> None:
@@ -430,7 +444,7 @@ def chat() -> None:
             MEMORY_FILE.unlink(missing_ok=True)
             session = client.chats.create(model=MODEL, config=build_config(facts))
             print("\n(memory wiped — Lissa is meeting you for the first time again)\n")
-            print(f"Lissa: {FIRST_GREETING}\n")
+            print(f"Lissa: {FIRST_GREETING.format(time_phrase=get_time_of_day_phrase())}\n")
             continue
         if user_input.lower() == "/voice":
             if player is None:
