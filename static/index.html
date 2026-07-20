@@ -8,6 +8,20 @@
 <link rel="icon" type="image/png" href="/static/icon-192.png">
 <link rel="apple-touch-icon" href="/static/icon-192.png">
 <title>Lissa 💋</title>
+<script>
+  // Set the theme before CSS paints, so a light-theme visitor never sees a
+  // flash of the dark theme first.
+  (function () {
+    try {
+      var t = localStorage.getItem("lissa_theme");
+      if (t !== "light" && t !== "dark") {
+        t = (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches)
+          ? "light" : "dark";
+      }
+      if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+    } catch (e) {}
+  })();
+</script>
 <style>
   :root {
     --bg0: #120810;
@@ -21,6 +35,42 @@
     --glass-strong: rgba(255, 255, 255, 0.08);
     --border: rgba(255, 255, 255, 0.09);
     --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  }
+  :root[data-theme="light"] {
+    --bg0: #fdf3f7;
+    --bg1: #ffffff;
+    --rose: #ff5c8f;
+    --rose-soft: #d6316f;
+    --violet: #8b5cf0;
+    --text: #2b1626;
+    --muted: #7d6672;
+    --glass: rgba(43, 22, 38, 0.045);
+    --glass-strong: rgba(43, 22, 38, 0.075);
+    --border: rgba(43, 22, 38, 0.12);
+    --shadow: 0 18px 40px rgba(43, 22, 38, 0.14);
+  }
+  :root[data-theme="light"] header,
+  :root[data-theme="light"] #bar {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  :root[data-theme="light"] #panel {
+    background: linear-gradient(170deg, #ffffff, #fdf0f5);
+  }
+  :root[data-theme="light"] #toast,
+  :root[data-theme="light"] #jump {
+    background: rgba(255, 255, 255, 0.94);
+  }
+  :root[data-theme="light"] .glow { opacity: 0.28; }
+  :root[data-theme="light"] .retryBtn,
+  :root[data-theme="light"] #panel .row .danger,
+  :root[data-theme="light"] .iconBtn.confirm {
+    color: #c2185b;
+    border-color: rgba(194, 24, 91, 0.35);
+  }
+  :root[data-theme="light"] #panel .row .danger.confirm {
+    background: rgba(194, 24, 91, 0.14);
+    border-color: #c2185b;
+    color: #a3134e;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
@@ -205,6 +255,11 @@
   #voiceBtn .off-icon { display: none; }
   #voiceBtn.off .on-icon { display: none; }
   #voiceBtn.off .off-icon { display: block; }
+
+  /* shows the icon for the theme a click would switch TO */
+  #themeBtn .moon-icon { display: none; }
+  #themeBtn.light .sun-icon { display: none; }
+  #themeBtn.light .moon-icon { display: block; }
 
   /* ---------- chat ---------- */
   #chat {
@@ -647,6 +702,10 @@
     <button id="resetBtn" class="iconBtn" title="Start a new conversation" aria-label="Start a new conversation">
       <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
     </button>
+    <button id="themeBtn" class="iconBtn" title="Toggle light/dark theme" aria-label="Toggle light/dark theme" aria-pressed="false">
+      <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
   </header>
 
   <main id="chat" role="log" aria-label="Conversation with Lissa"></main>
@@ -714,6 +773,7 @@ const msg = document.getElementById("msg");
 const sendBtn = document.getElementById("send");
 const micBtn = document.getElementById("mic");
 const voiceBtn = document.getElementById("voiceBtn");
+const themeBtn = document.getElementById("themeBtn");
 const statusEl = document.getElementById("status");
 const avatarWrap = document.getElementById("avatarWrap");
 const composer = document.getElementById("composer");
@@ -1342,6 +1402,33 @@ voiceBtn.onclick = () => {
     if (handsFree) setHandsFree(false); // muting her ends the conversation loop
   }
   toast(voiceOn ? "voice on" : "voice off");
+};
+
+/* ---------- theme ----------
+   The <head> script already applied the saved/system theme before paint
+   (avoiding a flash); this just keeps the toggle button and the mobile
+   chrome color in sync with it, and handles switching. */
+
+const THEME_KEY = "lissa_theme";
+const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+
+function syncThemeUI() {
+  const light = document.documentElement.getAttribute("data-theme") === "light";
+  themeBtn.classList.toggle("light", light);
+  themeBtn.setAttribute("aria-pressed", String(light));
+  if (metaThemeColor) metaThemeColor.setAttribute("content", light ? "#fdf3f7" : "#160b13");
+}
+syncThemeUI();
+
+themeBtn.onclick = () => {
+  const light = document.documentElement.getAttribute("data-theme") !== "light";
+  // matches the <head> script's convention: dark is the absence of the
+  // attribute (the base :root already is the dark theme), light is explicit
+  if (light) document.documentElement.setAttribute("data-theme", "light");
+  else document.documentElement.removeAttribute("data-theme");
+  try { localStorage.setItem(THEME_KEY, light ? "light" : "dark"); } catch {}
+  syncThemeUI();
+  toast(light ? "light theme" : "dark theme");
 };
 
 avatarWrap.onclick = stopSpeaking;

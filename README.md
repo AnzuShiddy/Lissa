@@ -56,6 +56,9 @@ The web chat also gives you:
 - **Time labels** appear between messages when more than 5 minutes pass.
 - **Screen-reader and keyboard friendly** — replies are announced, every
   control is labelled and focusable, Escape closes dialogs.
+- **Light/dark theme** — the sun/moon toggle in the header switches
+  instantly, remembers your choice, and matches your system preference on
+  first visit. No flash of the wrong theme on reload.
 
 **Terminal version**:
 

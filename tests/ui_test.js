@@ -430,6 +430,33 @@ const check = (cond, name) => {
     "export: downloads lissa-chat.txt");
   const saved = require("fs").readFileSync(await download.path(), "utf8");
   check(saved.includes("Lissa: "), "export: transcript contains her messages");
+  await page.click("#closeBtn"); // the panel stayed open for the export click
+
+  /* ---- light/dark theme toggle ---- */
+  const isLight = () => page.evaluate(() => document.documentElement.getAttribute("data-theme") === "light");
+  const themeLightBefore = await isLight();
+  await page.click("#themeBtn");
+  const themeLightAfter = await isLight();
+  check(themeLightAfter !== themeLightBefore, "theme: toggle flips the active theme");
+  check(
+    await page.$eval(
+      "#themeBtn",
+      (el, expected) => el.getAttribute("aria-pressed") === expected,
+      String(themeLightAfter)
+    ),
+    "theme: button aria-pressed matches the active theme"
+  );
+  const themeStored = await page.evaluate(() => localStorage.getItem("lissa_theme"));
+  check(themeStored === (themeLightAfter ? "light" : "dark"),
+    "theme: choice persisted to localStorage");
+
+  await page.reload();
+  await page.waitForFunction(() => {
+    const b = document.querySelector(".bubble.lissa");
+    return b && !b.querySelector(".typing-dots");
+  }, null, { timeout: 30000 });
+  check(await isLight() === themeLightAfter,
+    "theme: survives a reload with no flash (set before first paint)");
 
   await browser.close();
   console.log(failures === 0 ? "\nALL PASSED" : `\n${failures} FAILURE(S)`);
