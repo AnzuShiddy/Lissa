@@ -3,7 +3,9 @@
   "appName": "Lissa",
   "webDir": "static",
   "server": {
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "url": "https://lissa-02zl.onrender.com",
+    "cleartext": false
   },
   "ios": {
     "contentInset": "automatic",

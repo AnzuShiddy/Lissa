@@ -191,6 +191,43 @@ cd android
 cd ..
 ```
 
+### Emulator: "x86_64 emulation currently requires hardware acceleration"
+
+On Linux the emulator needs access to `/dev/kvm`, which is group-owned by
+`kvm`. Add yourself to that group:
+
+```bash
+sudo usermod -aG kvm $USER
+```
+
+The new group applies to new logins. To use it without logging out, run
+the emulator through `sg`:
+
+```bash
+sg kvm -c "$ANDROID_SDK_ROOT/emulator/emulator -avd lissa_test -no-window -no-audio -no-boot-anim"
+```
+
+### Testing without Android Studio
+
+The whole loop works from the command line — create an AVD, boot it
+headless, install and launch:
+
+```bash
+sdkmanager "emulator" "system-images;android-34;google_apis;x86_64"
+avdmanager create avd -n lissa_test \
+  -k "system-images;android-34;google_apis;x86_64" -d pixel_5
+sg kvm -c "$ANDROID_SDK_ROOT/emulator/emulator -avd lissa_test -no-window -no-audio -no-boot-anim" &
+adb wait-for-device
+until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1 ]; do sleep 2; done
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+adb shell am start -n com.lissa.app/.MainActivity
+adb exec-out screencap -p > shot.png   # see what the app is showing
+```
+
+Give the emulator ~4GB of free RAM; below that Android's own System UI
+becomes unresponsive and throws "System UI isn't responding" dialogs over
+the app.
+
 ### iOS build fails with CocoaPods
 ```bash
 cd ios/App
@@ -225,7 +262,15 @@ See [Capacitor docs](https://capacitorjs.com/docs/plugins) for the full list.
 
 ## Notes
 
-- The Android and iOS apps are built from the same `static/` directory, so web updates automatically sync to mobile (after rebuild).
-- The web app at https://lissa-02zl.onrender.com will always be the most up-to-date version.
-- For now, the mobile apps use the same public API endpoint. To use a private deployment, edit `capacitor.config.json` and set the `server` field.
+- **The apps load the hosted site** (`server.url` in `capacitor.config.json`
+  points at https://lissa-02zl.onrender.com). The WebView renders the live
+  site, so sessions and cookies work same-origin and **web updates reach
+  the apps without rebuilding the APK**. The bundled copy of `static/` is
+  only a fallback — the app needs network at launch, and on Render's free
+  tier the first launch after a quiet spell waits ~30s for the server to
+  wake.
+- To point the apps at your own deployment (or a machine on your LAN for
+  development), change `server.url` in `capacitor.config.json`, then
+  `npm run cap:sync` and rebuild. For a plain-HTTP host, also set
+  `"cleartext": true`.
 - Both apps are currently free to distribute, but App Store submission has a $99/year developer fee; Google Play has a $25 one-time fee.
