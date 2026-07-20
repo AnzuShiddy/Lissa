@@ -7,6 +7,8 @@ at no cost.
 **Try her live:** <https://lissa-02zl.onrender.com> (free tier — the first
 visit after a quiet spell takes ~30s to wake).
 
+**Now available as a native mobile app!** Build for Android or iOS with Capacitor. See [MOBILE.md](MOBILE.md) for setup and build instructions.
+
 ## Setup
 
 ```bash
@@ -67,6 +69,17 @@ The web chat also gives you:
   which are canned text rather than Gemini output.
 - **Privacy notice** at `/privacy` (linked from the 🧠 panel) — plain
   language about what's stored where, in English only.
+
+**Mobile apps** (Android & iOS via Capacitor):
+
+```bash
+npm install
+npm run cap:sync
+npm run cap:open:android  # Android Studio
+npm run cap:open:ios      # Xcode (macOS only)
+```
+
+See [MOBILE.md](MOBILE.md) for detailed setup, build, and app store submission instructions.
 
 **Terminal version**:
 

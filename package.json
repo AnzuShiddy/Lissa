@@ -1,0 +1,35 @@
+{
+  "name": "lissa",
+  "version": "1.0.0",
+  "description": "A charming companion chatbot for social conversation — web and native mobile app",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'No build needed — static files are in static/'",
+    "cap:add:android": "cap add android",
+    "cap:add:ios": "cap add ios",
+    "cap:build:android": "cap build android",
+    "cap:build:ios": "cap build ios",
+    "cap:copy": "cap copy",
+    "cap:sync": "cap sync",
+    "cap:open:android": "cap open android",
+    "cap:open:ios": "cap open ios",
+    "cap:update": "cap update"
+  },
+  "keywords": [
+    "chatbot",
+    "voice",
+    "gemini",
+    "mobile",
+    "pwa"
+  ],
+  "author": "Anzu Shiddy",
+  "license": "MIT",
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.0",
+    "@capacitor/core": "^6.1.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.0",
+    "@capacitor/ios": "^6.1.0"
+  }
+}

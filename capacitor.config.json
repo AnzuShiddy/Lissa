@@ -1,0 +1,16 @@
+{
+  "appId": "com.lissa.app",
+  "appName": "Lissa",
+  "webDir": "static",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "usesCleartextTraffic": true
+  }
+}

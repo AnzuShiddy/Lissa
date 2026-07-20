@@ -2,3 +2,10 @@
 .venv
 __pycache__/
 node_modules/
+android/
+ios/
+dist/
+build/
+*.ipa
+*.apk
+.DS_Store
