@@ -190,6 +190,11 @@ def service_worker() -> FileResponse:
     return FileResponse(STATIC_DIR / "sw.js", media_type="application/javascript")
 
 
+@app.get("/privacy")
+def privacy() -> FileResponse:
+    return FileResponse(STATIC_DIR / "privacy.html", media_type="text/html")
+
+
 @app.get("/")
 def index(sid: str | None = Cookie(None)) -> Response:
     session_id, _ = get_or_create_session(sid)

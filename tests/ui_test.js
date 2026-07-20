@@ -494,6 +494,17 @@ const check = (cond, name) => {
   await page.selectOption("#langSelect", "en"); // restore for cleanliness
   await page.click("#closeBtn");
 
+  /* ---- privacy page ---- */
+  await page.click("#memBtn");
+  const privacyHref = await page.$eval(".privacyLink", (el) => el.getAttribute("href"));
+  check(privacyHref === "/privacy", "privacy: link in the panel points at /privacy");
+  const privacyResp = await page.request.get("http://localhost:8765/privacy");
+  check(privacyResp.ok(), "privacy: /privacy serves 200");
+  const privacyBody = await privacyResp.text();
+  check(privacyBody.includes("Gemini") && privacyBody.includes("Forget me"),
+    "privacy: page mentions Gemini and the Forget-me control");
+  await page.click("#closeBtn");
+
   await browser.close();
   console.log(failures === 0 ? "\nALL PASSED" : `\n${failures} FAILURE(S)`);
   process.exit(failures === 0 ? 0 : 1);

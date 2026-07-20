@@ -65,6 +65,8 @@ The web chat also gives you:
   already follow whatever language you type in — this only covers the
   chrome around them, plus the scripted greeting and rate-limit messages,
   which are canned text rather than Gemini output.
+- **Privacy notice** at `/privacy` (linked from the 🧠 panel) — plain
+  language about what's stored where, in English only.
 
 **Terminal version**:
 

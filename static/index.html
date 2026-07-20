@@ -588,7 +588,15 @@
     margin-bottom: 4px;
     display: flex; align-items: center; gap: 8px;
   }
-  #panel .sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  #panel .sub { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .privacyLink {
+    display: inline-block;
+    font-size: 12.5px;
+    color: var(--muted);
+    text-decoration: underline;
+    margin-bottom: 16px;
+  }
+  .privacyLink:hover { color: var(--rose-soft); }
   #facts { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
   #facts li {
     background: var(--glass);
@@ -769,6 +777,7 @@
   <div id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
     <h2 id="panelTitle" data-i18n="panelTitle">What Lissa remembers</h2>
     <div class="sub" data-i18n="panelSub">Stored in this browser only — memories update as you chat and when you start a new conversation.</div>
+    <a class="privacyLink" href="/privacy" target="_blank" rel="noopener" data-i18n="privacyLink">Privacy</a>
     <ul id="facts"></ul>
     <div class="row lang-row">
       <label for="langSelect" class="visually-hidden" data-i18n="langLabel">Language</label>
@@ -844,7 +853,7 @@ const I18N = {
     recDoneTitle: "Send it", recDoneAria: "Send recording",
     panelTitle: "What Lissa remembers",
     panelSub: "Stored in this browser only — memories update as you chat and when you start a new conversation.",
-    langLabel: "Language",
+    langLabel: "Language", privacyLink: "Privacy",
     exportBtn: "Save chat", forgetBtn: "Forget me", closeBtn: "Close",
     confirmAgain: "Sure? Click again",
     copyTitle: "Copy message", copied: "copied",
@@ -900,7 +909,7 @@ const I18N = {
     recDoneTitle: "Tuma", recDoneAria: "Tuma rekodi",
     panelTitle: "Anachokumbuka Lissa",
     panelSub: "Imehifadhiwa kwenye kivinjari hiki tu — kumbukumbu zinasasishwa unapozungumza na unapoanza mazungumzo mapya.",
-    langLabel: "Lugha",
+    langLabel: "Lugha", privacyLink: "Faragha",
     exportBtn: "Hifadhi mazungumzo", forgetBtn: "Nisahau", closeBtn: "Funga",
     confirmAgain: "Una uhakika? Bofya tena",
     copyTitle: "Nakili ujumbe", copied: "imenakiliwa",
@@ -956,7 +965,7 @@ const I18N = {
     recDoneTitle: "Envoyer", recDoneAria: "Envoyer l'enregistrement",
     panelTitle: "Ce dont Lissa se souvient",
     panelSub: "Conservé uniquement dans ce navigateur — les souvenirs se mettent à jour au fil de la conversation et quand tu recommences une conversation.",
-    langLabel: "Langue",
+    langLabel: "Langue", privacyLink: "Confidentialité",
     exportBtn: "Enregistrer la conversation", forgetBtn: "Oublie-moi", closeBtn: "Fermer",
     confirmAgain: "Sûr(e) ? Clique encore",
     copyTitle: "Copier le message", copied: "copié",
@@ -1012,7 +1021,7 @@ const I18N = {
     recDoneTitle: "Enviar", recDoneAria: "Enviar gravação",
     panelTitle: "O que a Lissa se lembra",
     panelSub: "Guardado apenas neste navegador — as memórias se atualizam enquanto você conversa e quando inicia uma nova conversa.",
-    langLabel: "Idioma",
+    langLabel: "Idioma", privacyLink: "Privacidade",
     exportBtn: "Salvar conversa", forgetBtn: "Me esqueça", closeBtn: "Fechar",
     confirmAgain: "Tem certeza? Clique de novo",
     copyTitle: "Copiar mensagem", copied: "copiado",

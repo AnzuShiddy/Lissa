@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#160b13">
+<link rel="icon" type="image/png" href="/static/icon-192.png">
+<title>Privacy — Lissa</title>
+<style>
+  :root {
+    --bg0: #120810; --bg1: #1e0f1a;
+    --rose: #ff5c8f; --rose-soft: #ff8fb0;
+    --text: #f7ecf2; --muted: #ab8ca0;
+    --border: rgba(255, 255, 255, 0.09);
+    --card: rgba(255, 255, 255, 0.05);
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg0: #fdf3f7; --bg1: #ffffff;
+      --rose-soft: #d6316f;
+      --text: #2b1626; --muted: #7d6672;
+      --border: rgba(43, 22, 38, 0.12);
+      --card: rgba(43, 22, 38, 0.045);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    background: radial-gradient(120% 90% at 20% 0%, var(--bg1), var(--bg0) 70%);
+    color: var(--text);
+    line-height: 1.55;
+  }
+  main { max-width: 640px; margin: 0 auto; padding: 40px 22px 80px; }
+  a { color: var(--rose-soft); }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  .back { display: inline-block; margin-bottom: 28px; font-size: 14px; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--rose-soft); }
+  .lede { color: var(--muted); margin-bottom: 32px; }
+  section { margin-bottom: 26px; }
+  h2 { font-size: 15px; margin: 0 0 8px; }
+  p, li { font-size: 14.5px; color: var(--text); }
+  ul { margin: 8px 0; padding-left: 20px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .note {
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    padding-top: 20px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">← back to Lissa</a>
+  <h1>Privacy</h1>
+  <p class="lede">
+    Plain language, no legal filler. This describes the hosted app at
+    <a href="https://lissa-02zl.onrender.com">lissa-02zl.onrender.com</a>.
+    If you're running Lissa yourself from the
+    <a href="https://github.com/AnzuShiddy/Lissa">source on GitHub</a> — the
+    terminal app, or your own deployment — you control that instance's data
+    entirely; none of it touches this one.
+  </p>
+
+  <section class="card">
+    <h2>What she remembers about you</h2>
+    <p>
+      Long-term memory (your name, preferences, things you've told her) is
+      stored only in <strong>your browser's local storage</strong> — never on
+      our server. It's sent up with each request just to personalize your own
+      session, and it updates automatically as you chat. Use "Forget me" in
+      the 🧠 panel to erase it instantly; nothing needs to be requested from
+      us, because we never had a copy.
+    </p>
+  </section>
+
+  <section>
+    <h2>What's stored on the server</h2>
+    <p>
+      Nothing persists. Each conversation lives in server memory only, and is
+      automatically discarded after about 4 hours of inactivity — there's no
+      database. A single cookie (<code>sid</code>) identifies your session so
+      your messages land in the right conversation; it carries no personal
+      information and isn't used for tracking or advertising.
+    </p>
+    <p>
+      We also keep lightweight usage counters (timestamps and counts, not
+      message content) to enforce fair-use rate limits, since the app runs on
+      one shared API key. These reset daily and aren't tied to anything
+      identifying beyond your anonymous session.
+    </p>
+  </section>
+
+  <section>
+    <h2>Voice and photos</h2>
+    <p>
+      Recording only happens when you start it (tapping the mic, or turning
+      on hands-free mode). Audio is sent off for transcription and speech
+      synthesis and is not saved afterward. Photos you attach are sent for
+      that one exchange and aren't written to disk — though, like the rest of
+      a conversation, they remain part of the in-memory session until it
+      expires.
+    </p>
+  </section>
+
+  <section>
+    <h2>Where your messages go</h2>
+    <p>Two outside services process what you send, so Lissa can reply:</p>
+    <ul>
+      <li>
+        <strong>Google's Gemini API</strong> — your text, photos, and voice
+        recordings, to generate her replies and understand what you've sent.
+        See <a href="https://ai.google.dev/gemini-api/terms">Gemini API
+        Terms</a> and <a href="https://policies.google.com/privacy">Google's
+        Privacy Policy</a>.
+      </li>
+      <li>
+        <strong>Microsoft's Edge neural voice service</strong> — the text of
+        her replies, to synthesize her spoken voice. See
+        <a href="https://privacy.microsoft.com">Microsoft's Privacy
+        Statement</a>.
+      </li>
+    </ul>
+    <p>
+      We don't control how these providers handle data on their end — their
+      own policies apply to that processing, not ours.
+    </p>
+    <p>
+      The app is hosted on <a href="https://render.com">Render</a>, which,
+      like any host, may keep its own standard infrastructure logs (request
+      timing, IP address) under its
+      <a href="https://render.com/privacy">privacy policy</a> — separate from
+      anything this app itself stores.
+    </p>
+  </section>
+
+  <section>
+    <h2>Who this is for</h2>
+    <p>
+      Lissa is a flirtatious companion persona, written for adults. There's no
+      age verification — there just isn't a way for a project like this to
+      check — so we're asking directly: if you're a minor, please don't use
+      it.
+    </p>
+  </section>
+
+  <section>
+    <h2>Your choices</h2>
+    <ul>
+      <li>"Forget me" (🧠 panel) wipes your local memory instantly.</li>
+      <li>"Save chat" downloads your conversation as a text file, if you want a copy before it expires.</li>
+      <li>Closing the tab or clearing cookies ends your session; there's no account to delete, because none exists.</li>
+    </ul>
+  </section>
+
+  <p class="note">
+    This is a plain-language notice for a small independent project, not a
+    substitute for formal legal advice, and it may change as the app changes.
+    Questions or concerns: open an issue on
+    <a href="https://github.com/AnzuShiddy/Lissa/issues">GitHub</a>.
+  </p>
+</main>
+</body>
+</html>
