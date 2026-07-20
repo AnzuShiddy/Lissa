@@ -701,6 +701,7 @@
     <div class="sub">Stored in this browser only — memories update as you chat and when you start a new conversation.</div>
     <ul id="facts"></ul>
     <div class="row">
+      <button id="exportBtn">Save chat</button>
       <button id="forgetBtn" class="danger">Forget me</button>
       <button id="closeBtn">Close</button>
     </div>
@@ -968,10 +969,29 @@ function clearAttachment() {
 
 /* ---------- chat ---------- */
 
+/* rate-limit countdown: while she "catches her breath", show a ticking
+   status and hold the send button instead of dead-ending */
+let cooldownUntil = 0;
+
+function startCooldown(secs) {
+  cooldownUntil = Date.now() + secs * 1000;
+  sendBtn.disabled = true;
+  const iv = setInterval(() => {
+    const left = Math.ceil((cooldownUntil - Date.now()) / 1000);
+    if (left <= 0) {
+      clearInterval(iv);
+      sendBtn.disabled = false;
+      if (!busy && !rec) setStatus("online");
+      return;
+    }
+    if (!busy && !rec) setStatus("catching her breath… " + left + "s", true);
+  }, 250);
+}
+
 async function send(text, isRetry, retryImage) {
   text = text.trim();
   const image = isRetry ? retryImage || null : pendingImage;
-  if ((!text && !image) || busy) return;
+  if ((!text && !image) || busy || Date.now() < cooldownUntil) return;
   stopSpeaking();
   if (!isRetry) { // a retry's user bubble is already in the chat
     addBubble("user", text, image);
@@ -997,6 +1017,8 @@ async function send(text, isRetry, retryImage) {
       body: JSON.stringify({ message: text, image }),
       signal: ac.signal,
     });
+    const limitedFor = parseInt(res.headers.get("x-ratelimited") || "0", 10);
+    if (limitedFor > 0) startCooldown(limitedFor);
     const reader = res.body.getReader();
     const dec = new TextDecoder();
     while (true) {
@@ -1629,6 +1651,26 @@ document.getElementById("memBtn").onclick = () => {
 document.getElementById("closeBtn").onclick = closePanel;
 overlay.onclick = (e) => { if (e.target === overlay) closePanel(); };
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePanel(); });
+
+document.getElementById("exportBtn").onclick = () => {
+  const lines = [];
+  for (const el of chat.children) {
+    if (el.classList.contains("timestamp")) {
+      lines.push("[" + el.textContent + "]");
+    } else if (el.classList.contains("bubble")) {
+      const who = el.classList.contains("user") ? "You: " : "Lissa: ";
+      const photo = el.querySelector("img") ? "📷 " : "";
+      lines.push(who + photo + el.textContent.trim());
+    }
+  }
+  const blob = new Blob([lines.join("\n\n") + "\n"], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "lissa-chat.txt";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("chat saved");
+};
 
 forgetBtn.onclick = async () => {
   if (!forgetBtn.classList.contains("confirm")) {

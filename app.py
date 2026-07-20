@@ -46,11 +46,11 @@ _daily = {"day": "", "count": 0}
 app = FastAPI(title="Lissa")
 
 
-def take_quota(sess: "UserSession", per_minute: bool = True) -> str | None:
+def take_quota(sess: "UserSession", per_minute: bool = True) -> tuple[str, int] | None:
     """Spend one quota-burning Gemini call. Returns None when allowed,
-    otherwise an in-character message explaining the wait. Background calls
-    (memory distillation) pass per_minute=False so they only count against
-    the daily cap, never starve the visitor's own chatting."""
+    otherwise (in-character message, seconds to wait; 0 = no countdown).
+    Background calls (memory distillation) pass per_minute=False so they
+    only count against the daily cap, never starve the visitor's chatting."""
     if per_minute:
         now = time.time()
         sess.tokens = min(
@@ -59,14 +59,14 @@ def take_quota(sess: "UserSession", per_minute: bool = True) -> str | None:
         sess.tokens_at = now
         if sess.tokens < 1.0:
             wait = int((1.0 - sess.tokens) * 60.0 / RATE_PER_MIN) + 1
-            return f"(whoa, you're fast 😅 — give me about {wait}s to catch my breath)"
+            return (f"(whoa, you're fast 😅 — give me about {wait}s to catch my breath)", wait)
     with _daily_lock:
         today = time.strftime("%Y-%m-%d")
         if _daily["day"] != today:
             _daily["day"], _daily["count"] = today, 0
         if _daily["count"] >= DAILY_CALLS:
             return ("(I've been chatting all day and I need to rest my voice — "
-                    "come back tomorrow? 💋)")
+                    "come back tomorrow? 💋)", 0)
         _daily["count"] += 1
     if per_minute:
         sess.tokens -= 1.0
@@ -247,7 +247,12 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
 
     limited = take_quota(sess)
     if limited:
-        return StreamingResponse(iter([limited]), media_type="text/plain; charset=utf-8")
+        text, wait = limited
+        return StreamingResponse(
+            iter([text]),
+            media_type="text/plain; charset=utf-8",
+            headers={"x-ratelimited": str(wait)},  # lets the page show a countdown
+        )
 
     # Generate in a dedicated thread that always runs the Gemini stream to
     # completion. If the client disconnects mid-reply (stop button, closed
@@ -286,7 +291,7 @@ async def transcribe(request: Request, sid: str | None = Cookie(None)) -> dict:
     _, sess = get_or_create_session(sid)
     limited = take_quota(sess)
     if limited:
-        return {"text": None, "error": limited}
+        return {"text": None, "error": limited[0]}
     wav_bytes = await request.body()
     if len(wav_bytes) < 4000:  # far too short to contain speech
         return {"text": None}

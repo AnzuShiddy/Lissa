@@ -420,6 +420,17 @@ const check = (cond, name) => {
   check(!greet2.includes("what's on your mind"),
     "memory: reload greets like a returning visitor");
 
+  /* ---- transcript export ---- */
+  await page.click("#memBtn");
+  const [download] = await Promise.all([
+    page.waitForEvent("download", { timeout: 10000 }),
+    page.click("#exportBtn"),
+  ]);
+  check(download.suggestedFilename() === "lissa-chat.txt",
+    "export: downloads lissa-chat.txt");
+  const saved = require("fs").readFileSync(await download.path(), "utf8");
+  check(saved.includes("Lissa: "), "export: transcript contains her messages");
+
   await browser.close();
   console.log(failures === 0 ? "\nALL PASSED" : `\n${failures} FAILURE(S)`);
   process.exit(failures === 0 ? 0 : 1);
