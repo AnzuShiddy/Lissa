@@ -358,6 +358,23 @@ const check = (cond, name) => {
   check(visionReply.length > 5 && !visionReply.includes("API error"),
     "photo: she replied about the image (got: " + visionReply.slice(0, 60) + ")");
 
+  /* ---- PWA: manifest, icons, service worker ---- */
+  const pwa = await page.evaluate(async () => {
+    const man = await fetch("/static/manifest.json").then((r) => (r.ok ? r.json() : null));
+    const icon = await fetch("/static/icon-192.png").then((r) => r.ok);
+    const sw = await fetch("/sw.js").then((r) => r.ok && (r.headers.get("content-type") || "").includes("javascript"));
+    const reg = await navigator.serviceWorker.getRegistration().then((r) => !!r).catch(() => false);
+    return { name: man && man.name, icons: man && man.icons.length, icon, sw, reg };
+  });
+  check(pwa.name === "Lissa" && pwa.icons === 2, "pwa: manifest serves with icons");
+  check(pwa.icon, "pwa: app icon serves");
+  check(pwa.sw, "pwa: service worker serves from the root");
+  check(pwa.reg, "pwa: service worker registered");
+  check(
+    await page.$eval('link[rel="manifest"]', () => true).catch(() => false),
+    "pwa: page links the manifest"
+  );
+
   /* ---- hands-free conversation mode ---- */
   await page.click("#hfBtn");
   await page.waitForSelector("#recorder:not([hidden])", { timeout: 8000 });

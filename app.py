@@ -20,6 +20,7 @@ from pathlib import Path
 import edge_tts
 from fastapi import Cookie, FastAPI, Request
 from fastapi.responses import FileResponse, Response, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from google.genai import errors, types
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
@@ -160,6 +161,15 @@ def clean_facts(raw: list[str]) -> list[str]:
     """Sanitize client-supplied memory facts (they live in the visitor's
     browser and personalize only their own session)."""
     return [f.strip()[:200] for f in raw if isinstance(f, str) and f.strip()][: lissa.MAX_FACTS]
+
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+@app.get("/sw.js")
+def service_worker() -> FileResponse:
+    # served from the root so its scope can cover the whole app
+    return FileResponse(STATIC_DIR / "sw.js", media_type="application/javascript")
 
 
 @app.get("/")

@@ -1,0 +1,14 @@
+{
+  "name": "Lissa",
+  "short_name": "Lissa",
+  "description": "A charming companion to talk to — voice, photos, and memory.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#120810",
+  "theme_color": "#160b13",
+  "icons": [
+    { "src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
