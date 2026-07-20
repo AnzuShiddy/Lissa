@@ -39,6 +39,13 @@ const check = (cond, name) => {
     if (m.type() === "error") console.log("CONSOLE ERROR:", m.text());
   });
 
+  // the five header controls live in the overflow menu now: open it first,
+  // unless a previous item left it open (toggles keep it up)
+  const menuClick = async (sel) => {
+    if (await page.$eval("#menu", (el) => el.hidden)) await page.click("#menuBtn");
+    await page.click(sel);
+  };
+
   await page.goto("http://localhost:8765/");
 
   /* ---- greeting renders (fresh session) ---- */
@@ -74,7 +81,7 @@ const check = (cond, name) => {
   }
 
   /* voice off for deterministic streaming in the rest of the test */
-  await page.click("#voiceBtn");
+  await menuClick("#voiceBtn");
 
   /* ---- fix 3: multiline composer ---- */
   await page.click("#msg");
@@ -199,7 +206,7 @@ const check = (cond, name) => {
 
   /* ---- fix 2: reset needs a second tap ---- */
   const bubblesBefore = (await page.$$(".bubble")).length;
-  await page.click("#resetBtn");
+  await menuClick("#resetBtn");
   await page.waitForTimeout(300);
   check(
     await page.$eval("#resetBtn", (el) => el.classList.contains("confirm")),
@@ -207,7 +214,7 @@ const check = (cond, name) => {
   );
   check((await page.$$(".bubble")).length === bubblesBefore,
     "fix2: single tap does not wipe the chat");
-  await page.click("#resetBtn");
+  await menuClick("#resetBtn");
   await page.waitForFunction(
     (n) => document.querySelectorAll(".bubble").length < n,
     bubblesBefore, { timeout: 15000 }
@@ -229,21 +236,21 @@ const check = (cond, name) => {
     "fix8: screen-reader live region announced the reply"
   );
   check(
-    await page.$eval("#voiceBtn", (el) => el.getAttribute("aria-pressed") === "false"),
+    await page.$eval("#voiceBtn", (el) => el.getAttribute("aria-checked") === "false"),
     "fix8: voice toggle exposes pressed state (off)"
   );
-  await page.click("#voiceBtn");
+  await menuClick("#voiceBtn");
   check(
-    await page.$eval("#voiceBtn", (el) => el.getAttribute("aria-pressed") === "true"),
-    "fix8: aria-pressed follows the toggle"
+    await page.$eval("#voiceBtn", (el) => el.getAttribute("aria-checked") === "true"),
+    "fix8: aria-checked follows the toggle"
   );
-  await page.click("#voiceBtn"); // back off
+  await menuClick("#voiceBtn"); // back off
   await page.focus("#avatarWrap");
   check(
     await page.evaluate(() => document.activeElement.id === "avatarWrap"),
     "fix8: avatar is keyboard-focusable"
   );
-  await page.click("#memBtn");
+  await menuClick("#memBtn");
   check(
     await page.$eval("#overlay", (el) => el.classList.contains("show")),
     "fix8: info panel opens"
@@ -315,7 +322,7 @@ const check = (cond, name) => {
   );
 
   /* ---- sentence-by-sentence speech ---- */
-  await page.click("#voiceBtn"); // voice back on
+  await menuClick("#voiceBtn"); // voice back on
   const sayTimes = [];
   const onReq = (r) => { if (r.url().includes("/api/say")) sayTimes.push(Date.now()); };
   page.on("request", onReq);
@@ -333,7 +340,7 @@ const check = (cond, name) => {
   check(sayTimes.length > 0 && sayTimes[0] < streamDoneAt,
     "speech: first clip requested before the text stream finished");
   await page.click("#avatarWrap"); // stop any ongoing speech
-  await page.click("#voiceBtn");   // voice off again for the memory tests
+  await menuClick("#voiceBtn");   // voice off again for the memory tests
 
   /* ---- photo understanding ---- */
   const png1x1 = Buffer.from(
@@ -376,7 +383,7 @@ const check = (cond, name) => {
   );
 
   /* ---- hands-free conversation mode ---- */
-  await page.click("#hfBtn");
+  await menuClick("#hfBtn");
   await page.waitForSelector("#recorder:not([hidden])", { timeout: 8000 });
   check(true, "handsfree: toggling on opens the mic by itself");
   check(
@@ -387,22 +394,22 @@ const check = (cond, name) => {
     await page.evaluate(() => voiceOn),
     "handsfree: spoken replies auto-enabled"
   );
-  await page.click("#hfBtn"); // off
+  await menuClick("#hfBtn"); // off
   await page.waitForFunction(
     () => document.getElementById("recorder").hidden, null, { timeout: 5000 });
   check(true, "handsfree: toggling off stops listening");
   check(
-    await page.$eval("#hfBtn", (el) => el.getAttribute("aria-pressed") === "false"),
+    await page.$eval("#hfBtn", (el) => el.getAttribute("aria-checked") === "false"),
     "handsfree: button state cleared"
   );
-  await page.click("#voiceBtn"); // voice off again for the remaining tests
+  await menuClick("#voiceBtn"); // voice off again for the remaining tests
 
   /* ---- web memory: facts persist in localStorage across reloads ---- */
   await page.fill("#msg", "By the way, my name is Zanzibar and I love mango juice. Remember that!");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => !busy, null, { timeout: 60000 });
-  await page.click("#resetBtn");
-  await page.click("#resetBtn"); // confirm — distills memory, then resets
+  await menuClick("#resetBtn");
+  await menuClick("#resetBtn"); // confirm — distills memory, then resets
   await page.waitForFunction(
     () => document.querySelectorAll(".bubble").length === 1, null, { timeout: 60000 });
   const stored = await page.evaluate(() =>
@@ -421,7 +428,7 @@ const check = (cond, name) => {
     "memory: reload greets like a returning visitor");
 
   /* ---- transcript export ---- */
-  await page.click("#memBtn");
+  await menuClick("#memBtn");
   const [download] = await Promise.all([
     page.waitForEvent("download", { timeout: 10000 }),
     page.click("#exportBtn"),
@@ -431,6 +438,45 @@ const check = (cond, name) => {
   const saved = require("fs").readFileSync(await download.path(), "utf8");
   check(saved.includes("Lissa: "), "export: transcript contains her messages");
   await page.click("#closeBtn"); // the panel stayed open for the export click
+
+  /* ---- header overflow menu ---- */
+  const menuHidden = () => page.$eval("#menu", (el) => el.hidden);
+  check(await menuHidden(), "menu: closed on load");
+  await page.click("#menuBtn");
+  check(!(await menuHidden()), "menu: opens on click");
+  check(
+    await page.$eval("#menuBtn", (el) => el.getAttribute("aria-expanded") === "true"),
+    "menu: trigger reports expanded"
+  );
+  check(
+    (await page.$$eval("#menu .menuItem", (els) => els.map((e) => e.id))).join() ===
+      "hfBtn,voiceBtn,themeBtn,memBtn,resetBtn",
+    "menu: holds all five relocated controls"
+  );
+  // a toggle keeps the menu open so its new state is visible
+  await page.click("#voiceBtn");
+  check(!(await menuHidden()), "menu: stays open after a toggle");
+  await page.click("#voiceBtn"); // restore
+  // arrow keys move between items
+  await page.click("#menuBtn"); // close
+  await page.click("#menuBtn"); // reopen with a clean focus state
+  await page.keyboard.press("ArrowDown");
+  check(await page.evaluate(() => document.activeElement.id === "hfBtn"),
+    "menu: ArrowDown focuses the first item");
+  await page.keyboard.press("ArrowDown");
+  check(await page.evaluate(() => document.activeElement.id === "voiceBtn"),
+    "menu: ArrowDown moves to the next item");
+  await page.keyboard.press("ArrowUp");
+  await page.keyboard.press("ArrowUp"); // wraps to the last
+  check(await page.evaluate(() => document.activeElement.id === "resetBtn"),
+    "menu: ArrowUp wraps to the last item");
+  await page.keyboard.press("Escape");
+  check(await menuHidden(), "menu: Escape closes it");
+  check(await page.evaluate(() => document.activeElement.id === "menuBtn"),
+    "menu: Escape returns focus to the trigger");
+  await page.click("#menuBtn");
+  await page.click("#title"); // click outside
+  check(await menuHidden(), "menu: clicking outside dismisses it");
 
   /* ---- time-of-day greeting follows the VISITOR's clock ----
      The server runs in UTC on Render, hours off from most visitors, so
@@ -461,16 +507,16 @@ const check = (cond, name) => {
   /* ---- light/dark theme toggle ---- */
   const isLight = () => page.evaluate(() => document.documentElement.getAttribute("data-theme") === "light");
   const themeLightBefore = await isLight();
-  await page.click("#themeBtn");
+  await menuClick("#themeBtn");
   const themeLightAfter = await isLight();
   check(themeLightAfter !== themeLightBefore, "theme: toggle flips the active theme");
   check(
     await page.$eval(
       "#themeBtn",
-      (el, expected) => el.getAttribute("aria-pressed") === expected,
+      (el, expected) => el.getAttribute("aria-checked") === expected,
       String(themeLightAfter)
     ),
-    "theme: button aria-pressed matches the active theme"
+    "theme: menu item aria-checked matches the active theme"
   );
   const themeStored = await page.evaluate(() => localStorage.getItem("lissa_theme"));
   check(themeStored === (themeLightAfter ? "light" : "dark"),
@@ -486,7 +532,7 @@ const check = (cond, name) => {
 
   /* ---- UI localization ---- */
   const enPlaceholder = await page.$eval("#msg", (el) => el.placeholder);
-  await page.click("#memBtn"); // the language select lives in the panel
+  await menuClick("#memBtn"); // the language select lives in the panel
   await page.selectOption("#langSelect", "fr");
   await page.click("#closeBtn");
   await page.waitForTimeout(100);
@@ -516,12 +562,12 @@ const check = (cond, name) => {
     await page.$eval("#msg", (el) => el.placeholder) !== enPlaceholder,
     "i18n: chosen language survives a reload"
   );
-  await page.click("#memBtn");
+  await menuClick("#memBtn");
   await page.selectOption("#langSelect", "en"); // restore for cleanliness
   await page.click("#closeBtn");
 
   /* ---- privacy page ---- */
-  await page.click("#memBtn");
+  await menuClick("#memBtn");
   const privacyHref = await page.$eval(".privacyLink", (el) => el.getAttribute("href"));
   check(privacyHref === "/privacy", "privacy: link in the panel points at /privacy");
   const privacyResp = await page.request.get("http://localhost:8765/privacy");

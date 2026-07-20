@@ -251,15 +251,78 @@
     color: var(--rose-soft);
   }
   #voiceBtn.off { opacity: 0.4; }
+  /* header overflow menu */
+  #menuWrap { position: relative; flex-shrink: 0; }
+  #menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 60;
+    min-width: 232px;
+    padding: 6px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: linear-gradient(170deg, #2b1826, #1f1019);
+    box-shadow: var(--shadow);
+    animation: menuIn 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  }
+  #menu[hidden] { display: none; }
+  @keyframes menuIn { from { opacity: 0; transform: translateY(-8px); } }
+  :root[data-theme="light"] #menu {
+    background: linear-gradient(170deg, #ffffff, #fdf0f5);
+  }
+  .menuItem {
+    width: 100%;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 11px;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.13s;
+  }
+  .menuItem:hover, .menuItem:focus-visible { background: var(--glass-strong); }
+  .menuItem:focus-visible { outline: 2px solid var(--rose); outline-offset: -2px; }
+  .menuItem svg.mIcon {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    fill: none; stroke: currentColor; stroke-width: 1.9;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .mLabel { flex: 1; }
+  .menuItem svg.mCheck {
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    fill: none; stroke: var(--rose); stroke-width: 2.6;
+    stroke-linecap: round; stroke-linejoin: round;
+    opacity: 0;
+    transition: opacity 0.13s;
+  }
+  .menuItem[aria-checked="true"] svg.mCheck { opacity: 1; }
+  .menuItem[aria-checked="true"] svg.mIcon { color: var(--rose-soft); }
+  .menuItem.confirm {
+    background: rgba(255, 77, 109, 0.18);
+    color: #ffb3c0;
+  }
+  :root[data-theme="light"] .menuItem.confirm { color: #c2185b; }
+  .menuSep {
+    height: 1px;
+    margin: 6px 8px;
+    background: var(--border);
+  }
+
   #voiceBtn .on-icon { display: block; }
   #voiceBtn .off-icon { display: none; }
   #voiceBtn.off .on-icon { display: none; }
   #voiceBtn.off .off-icon { display: block; }
 
   /* shows the icon for the theme a click would switch TO */
-  #themeBtn .moon-icon { display: none; }
-  #themeBtn.light .sun-icon { display: none; }
-  #themeBtn.light .moon-icon { display: block; }
+  /* the menu item keeps a steady sun: its checkmark carries the state,
+     so swapping to a moon would contradict the "Light theme" label */
 
   /* ---------- chat ---------- */
   #chat {
@@ -708,23 +771,38 @@
       <h1>Lissa</h1>
       <div id="status">online</div>
     </div>
-    <button id="hfBtn" class="iconBtn" data-i18n-title="hfTitle" data-i18n-aria="hfTitle" title="Hands-free conversation" aria-label="Hands-free conversation" aria-pressed="false">
-      <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-    </button>
-    <button id="voiceBtn" class="iconBtn" data-i18n-title="voiceTitle" data-i18n-aria="voiceAria" title="Toggle spoken replies" aria-label="Spoken replies" aria-pressed="true">
-      <svg class="on-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.4a9.5 9.5 0 0 1 0 13.2"/></svg>
-      <svg class="off-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
-    </button>
-    <button id="memBtn" class="iconBtn" data-i18n-title="memTitle" data-i18n-aria="memTitle" title="About this conversation" aria-label="About this conversation">
-      <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-    </button>
-    <button id="resetBtn" class="iconBtn" data-i18n-title="resetTitle" data-i18n-aria="resetTitle" title="Start a new conversation" aria-label="Start a new conversation">
-      <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
-    </button>
-    <button id="themeBtn" class="iconBtn" data-i18n-title="themeTitle" data-i18n-aria="themeTitle" title="Toggle light/dark theme" aria-label="Toggle light/dark theme" aria-pressed="false">
-      <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
+    <div id="menuWrap">
+      <button id="menuBtn" class="iconBtn" data-i18n-title="menuTitle" data-i18n-aria="menuTitle" title="Settings and actions" aria-label="Settings and actions" aria-haspopup="true" aria-expanded="false" aria-controls="menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <div id="menu" role="menu" data-i18n-aria="menuTitle" aria-label="Settings and actions" hidden>
+        <button id="hfBtn" class="menuItem" role="menuitemcheckbox" aria-checked="false" data-i18n-title="hfTitle" title="Hands-free conversation">
+          <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+          <span class="mLabel" data-i18n="hfLabel">Hands-free</span>
+          <svg class="mCheck" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button id="voiceBtn" class="menuItem" role="menuitemcheckbox" aria-checked="true" data-i18n-title="voiceTitle" title="Toggle spoken replies">
+          <svg class="mIcon on-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.4a9.5 9.5 0 0 1 0 13.2"/></svg>
+          <svg class="mIcon off-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+          <span class="mLabel" data-i18n="voiceLabel">Spoken replies</span>
+          <svg class="mCheck" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button id="themeBtn" class="menuItem" role="menuitemcheckbox" aria-checked="false" data-i18n-title="themeTitle" title="Toggle light/dark theme">
+          <svg class="mIcon sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <span class="mLabel" data-i18n="themeLabel">Light theme</span>
+          <svg class="mCheck" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <div class="menuSep" role="separator"></div>
+        <button id="memBtn" class="menuItem" role="menuitem" data-i18n-title="memTitle" title="About this conversation">
+          <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+          <span class="mLabel" data-i18n="memLabel">What she remembers</span>
+        </button>
+        <button id="resetBtn" class="menuItem" role="menuitem" data-i18n-title="resetTitle" title="Start a new conversation">
+          <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
+          <span class="mLabel" data-i18n="resetLabel">New conversation</span>
+        </button>
+      </div>
+    </div>
   </header>
 
   <main id="chat" role="log" aria-label="Conversation with Lissa"></main>
@@ -803,12 +881,71 @@ const sendBtn = document.getElementById("send");
 const micBtn = document.getElementById("mic");
 const voiceBtn = document.getElementById("voiceBtn");
 const themeBtn = document.getElementById("themeBtn");
+const menuBtn = document.getElementById("menuBtn");
+const menuEl = document.getElementById("menu");
 const statusEl = document.getElementById("status");
 const avatarWrap = document.getElementById("avatarWrap");
 const composer = document.getElementById("composer");
 const recorder = document.getElementById("recorder");
 const recTime = document.getElementById("recTime");
 const meter = document.getElementById("meter");
+
+/* ---------- header overflow menu ----------
+   The five controls used to sit in the header and crowded the title on
+   narrow screens. Toggles keep the menu open so their new state is
+   visible; anything that takes over the screen closes it. */
+
+function menuItems() {
+  return [...menuEl.querySelectorAll(".menuItem")];
+}
+
+function closeMenu(focusTrigger) {
+  if (menuEl.hidden) return;
+  menuEl.hidden = true;
+  menuBtn.setAttribute("aria-expanded", "false");
+  if (focusTrigger) menuBtn.focus();
+}
+
+function openMenu(focusFirst) {
+  menuEl.hidden = false;
+  menuBtn.setAttribute("aria-expanded", "true");
+  if (focusFirst) menuItems()[0]?.focus();
+}
+
+menuBtn.onclick = (e) => {
+  e.stopPropagation();
+  menuEl.hidden ? openMenu(false) : closeMenu(false);
+};
+
+// clicking anywhere else dismisses it
+document.addEventListener("pointerdown", (e) => {
+  if (!menuEl.hidden && !menuEl.contains(e.target) && e.target !== menuBtn) closeMenu(false);
+});
+
+menuEl.addEventListener("keydown", (e) => {
+  const items = menuItems();
+  const i = items.indexOf(document.activeElement);
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    const next = e.key === "ArrowDown" ? i + 1 : i - 1;
+    items[(next + items.length) % items.length].focus();
+  } else if (e.key === "Home" || e.key === "End") {
+    e.preventDefault();
+    (e.key === "Home" ? items[0] : items[items.length - 1]).focus();
+  } else if (e.key === "Escape") {
+    e.stopPropagation(); // don't also close the memory panel
+    closeMenu(true);
+  } else if (e.key === "Tab") {
+    closeMenu(false);
+  }
+});
+
+menuBtn.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    openMenu(true);
+  }
+});
 
 const BAR_COUNT = 24;
 for (let i = 0; i < BAR_COUNT; i++) meter.appendChild(document.createElement("i"));
@@ -843,6 +980,9 @@ const I18N = {
     memTitle: "About this conversation",
     resetTitle: "Start a new conversation",
     themeTitle: "Toggle light/dark theme",
+    menuTitle: "Settings and actions",
+    hfLabel: "Hands-free", voiceLabel: "Spoken replies", themeLabel: "Light theme",
+    memLabel: "What she remembers", resetLabel: "New conversation",
     jumpTitle: "Scroll to the latest message", jumpLabel: "new message",
     attachHint: "she'll see this with your next message",
     attachRemove: "Remove photo", attachTitle: "Send a photo",
@@ -899,6 +1039,9 @@ const I18N = {
     memTitle: "Kuhusu mazungumzo haya",
     resetTitle: "Anza mazungumzo mapya",
     themeTitle: "Badilisha mandhari nyepesi/giza",
+    menuTitle: "Mipangilio na vitendo",
+    hfLabel: "Mikono huru", voiceLabel: "Majibu ya sauti", themeLabel: "Mandhari nyepesi",
+    memLabel: "Anayokumbuka", resetLabel: "Mazungumzo mapya",
     jumpTitle: "Nenda kwenye ujumbe wa mwisho", jumpLabel: "ujumbe mpya",
     attachHint: "ataona hii pamoja na ujumbe wako unaofuata",
     attachRemove: "Ondoa picha", attachTitle: "Tuma picha",
@@ -955,6 +1098,9 @@ const I18N = {
     memTitle: "À propos de cette conversation",
     resetTitle: "Démarrer une nouvelle conversation",
     themeTitle: "Basculer entre thème clair et sombre",
+    menuTitle: "Réglages et actions",
+    hfLabel: "Mains libres", voiceLabel: "Réponses vocales", themeLabel: "Thème clair",
+    memLabel: "Ce dont elle se souvient", resetLabel: "Nouvelle conversation",
     jumpTitle: "Aller au dernier message", jumpLabel: "nouveau message",
     attachHint: "elle verra ceci avec ton prochain message",
     attachRemove: "Retirer la photo", attachTitle: "Envoyer une photo",
@@ -1011,6 +1157,9 @@ const I18N = {
     memTitle: "Sobre esta conversa",
     resetTitle: "Começar uma nova conversa",
     themeTitle: "Alternar tema claro/escuro",
+    menuTitle: "Configurações e ações",
+    hfLabel: "Viva-voz", voiceLabel: "Respostas faladas", themeLabel: "Tema claro",
+    memLabel: "O que ela lembra", resetLabel: "Nova conversa",
     jumpTitle: "Ir para a última mensagem", jumpLabel: "nova mensagem",
     attachHint: "ela vai ver isso com sua próxima mensagem",
     attachRemove: "Remover foto", attachTitle: "Enviar uma foto",
@@ -1710,7 +1859,7 @@ function speakBrowser(text) {
 voiceBtn.onclick = () => {
   voiceOn = !voiceOn;
   voiceBtn.classList.toggle("off", !voiceOn);
-  voiceBtn.setAttribute("aria-pressed", String(voiceOn));
+  voiceBtn.setAttribute("aria-checked", String(voiceOn));
   if (!voiceOn) {
     stopSpeaking();
     if (handsFree) setHandsFree(false); // muting her ends the conversation loop
@@ -1728,8 +1877,7 @@ const metaThemeColor = document.querySelector('meta[name="theme-color"]');
 
 function syncThemeUI() {
   const light = document.documentElement.getAttribute("data-theme") === "light";
-  themeBtn.classList.toggle("light", light);
-  themeBtn.setAttribute("aria-pressed", String(light));
+  themeBtn.setAttribute("aria-checked", String(light));
   if (metaThemeColor) metaThemeColor.setAttribute("content", light ? "#fdf3f7" : "#160b13");
 }
 syncThemeUI();
@@ -1777,13 +1925,13 @@ function resumeHandsFree() {
 function setHandsFree(on) {
   handsFree = on;
   hfBtn.classList.toggle("on", on);
-  hfBtn.setAttribute("aria-pressed", String(on));
+  hfBtn.setAttribute("aria-checked", String(on));
   hfFails = 0;
   if (on) {
     if (!voiceOn) { // spoken replies are the point of hands-free
       voiceOn = true;
       voiceBtn.classList.remove("off");
-      voiceBtn.setAttribute("aria-pressed", "true");
+      voiceBtn.setAttribute("aria-checked", "true");
     }
     toast(t("hfOn"));
     setTimeout(maybeListen, 300);
@@ -2054,11 +2202,18 @@ function renderFacts() {
 document.getElementById("memBtn").onclick = () => {
   renderFacts();
   overlay.classList.add("show");
+  closeMenu(); // a panel is taking over the screen
 };
 
 document.getElementById("closeBtn").onclick = closePanel;
 overlay.onclick = (e) => { if (e.target === overlay) closePanel(); };
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePanel(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  // menu keydown handles its own Escape (and stops it here) when focus is
+  // inside it; this catches Escape while focus sits on the trigger
+  if (!menuEl.hidden) closeMenu(true);
+  else closePanel();
+});
 
 document.getElementById("exportBtn").onclick = () => {
   const lines = [];
@@ -2116,6 +2271,7 @@ resetBtn.onclick = async () => {
   }
   clearTimeout(resetArmTimer);
   resetBtn.classList.remove("confirm");
+  closeMenu(); // confirmed — get out of the way and show the fresh chat
   stopSpeaking();
   setStatus(t("statusSaving"), true);
   await memorize(); // capture this conversation before it's cleared
