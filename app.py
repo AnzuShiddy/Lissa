@@ -173,6 +173,13 @@ class TTSIn(BaseModel):
 class FactsIn(BaseModel):
     facts: list[str] = []
     lang: str = "en"  # UI language, for the greeting only
+    hour: int | None = None  # visitor's local hour, for the greeting only
+
+
+def clean_hour(hour: int | None) -> int | None:
+    """The visitor's own clock decides the time-of-day greeting — the server
+    runs in UTC and is hours off from most of them. Ignore nonsense values."""
+    return hour if isinstance(hour, int) and 0 <= hour <= 23 else None
 
 
 def clean_facts(raw: list[str]) -> list[str]:
@@ -214,7 +221,7 @@ def hello(body: FactsIn, sid: str | None = Cookie(None)) -> dict:
     with sess.lock:
         if not lissa.transcript_of(sess.session):
             sess.rebuild(facts)
-    return {"text": lissa.greeting(sess.facts, body.lang)}
+    return {"text": lissa.greeting(sess.facts, body.lang, clean_hour(body.hour))}
 
 
 @app.post("/api/memorize")
@@ -370,6 +377,7 @@ def reset(body: FactsIn | None = None, sid: str | None = Cookie(None)) -> dict:
     _, sess = get_or_create_session(sid)
     facts = clean_facts(body.facts) if body else []
     lang = body.lang if body else "en"
+    hour = clean_hour(body.hour) if body else None
     with sess.lock:
         sess.rebuild(facts)
-    return {"text": lissa.greeting(facts, lang)}
+    return {"text": lissa.greeting(facts, lang, hour)}

@@ -1099,6 +1099,12 @@ langSelect.onchange = () => {
   toast(t("langChanged"));
 };
 
+/* Her "morning/afternoon/evening/tonight" comes from YOUR clock, not the
+   server's — the server runs in UTC, hours off from most visitors. */
+function localHour() {
+  return new Date().getHours();
+}
+
 /* ---------- long-term memory ----------
    Facts about the visitor live in THIS browser (localStorage) and are sent
    up only to personalize their own session; the server stores nothing. */
@@ -2085,7 +2091,7 @@ forgetBtn.onclick = async () => {
   const { text } = await (await fetch("/api/reset", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ facts: [], lang: currentLang }),
+    body: JSON.stringify({ facts: [], lang: currentLang, hour: localHour() }),
   })).json();
   closePanel();
   chat.innerHTML = "";
@@ -2116,7 +2122,7 @@ resetBtn.onclick = async () => {
   const { text } = await (await fetch("/api/reset", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ facts, lang: currentLang }),
+    body: JSON.stringify({ facts, lang: currentLang, hour: localHour() }),
   })).json();
   setStatus(t("statusOnline"));
   chat.innerHTML = "";
@@ -2182,7 +2188,7 @@ async function boot() {
     const { text } = await (await fetch("/api/hello", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ facts, lang: currentLang }),
+      body: JSON.stringify({ facts, lang: currentLang, hour: localHour() }),
     })).json();
     if (voiceOn) {
       speak(text, bubble);

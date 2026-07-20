@@ -432,6 +432,32 @@ const check = (cond, name) => {
   check(saved.includes("Lissa: "), "export: transcript contains her messages");
   await page.click("#closeBtn"); // the panel stayed open for the export click
 
+  /* ---- time-of-day greeting follows the VISITOR's clock ----
+     The server runs in UTC on Render, hours off from most visitors, so
+     the phrase has to come from the browser's own hour. Two timezones a
+     long way apart: at any moment at least one differs from the server. */
+  const phraseFor = (h) =>
+    h >= 6 && h < 12 ? "this morning"
+      : h >= 12 && h < 17 ? "this afternoon"
+        : h >= 17 && h < 21 ? "this evening"
+          : "tonight";
+  for (const tz of ["Africa/Dar_es_Salaam", "America/Los_Angeles"]) {
+    const tzCtx = await browser.newContext({ timezoneId: tz });
+    const tzPage = await tzCtx.newPage();
+    await tzPage.goto("http://localhost:8765/"); // fresh visitor: no facts
+    // she types the greeting out in sync with her speech, so wait for the
+    // whole sentence — a partial one has no time phrase in it yet
+    await tzPage.waitForFunction(() => {
+      const b = document.querySelector(".bubble.lissa");
+      return b && !b.querySelector(".typing-dots") && b.textContent.trim().endsWith("?");
+    }, null, { timeout: 30000 });
+    const tzHour = await tzPage.evaluate(() => new Date().getHours());
+    const tzGreet = await tzPage.$eval(".bubble.lissa", (el) => el.textContent);
+    check(tzGreet.includes(phraseFor(tzHour)),
+      `timezone: ${tz} (hour ${tzHour}) greeted with "${phraseFor(tzHour)}"`);
+    await tzCtx.close();
+  }
+
   /* ---- light/dark theme toggle ---- */
   const isLight = () => page.evaluate(() => document.documentElement.getAttribute("data-theme") === "light");
   const themeLightBefore = await isLight();

@@ -121,9 +121,15 @@ RETURNING_GREETINGS = {
 }
 
 
-def get_time_of_day_phrase(lang: str = "en") -> str:
-	"""Return an appropriate time-of-day phrase based on current hour."""
-	hour = datetime.now().hour
+def get_time_of_day_phrase(lang: str = "en", hour: int | None = None) -> str:
+	"""Return an appropriate time-of-day phrase for `hour`.
+
+	The web app passes the visitor's own local hour: the server clock is
+	useless for this (Render runs in UTC, hours off from most visitors).
+	Falls back to the local clock, which is what the terminal app wants.
+	"""
+	if hour is None:
+		hour = datetime.now().hour
 	if 6 <= hour < 12:
 		period = "morning"
 	elif 12 <= hour < 17:
@@ -426,10 +432,12 @@ def make_client() -> genai.Client:
     return genai.Client()
 
 
-def greeting(facts: list[str], lang: str = "en") -> str:
+def greeting(facts: list[str], lang: str = "en", hour: int | None = None) -> str:
 	lang = lang if lang in SUPPORTED_LANGS else "en"
 	if not facts:
-		return GREETING_TEMPLATES[lang].format(time_phrase=get_time_of_day_phrase(lang))
+		return GREETING_TEMPLATES[lang].format(
+			time_phrase=get_time_of_day_phrase(lang, hour)
+		)
 	return RETURNING_GREETINGS[lang]
 
 
