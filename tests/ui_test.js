@@ -474,6 +474,30 @@ const check = (cond, name) => {
   check(await menuHidden(), "menu: Escape closes it");
   check(await page.evaluate(() => document.activeElement.id === "menuBtn"),
     "menu: Escape returns focus to the trigger");
+  // nothing may paint over the open menu. The header's backdrop-filter
+  // makes it a stacking context, so without a layer of its own it sits
+  // under #chat and a wide bubble covers the menu (seen on Android).
+  await page.click("#menuBtn");
+  await page.evaluate(() => {
+    // a bubble wide enough to reach under the menu
+    addBubble("lissa", "x".repeat(400));
+    chat.scrollTop = 0;
+  });
+  const covering = await page.evaluate(() => {
+    const menu = document.getElementById("menu");
+    const m = menu.getBoundingClientRect();
+    const bad = [];
+    for (const fx of [0.05, 0.3, 0.6, 0.95])
+      for (const fy of [0.1, 0.35, 0.6, 0.9]) {
+        const el = document.elementFromPoint(m.left + m.width * fx, m.top + m.height * fy);
+        if (!menu.contains(el)) bad.push(el ? el.className || el.tagName : "null");
+      }
+    return [...new Set(bad)];
+  });
+  check(covering.length === 0,
+    "menu: nothing paints over it" + (covering.length ? " (covered by " + covering.join() + ")" : ""));
+  await page.click("#menuBtn"); // close
+
   await page.click("#menuBtn");
   await page.click("#title"); // click outside
   check(await menuHidden(), "menu: clicking outside dismisses it");

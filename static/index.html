@@ -133,6 +133,11 @@
     background: rgba(20, 10, 17, 0.6);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+    /* backdrop-filter makes this a stacking context, which traps the
+       menu's z-index inside it — without a layer of its own the header
+       paints under #chat and wide bubbles cover the open menu */
+    position: relative;
+    z-index: 8; /* over #chat and the jump pill (5), under #overlay (10) */
   }
   #avatarWrap { position: relative; flex-shrink: 0; cursor: pointer; }
   #avatar {
