@@ -358,6 +358,28 @@ const check = (cond, name) => {
   check(visionReply.length > 5 && !visionReply.includes("API error"),
     "photo: she replied about the image (got: " + visionReply.slice(0, 60) + ")");
 
+  /* ---- hands-free conversation mode ---- */
+  await page.click("#hfBtn");
+  await page.waitForSelector("#recorder:not([hidden])", { timeout: 8000 });
+  check(true, "handsfree: toggling on opens the mic by itself");
+  check(
+    await page.evaluate(() => rec && rec.auto === true),
+    "handsfree: recording is in auto (VAD) mode"
+  );
+  check(
+    await page.evaluate(() => voiceOn),
+    "handsfree: spoken replies auto-enabled"
+  );
+  await page.click("#hfBtn"); // off
+  await page.waitForFunction(
+    () => document.getElementById("recorder").hidden, null, { timeout: 5000 });
+  check(true, "handsfree: toggling off stops listening");
+  check(
+    await page.$eval("#hfBtn", (el) => el.getAttribute("aria-pressed") === "false"),
+    "handsfree: button state cleared"
+  );
+  await page.click("#voiceBtn"); // voice off again for the remaining tests
+
   /* ---- web memory: facts persist in localStorage across reloads ---- */
   await page.fill("#msg", "By the way, my name is Zanzibar and I love mango juice. Remember that!");
   await page.keyboard.press("Enter");

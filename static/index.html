@@ -192,6 +192,11 @@
     border-color: #ff4d6d;
     color: #ffb3c0;
   }
+  .iconBtn.on {
+    background: rgba(255, 92, 143, 0.14);
+    border-color: rgba(255, 92, 143, 0.55);
+    color: var(--rose-soft);
+  }
   #voiceBtn.off { opacity: 0.4; }
   #voiceBtn .on-icon { display: block; }
   #voiceBtn .off-icon { display: none; }
@@ -626,6 +631,9 @@
       <h1>Lissa</h1>
       <div id="status">online</div>
     </div>
+    <button id="hfBtn" class="iconBtn" title="Hands-free conversation" aria-label="Hands-free conversation" aria-pressed="false">
+      <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+    </button>
     <button id="voiceBtn" class="iconBtn" title="Toggle spoken replies" aria-label="Spoken replies" aria-pressed="true">
       <svg class="on-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.4a9.5 9.5 0 0 1 0 13.2"/></svg>
       <svg class="off-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
@@ -1029,6 +1037,7 @@ async function send(text, isRetry, retryImage) {
   } else {
     bubble.textContent = full;
     addCopy(bubble, full);
+    setTimeout(maybeListen, 600); // voice off: reply is done once text lands
   }
   announce("Lissa: " + full);
   if (++exchanges % 4 === 0) memorize(); // fire-and-forget memory refresh
@@ -1144,6 +1153,7 @@ async function pipePlay(p) {
       scrollChat();
     }
     speakingUI(false);
+    setTimeout(maybeListen, 500); // hands-free: her turn is over
   }
 }
 
@@ -1252,6 +1262,7 @@ function feedSpeech(p, full, done) {
       addCopy(p.bubble, p.fullText);
     }
     speakingUI(false);
+    setTimeout(maybeListen, 500);
   }
 }
 
@@ -1301,7 +1312,10 @@ voiceBtn.onclick = () => {
   voiceOn = !voiceOn;
   voiceBtn.classList.toggle("off", !voiceOn);
   voiceBtn.setAttribute("aria-pressed", String(voiceOn));
-  if (!voiceOn) stopSpeaking();
+  if (!voiceOn) {
+    stopSpeaking();
+    if (handsFree) setHandsFree(false); // muting her ends the conversation loop
+  }
   toast(voiceOn ? "voice on" : "voice off");
 };
 
@@ -1309,6 +1323,51 @@ avatarWrap.onclick = stopSpeaking;
 avatarWrap.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); stopSpeaking(); }
 });
+
+/* ---------- hands-free conversation ----------
+   With the mode on, the mic opens by itself whenever she isn't speaking
+   and a reply isn't streaming; simple voice-activity detection sends the
+   recording after ~1.3s of silence, and the loop repeats. */
+
+const hfBtn = document.getElementById("hfBtn");
+let handsFree = false;
+let hfFails = 0; // consecutive empty/failed recordings — bail out at 3
+
+function maybeListen() {
+  if (!handsFree || busy || rec || pipeline) return;
+  startRecording(true);
+}
+
+function resumeHandsFree() {
+  if (!handsFree) return;
+  if (++hfFails >= 3) {
+    setHandsFree(false);
+    toast("hands-free off — I couldn't hear you");
+    return;
+  }
+  setTimeout(maybeListen, 600);
+}
+
+function setHandsFree(on) {
+  handsFree = on;
+  hfBtn.classList.toggle("on", on);
+  hfBtn.setAttribute("aria-pressed", String(on));
+  hfFails = 0;
+  if (on) {
+    if (!voiceOn) { // spoken replies are the point of hands-free
+      voiceOn = true;
+      voiceBtn.classList.remove("off");
+      voiceBtn.setAttribute("aria-pressed", "true");
+    }
+    toast("hands-free on — just start talking, pause to send");
+    setTimeout(maybeListen, 300);
+  } else {
+    if (rec && rec.auto) teardownRecording();
+    toast("hands-free off");
+  }
+}
+
+hfBtn.onclick = () => setHandsFree(!handsFree);
 
 /* ---------- voice input ---------- */
 
@@ -1329,7 +1388,26 @@ function setRecordingUI(on) {
   recorder.hidden = !on;
 }
 
-async function startRecording() {
+/* silence-based auto-send for hands-free mode; level arrives ~21x/sec */
+function autoVad(level) {
+  const r = rec;
+  if (!r || !r.auto || r.stopping) return;
+  const now = Date.now();
+  if (level > 0.02) { r.voiced = true; r.lastVoice = now; }
+  if (r.voiced && now - r.lastVoice > 1300) {
+    r.stopping = true;
+    stopRecording(); // they said something and went quiet — send it
+  } else if (!r.voiced && now - r.started > 10000) {
+    teardownRecording();
+    setHandsFree(false);
+    toast("didn't hear anything — hands-free off");
+  } else if (now - r.started > 30000) {
+    r.stopping = true;
+    stopRecording(); // hard cap on one turn
+  }
+}
+
+async function startRecording(auto) {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     toast("mic needs a secure origin — open the app via http://localhost:8000");
     return;
@@ -1362,13 +1440,15 @@ async function startRecording() {
       chunks.push(data);
       for (let i = 0; i < data.length; i += 16) { sum += data[i] * data[i]; n++; }
       if (n >= 128) {
-        levels.push(Math.sqrt(sum / n));
+        const level = Math.sqrt(sum / n);
+        levels.push(level);
         sum = 0; n = 0;
         if (levels.length > BAR_COUNT) levels.shift();
         bars.forEach((b, i) => {
           const v = levels[levels.length - 1 - i] || 0;
           b.style.height = Math.min(96, 10 + v * 480) + "%";
         });
+        autoVad(level);
       }
     };
     let proc;
@@ -1391,7 +1471,8 @@ async function startRecording() {
       const s = Math.floor((Date.now() - started) / 1000);
       recTime.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
     }, 250);
-    rec = { stream, ctx, proc, chunks, rate: ctx.sampleRate, timer };
+    rec = { stream, ctx, proc, chunks, rate: ctx.sampleRate, timer,
+            auto: !!auto, started, voiced: false, lastVoice: 0, stopping: false };
     recTime.textContent = "0:00";
     setRecordingUI(true);
     setStatus("listening…", true);
@@ -1418,11 +1499,16 @@ async function stopRecording() {
   const { chunks, rate } = teardownRecording();
 
   const total = chunks.reduce((n, c) => n + c.length, 0);
-  if (total < rate / 2) { toast("didn't catch anything — try again"); return; }
+  if (total < rate / 2) {
+    toast("didn't catch anything — try again");
+    resumeHandsFree();
+    return;
+  }
   let peak = 0;
   for (const c of chunks) for (let i = 0; i < c.length; i++) peak = Math.max(peak, Math.abs(c[i]));
   if (peak < 0.005) {
     toast("only silence came through — check the mic isn't muted (Windows Settings → Privacy → Microphone)");
+    resumeHandsFree();
     return;
   }
 
@@ -1435,11 +1521,17 @@ async function stopRecording() {
       body: encodeWav(chunks, total, rate),
     });
     const { text, error } = await res.json();
-    if (error) { toast(error); return; }
-    if (!text) { toast("couldn't make out any words — try again"); return; }
+    if (error) { toast(error); resumeHandsFree(); return; }
+    if (!text) {
+      toast("couldn't make out any words — try again");
+      resumeHandsFree();
+      return;
+    }
+    hfFails = 0;
     send(text);
   } catch (e) {
     toast("transcription failed — try again");
+    resumeHandsFree();
   } finally {
     micBtn.classList.remove("busy");
     if (!busy) setStatus("online");
@@ -1494,7 +1586,13 @@ micBtn.addEventListener("click", () => {
 });
 micBtn.addEventListener("contextmenu", (e) => e.preventDefault());
 document.getElementById("recDone").onclick = () => { if (rec) stopRecording(); };
-document.getElementById("recCancel").onclick = () => { if (rec) { teardownRecording(); toast("recording discarded"); } };
+document.getElementById("recCancel").onclick = () => {
+  if (!rec) return;
+  const wasAuto = rec.auto;
+  teardownRecording();
+  if (wasAuto) setHandsFree(false); // cancelling means "stop listening to me"
+  else toast("recording discarded");
+};
 
 /* ---------- memory panel ---------- */
 
