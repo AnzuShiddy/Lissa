@@ -601,6 +601,17 @@
   }
   #facts li.empty { color: var(--muted); background: none; border: 1px dashed var(--border); text-align: center; }
   #panel .row { display: flex; gap: 10px; justify-content: flex-end; }
+  #panel .row.lang-row { justify-content: flex-start; margin-bottom: 12px; }
+  #langSelect {
+    border: 1px solid var(--border);
+    background: var(--glass);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+  }
   #panel .row button {
     border: 1px solid var(--border);
     background: var(--glass);
@@ -623,7 +634,7 @@
 
 <div id="frame">
   <header>
-    <div id="avatarWrap" role="button" tabindex="0" title="Click to stop her voice" aria-label="Stop her voice">
+    <div id="avatarWrap" role="button" tabindex="0" data-i18n-title="avatarTitle" data-i18n-aria="avatarTitle" title="Click to stop her voice" aria-label="Stop her voice">
       <div id="avatar">
         <svg viewBox="0 0 120 120" role="img" aria-label="Lissa's face">
           <defs>
@@ -689,20 +700,20 @@
       <h1>Lissa</h1>
       <div id="status">online</div>
     </div>
-    <button id="hfBtn" class="iconBtn" title="Hands-free conversation" aria-label="Hands-free conversation" aria-pressed="false">
+    <button id="hfBtn" class="iconBtn" data-i18n-title="hfTitle" data-i18n-aria="hfTitle" title="Hands-free conversation" aria-label="Hands-free conversation" aria-pressed="false">
       <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
     </button>
-    <button id="voiceBtn" class="iconBtn" title="Toggle spoken replies" aria-label="Spoken replies" aria-pressed="true">
+    <button id="voiceBtn" class="iconBtn" data-i18n-title="voiceTitle" data-i18n-aria="voiceAria" title="Toggle spoken replies" aria-label="Spoken replies" aria-pressed="true">
       <svg class="on-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.4a9.5 9.5 0 0 1 0 13.2"/></svg>
       <svg class="off-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
     </button>
-    <button id="memBtn" class="iconBtn" title="About this conversation" aria-label="About this conversation">
+    <button id="memBtn" class="iconBtn" data-i18n-title="memTitle" data-i18n-aria="memTitle" title="About this conversation" aria-label="About this conversation">
       <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
     </button>
-    <button id="resetBtn" class="iconBtn" title="Start a new conversation" aria-label="Start a new conversation">
+    <button id="resetBtn" class="iconBtn" data-i18n-title="resetTitle" data-i18n-aria="resetTitle" title="Start a new conversation" aria-label="Start a new conversation">
       <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
     </button>
-    <button id="themeBtn" class="iconBtn" title="Toggle light/dark theme" aria-label="Toggle light/dark theme" aria-pressed="false">
+    <button id="themeBtn" class="iconBtn" data-i18n-title="themeTitle" data-i18n-aria="themeTitle" title="Toggle light/dark theme" aria-label="Toggle light/dark theme" aria-pressed="false">
       <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
@@ -711,29 +722,29 @@
   <main id="chat" role="log" aria-label="Conversation with Lissa"></main>
   <div id="sr" class="visually-hidden" aria-live="polite"></div>
 
-  <button id="jump" title="Scroll to the latest message">
+  <button id="jump" data-i18n-title="jumpTitle" title="Scroll to the latest message">
     <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="5 12 12 19 19 12"/></svg>
-    new message
+    <span data-i18n="jumpLabel">new message</span>
   </button>
 
   <div id="bar">
     <div id="attachPreview" hidden>
       <img id="attachImg" alt="photo to send">
-      <span id="attachHint">she'll see this with your next message</span>
-      <button id="attachRemove" title="Remove photo" aria-label="Remove photo">
+      <span id="attachHint" data-i18n="attachHint">she'll see this with your next message</span>
+      <button id="attachRemove" data-i18n-title="attachRemove" data-i18n-aria="attachRemove" title="Remove photo" aria-label="Remove photo">
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div id="composer">
-      <button id="attach" class="roundBtn" title="Send a photo" aria-label="Send a photo">
+      <button id="attach" class="roundBtn" data-i18n-title="attachTitle" data-i18n-aria="attachTitle" title="Send a photo" aria-label="Send a photo">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
       </button>
       <input id="file" type="file" accept="image/*" hidden>
-      <textarea id="msg" rows="1" placeholder="Say something to Lissa…" autocomplete="off" aria-label="Message to Lissa"></textarea>
-      <button id="mic" class="roundBtn" title="Tap to record, hold to talk" aria-label="Tap to record, hold to talk">
+      <textarea id="msg" rows="1" data-i18n-placeholder="msgPlaceholder" placeholder="Say something to Lissa…" autocomplete="off" data-i18n-aria="msgAria" aria-label="Message to Lissa"></textarea>
+      <button id="mic" class="roundBtn" data-i18n-title="micTitle" data-i18n-aria="micTitle" title="Tap to record, hold to talk" aria-label="Tap to record, hold to talk">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
-      <button id="send" class="roundBtn" title="Send" aria-label="Send">
+      <button id="send" class="roundBtn" data-i18n-title="sendTitle" data-i18n-aria="sendTitle" title="Send" aria-label="Send">
         <svg class="send-icon" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         <svg class="stop-icon" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
       </button>
@@ -742,10 +753,10 @@
       <div id="recDot"></div>
       <span id="recTime">0:00</span>
       <div id="meter"></div>
-      <button id="recCancel" class="roundBtn" title="Cancel" aria-label="Cancel recording">
+      <button id="recCancel" class="roundBtn" data-i18n-title="recCancelTitle" data-i18n-aria="recCancelAria" title="Cancel" aria-label="Cancel recording">
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <button id="recDone" class="roundBtn" title="Send it" aria-label="Send recording">
+      <button id="recDone" class="roundBtn" data-i18n-title="recDoneTitle" data-i18n-aria="recDoneAria" title="Send it" aria-label="Send recording">
         <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
       </button>
     </div>
@@ -756,13 +767,22 @@
 
 <div id="overlay">
   <div id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
-    <h2 id="panelTitle">What Lissa remembers</h2>
-    <div class="sub">Stored in this browser only — memories update as you chat and when you start a new conversation.</div>
+    <h2 id="panelTitle" data-i18n="panelTitle">What Lissa remembers</h2>
+    <div class="sub" data-i18n="panelSub">Stored in this browser only — memories update as you chat and when you start a new conversation.</div>
     <ul id="facts"></ul>
+    <div class="row lang-row">
+      <label for="langSelect" class="visually-hidden" data-i18n="langLabel">Language</label>
+      <select id="langSelect">
+        <option value="en">English</option>
+        <option value="sw">Kiswahili</option>
+        <option value="fr">Français</option>
+        <option value="pt">Português</option>
+      </select>
+    </div>
     <div class="row">
-      <button id="exportBtn">Save chat</button>
-      <button id="forgetBtn" class="danger">Forget me</button>
-      <button id="closeBtn">Close</button>
+      <button id="exportBtn" data-i18n="exportBtn">Save chat</button>
+      <button id="forgetBtn" class="danger" data-i18n="forgetBtn">Forget me</button>
+      <button id="closeBtn" data-i18n="closeBtn">Close</button>
     </div>
   </div>
 </div>
@@ -790,6 +810,285 @@ let busy = false;          // a reply is streaming
 let rec = null;            // active recording state
 let toastTimer = null;
 let chatAbort = null;      // AbortController for the in-flight reply
+
+/* ---------- localization ----------
+   Only the UI chrome (buttons, toasts, panel copy) is translated here —
+   her actual replies already follow whatever language the visitor types
+   in, since that's just Gemini responding in kind. The scripted greeting
+   and rate-limit messages are canned text, though, so the server takes a
+   `lang` param for those (see /api/hello, /api/reset, /api/chat,
+   /api/transcribe). */
+
+const SUPPORTED_LANGS = ["en", "sw", "fr", "pt"];
+const LANG_KEY = "lissa_lang";
+
+const I18N = {
+  en: {
+    statusOnline: "online", statusTyping: "typing…", statusSpeaking: "speaking…",
+    statusListening: "listening…", statusUnderstanding: "understanding…",
+    statusSaving: "saving memories…",
+    cooldown: "catching her breath… {secs}s",
+    avatarTitle: "Click to stop her voice",
+    hfTitle: "Hands-free conversation",
+    voiceTitle: "Toggle spoken replies", voiceAria: "Spoken replies",
+    memTitle: "About this conversation",
+    resetTitle: "Start a new conversation",
+    themeTitle: "Toggle light/dark theme",
+    jumpTitle: "Scroll to the latest message", jumpLabel: "new message",
+    attachHint: "she'll see this with your next message",
+    attachRemove: "Remove photo", attachTitle: "Send a photo",
+    msgPlaceholder: "Say something to Lissa…", msgAria: "Message to Lissa",
+    micTitle: "Tap to record, hold to talk",
+    sendTitle: "Send", stopTitle: "Stop the reply",
+    recCancelTitle: "Cancel", recCancelAria: "Cancel recording",
+    recDoneTitle: "Send it", recDoneAria: "Send recording",
+    panelTitle: "What Lissa remembers",
+    panelSub: "Stored in this browser only — memories update as you chat and when you start a new conversation.",
+    langLabel: "Language",
+    exportBtn: "Save chat", forgetBtn: "Forget me", closeBtn: "Close",
+    confirmAgain: "Sure? Click again",
+    copyTitle: "Copy message", copied: "copied",
+    copyFailed: "couldn't copy — select the text instead",
+    tryAgain: "↻ try again",
+    notAnImage: "that's not an image",
+    connLostMidReply: "\n\n(connection lost mid-reply)",
+    connLostInitial: "(couldn't reach the server — is it still running?)",
+    autoplayBlocked: "your browser muted her 🔇 — tap anywhere to hear her voice",
+    voiceOn: "voice on", voiceOff: "voice off",
+    themeLight: "light theme", themeDark: "dark theme",
+    hfOn: "hands-free on — just start talking, pause to send",
+    hfOff: "hands-free off", hfOffNoHear: "hands-free off — I couldn't hear you",
+    hfOffSilence: "didn't hear anything — hands-free off",
+    micSecureOrigin: "mic needs a secure origin — open the app via http://localhost:8000",
+    micNotFound: "no microphone found — is one plugged in and enabled?",
+    micBlocked: "microphone blocked — click the 🔒/camera icon in the address bar to allow it",
+    micError: "mic error: {msg}", micStartFailed: "couldn't start recording: {msg}",
+    noAudioCaught: "didn't catch anything — try again",
+    onlySilence: "only silence came through — check the mic isn't muted (Windows Settings → Privacy → Microphone)",
+    noWordsHeard: "couldn't make out any words — try again",
+    transcriptionFailed: "transcription failed — try again",
+    recordingDiscarded: "recording discarded",
+    noFactsYet: "Nothing yet — she starts remembering after you've chatted a little.",
+    memoryWiped: "memory wiped — she's meeting you for the first time again",
+    chatSaved: "chat saved",
+    resetConfirm: "tap again to start a new conversation",
+    resetDone: "new conversation — she'll remember you",
+    bootConnError: "(couldn't reach the server — is it running?)",
+    pickedUpWhereLeftOff: "picked up where you left off",
+    photoAlt: "photo you sent",
+    exportYou: "You: ", exportLissa: "Lissa: ",
+    langChanged: "language updated",
+  },
+  sw: {
+    statusOnline: "mtandaoni", statusTyping: "anaandika…", statusSpeaking: "anazungumza…",
+    statusListening: "anasikiliza…", statusUnderstanding: "anaelewa…",
+    statusSaving: "anahifadhi kumbukumbu…",
+    cooldown: "anapumzika kidogo… sekunde {secs}",
+    avatarTitle: "Bofya kusimamisha sauti yake",
+    hfTitle: "Mazungumzo ya mikono huru",
+    voiceTitle: "Washa/zima majibu ya sauti", voiceAria: "Majibu ya sauti",
+    memTitle: "Kuhusu mazungumzo haya",
+    resetTitle: "Anza mazungumzo mapya",
+    themeTitle: "Badilisha mandhari nyepesi/giza",
+    jumpTitle: "Nenda kwenye ujumbe wa mwisho", jumpLabel: "ujumbe mpya",
+    attachHint: "ataona hii pamoja na ujumbe wako unaofuata",
+    attachRemove: "Ondoa picha", attachTitle: "Tuma picha",
+    msgPlaceholder: "Sema kitu kwa Lissa…", msgAria: "Ujumbe kwa Lissa",
+    micTitle: "Gusa kurekodi, shikilia kuongea",
+    sendTitle: "Tuma", stopTitle: "Simamisha jibu",
+    recCancelTitle: "Ghairi", recCancelAria: "Ghairi kurekodi",
+    recDoneTitle: "Tuma", recDoneAria: "Tuma rekodi",
+    panelTitle: "Anachokumbuka Lissa",
+    panelSub: "Imehifadhiwa kwenye kivinjari hiki tu — kumbukumbu zinasasishwa unapozungumza na unapoanza mazungumzo mapya.",
+    langLabel: "Lugha",
+    exportBtn: "Hifadhi mazungumzo", forgetBtn: "Nisahau", closeBtn: "Funga",
+    confirmAgain: "Una uhakika? Bofya tena",
+    copyTitle: "Nakili ujumbe", copied: "imenakiliwa",
+    copyFailed: "imeshindwa kunakili — chagua maandishi",
+    tryAgain: "↻ jaribu tena",
+    notAnImage: "hii si picha",
+    connLostMidReply: "\n\n(muunganisho umepotea katikati ya jibu)",
+    connLostInitial: "(imeshindwa kufikia seva — je, inaendesha bado?)",
+    autoplayBlocked: "kivinjari chako kimemnyamazisha 🔇 — gusa popote kusikia sauti yake",
+    voiceOn: "sauti imewashwa", voiceOff: "sauti imezimwa",
+    themeLight: "mandhari nyepesi", themeDark: "mandhari ya giza",
+    hfOn: "mikono huru imewashwa — anza kuongea, kisha nyamaza kutuma",
+    hfOff: "mikono huru imezimwa", hfOffNoHear: "mikono huru imezimwa — sikuweza kukusikia",
+    hfOffSilence: "hakuna kilichosikika — mikono huru imezimwa",
+    micSecureOrigin: "kipaza sauti kinahitaji chanzo salama — fungua programu kupitia http://localhost:8000",
+    micNotFound: "hakuna kipaza sauti kilichopatikana — je, kimeunganishwa na kuwashwa?",
+    micBlocked: "kipaza sauti kimezuiwa — bofya ikoni ya 🔒/kamera kwenye upau wa anwani ili kuruhusu",
+    micError: "hitilafu ya kipaza sauti: {msg}", micStartFailed: "imeshindwa kuanza kurekodi: {msg}",
+    noAudioCaught: "hakuna kilichonaswa — jaribu tena",
+    onlySilence: "kimya tu kilichofika — hakikisha kipaza sauti hakijanyamazishwa (Windows: Mipangilio → Faragha → Kipaza sauti)",
+    noWordsHeard: "imeshindwa kuelewa maneno — jaribu tena",
+    transcriptionFailed: "imeshindwa kuandika maneno — jaribu tena",
+    recordingDiscarded: "rekodi imetupwa",
+    noFactsYet: "Bado hakuna — ataanza kukumbuka baada ya kuzungumza kidogo.",
+    memoryWiped: "kumbukumbu imefutwa — anakukutana nawe kwa mara ya kwanza tena",
+    chatSaved: "mazungumzo yamehifadhiwa",
+    resetConfirm: "gusa tena kuanza mazungumzo mapya",
+    resetDone: "mazungumzo mapya — atakukumbuka",
+    bootConnError: "(imeshindwa kufikia seva — je, inaendesha?)",
+    pickedUpWhereLeftOff: "tunaendelea pale tulipoishia",
+    photoAlt: "picha uliyotuma",
+    exportYou: "Wewe: ", exportLissa: "Lissa: ",
+    langChanged: "lugha imesasishwa",
+  },
+  fr: {
+    statusOnline: "en ligne", statusTyping: "elle écrit…", statusSpeaking: "elle parle…",
+    statusListening: "elle écoute…", statusUnderstanding: "elle comprend…",
+    statusSaving: "elle enregistre ses souvenirs…",
+    cooldown: "elle reprend son souffle… {secs}s",
+    avatarTitle: "Clique pour arrêter sa voix",
+    hfTitle: "Conversation mains libres",
+    voiceTitle: "Activer/désactiver les réponses vocales", voiceAria: "Réponses vocales",
+    memTitle: "À propos de cette conversation",
+    resetTitle: "Démarrer une nouvelle conversation",
+    themeTitle: "Basculer entre thème clair et sombre",
+    jumpTitle: "Aller au dernier message", jumpLabel: "nouveau message",
+    attachHint: "elle verra ceci avec ton prochain message",
+    attachRemove: "Retirer la photo", attachTitle: "Envoyer une photo",
+    msgPlaceholder: "Dis quelque chose à Lissa…", msgAria: "Message à Lissa",
+    micTitle: "Appuie pour enregistrer, maintiens pour parler",
+    sendTitle: "Envoyer", stopTitle: "Arrêter la réponse",
+    recCancelTitle: "Annuler", recCancelAria: "Annuler l'enregistrement",
+    recDoneTitle: "Envoyer", recDoneAria: "Envoyer l'enregistrement",
+    panelTitle: "Ce dont Lissa se souvient",
+    panelSub: "Conservé uniquement dans ce navigateur — les souvenirs se mettent à jour au fil de la conversation et quand tu recommences une conversation.",
+    langLabel: "Langue",
+    exportBtn: "Enregistrer la conversation", forgetBtn: "Oublie-moi", closeBtn: "Fermer",
+    confirmAgain: "Sûr(e) ? Clique encore",
+    copyTitle: "Copier le message", copied: "copié",
+    copyFailed: "impossible de copier — sélectionne le texte",
+    tryAgain: "↻ réessayer",
+    notAnImage: "ce n'est pas une image",
+    connLostMidReply: "\n\n(connexion perdue en cours de réponse)",
+    connLostInitial: "(impossible de joindre le serveur — tourne-t-il encore ?)",
+    autoplayBlocked: "ton navigateur l'a coupée 🔇 — touche l'écran pour entendre sa voix",
+    voiceOn: "voix activée", voiceOff: "voix désactivée",
+    themeLight: "thème clair", themeDark: "thème sombre",
+    hfOn: "mains libres activé — parle, puis fais une pause pour envoyer",
+    hfOff: "mains libres désactivé", hfOffNoHear: "mains libres désactivé — je n'arrivais pas à t'entendre",
+    hfOffSilence: "rien entendu — mains libres désactivé",
+    micSecureOrigin: "le micro nécessite une origine sécurisée — ouvre l'appli via http://localhost:8000",
+    micNotFound: "aucun micro trouvé — en as-tu un branché et activé ?",
+    micBlocked: "micro bloqué — clique sur l'icône 🔒/caméra dans la barre d'adresse pour l'autoriser",
+    micError: "erreur micro : {msg}", micStartFailed: "impossible de démarrer l'enregistrement : {msg}",
+    noAudioCaught: "rien capté — réessaie",
+    onlySilence: "seulement du silence — vérifie que le micro n'est pas coupé (Windows : Paramètres → Confidentialité → Micro)",
+    noWordsHeard: "impossible de comprendre — réessaie",
+    transcriptionFailed: "échec de la transcription — réessaie",
+    recordingDiscarded: "enregistrement abandonné",
+    noFactsYet: "Rien pour l'instant — elle commence à se souvenir après un peu de conversation.",
+    memoryWiped: "mémoire effacée — elle te rencontre à nouveau pour la première fois",
+    chatSaved: "conversation enregistrée",
+    resetConfirm: "touche à nouveau pour démarrer une nouvelle conversation",
+    resetDone: "nouvelle conversation — elle se souviendra de toi",
+    bootConnError: "(impossible de joindre le serveur — tourne-t-il ?)",
+    pickedUpWhereLeftOff: "on reprend là où on en était",
+    photoAlt: "photo envoyée",
+    exportYou: "Toi : ", exportLissa: "Lissa : ",
+    langChanged: "langue mise à jour",
+  },
+  pt: {
+    statusOnline: "online", statusTyping: "digitando…", statusSpeaking: "falando…",
+    statusListening: "ouvindo…", statusUnderstanding: "entendendo…",
+    statusSaving: "salvando memórias…",
+    cooldown: "recuperando o fôlego… {secs}s",
+    avatarTitle: "Clique para parar a voz dela",
+    hfTitle: "Conversa em modo viva-voz",
+    voiceTitle: "Ativar/desativar respostas faladas", voiceAria: "Respostas faladas",
+    memTitle: "Sobre esta conversa",
+    resetTitle: "Começar uma nova conversa",
+    themeTitle: "Alternar tema claro/escuro",
+    jumpTitle: "Ir para a última mensagem", jumpLabel: "nova mensagem",
+    attachHint: "ela vai ver isso com sua próxima mensagem",
+    attachRemove: "Remover foto", attachTitle: "Enviar uma foto",
+    msgPlaceholder: "Diga algo para a Lissa…", msgAria: "Mensagem para a Lissa",
+    micTitle: "Toque para gravar, segure para falar",
+    sendTitle: "Enviar", stopTitle: "Parar a resposta",
+    recCancelTitle: "Cancelar", recCancelAria: "Cancelar gravação",
+    recDoneTitle: "Enviar", recDoneAria: "Enviar gravação",
+    panelTitle: "O que a Lissa se lembra",
+    panelSub: "Guardado apenas neste navegador — as memórias se atualizam enquanto você conversa e quando inicia uma nova conversa.",
+    langLabel: "Idioma",
+    exportBtn: "Salvar conversa", forgetBtn: "Me esqueça", closeBtn: "Fechar",
+    confirmAgain: "Tem certeza? Clique de novo",
+    copyTitle: "Copiar mensagem", copied: "copiado",
+    copyFailed: "não foi possível copiar — selecione o texto",
+    tryAgain: "↻ tentar novamente",
+    notAnImage: "isso não é uma imagem",
+    connLostMidReply: "\n\n(conexão perdida no meio da resposta)",
+    connLostInitial: "(não foi possível conectar ao servidor — ele ainda está rodando?)",
+    autoplayBlocked: "seu navegador silenciou ela 🔇 — toque em qualquer lugar para ouvir a voz dela",
+    voiceOn: "voz ativada", voiceOff: "voz desativada",
+    themeLight: "tema claro", themeDark: "tema escuro",
+    hfOn: "modo viva-voz ativado — comece a falar, faça uma pausa para enviar",
+    hfOff: "modo viva-voz desativado", hfOffNoHear: "modo viva-voz desativado — não consegui te ouvir",
+    hfOffSilence: "nada foi ouvido — modo viva-voz desativado",
+    micSecureOrigin: "o microfone precisa de uma origem segura — abra o app em http://localhost:8000",
+    micNotFound: "nenhum microfone encontrado — há algum conectado e ativado?",
+    micBlocked: "microfone bloqueado — clique no ícone 🔒/câmera na barra de endereço para permitir",
+    micError: "erro no microfone: {msg}", micStartFailed: "não foi possível iniciar a gravação: {msg}",
+    noAudioCaught: "nada foi captado — tente novamente",
+    onlySilence: "só veio silêncio — verifique se o microfone não está mudo (Windows: Configurações → Privacidade → Microfone)",
+    noWordsHeard: "não consegui entender nenhuma palavra — tente novamente",
+    transcriptionFailed: "falha na transcrição — tente novamente",
+    recordingDiscarded: "gravação descartada",
+    noFactsYet: "Nada ainda — ela começa a lembrar depois que vocês conversarem um pouco.",
+    memoryWiped: "memória apagada — ela está te conhecendo pela primeira vez outra vez",
+    chatSaved: "conversa salva",
+    resetConfirm: "toque novamente para começar uma nova conversa",
+    resetDone: "nova conversa — ela vai se lembrar de você",
+    bootConnError: "(não foi possível conectar ao servidor — ele está rodando?)",
+    pickedUpWhereLeftOff: "continuando de onde paramos",
+    photoAlt: "foto enviada",
+    exportYou: "Você: ", exportLissa: "Lissa: ",
+    langChanged: "idioma atualizado",
+  },
+};
+
+function detectLang() {
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (SUPPORTED_LANGS.includes(saved)) return saved;
+  } catch {}
+  const nav = ((navigator.language || "en").split("-")[0] || "en").toLowerCase();
+  return SUPPORTED_LANGS.includes(nav) ? nav : "en";
+}
+
+let currentLang = detectLang();
+
+function t(key, vars) {
+  let s = (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+  if (vars) for (const k in vars) s = s.replaceAll("{" + k + "}", vars[k]);
+  return s;
+}
+
+function applyI18n() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => { el.title = t(el.dataset.i18nTitle); });
+  document.querySelectorAll("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+}
+applyI18n();
+setStatus(t("statusOnline")); // the static markup's "online" is only ever English
+
+const langSelect = document.getElementById("langSelect");
+langSelect.value = currentLang;
+langSelect.onchange = () => {
+  if (!SUPPORTED_LANGS.includes(langSelect.value)) return;
+  currentLang = langSelect.value;
+  try { localStorage.setItem(LANG_KEY, currentLang); } catch {}
+  applyI18n();
+  if (overlay.classList.contains("show")) renderFacts(); // generated content
+  // the header status is also generated content — refresh it too, but only
+  // when idle, so a switch mid-reply/recording doesn't stomp on that state
+  if (!busy && !rec && !pipeline && Date.now() >= cooldownUntil) setStatus(t("statusOnline"));
+  toast(t("langChanged"));
+};
 
 /* ---------- long-term memory ----------
    Facts about the visitor live in THIS browser (localStorage) and are sent
@@ -911,7 +1210,7 @@ function addBubble(who, text, image) {
   if (image) {
     const im = document.createElement("img");
     im.src = image;
-    im.alt = "photo you sent";
+    im.alt = t("photoAlt");
     div.appendChild(im);
     if (text) {
       const cap = document.createElement("div");
@@ -959,12 +1258,12 @@ function addCopy(bubble, text) {
   if (!text || bubble.querySelector(".copyBtn")) return;
   const btn = document.createElement("button");
   btn.className = "copyBtn";
-  btn.title = "Copy message";
-  btn.setAttribute("aria-label", "Copy message");
+  btn.title = t("copyTitle");
+  btn.setAttribute("aria-label", t("copyTitle"));
   btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
   btn.onclick = () => copyText(text).then(
-    () => toast("copied"),
-    () => toast("couldn't copy — select the text instead")
+    () => toast(t("copied")),
+    () => toast(t("copyFailed"))
   );
   bubble.appendChild(btn);
 }
@@ -974,7 +1273,7 @@ function addCopy(bubble, text) {
 function addRetry(bubble, action) {
   const btn = document.createElement("button");
   btn.className = "retryBtn";
-  btn.textContent = "↻ try again";
+  btn.textContent = t("tryAgain");
   btn.onclick = () => { bubble.remove(); action(); };
   bubble.appendChild(btn);
 }
@@ -984,9 +1283,9 @@ function setBusy(b) {
   micBtn.disabled = b;
   // while a reply streams, the send button becomes a stop button
   sendBtn.classList.toggle("stop", b);
-  sendBtn.title = b ? "Stop the reply" : "Send";
+  sendBtn.title = b ? t("stopTitle") : t("sendTitle");
   sendBtn.setAttribute("aria-label", sendBtn.title);
-  setStatus(b ? "typing…" : "online", b);
+  setStatus(b ? t("statusTyping") : t("statusOnline"), b);
 }
 
 /* ---------- photo attachment ---------- */
@@ -1015,7 +1314,7 @@ async function shrinkImage(file) {
 }
 
 async function setAttachment(file) {
-  if (!file.type.startsWith("image/")) { toast("that's not an image"); return; }
+  if (!file.type.startsWith("image/")) { toast(t("notAnImage")); return; }
   pendingImage = await shrinkImage(file);
   attachImg.src = pendingImage;
   attachPreview.hidden = false;
@@ -1041,10 +1340,10 @@ function startCooldown(secs) {
     if (left <= 0) {
       clearInterval(iv);
       sendBtn.disabled = false;
-      if (!busy && !rec) setStatus("online");
+      if (!busy && !rec) setStatus(t("statusOnline"));
       return;
     }
-    if (!busy && !rec) setStatus("catching her breath… " + left + "s", true);
+    if (!busy && !rec) setStatus(t("cooldown", { secs: left }), true);
   }, 250);
 }
 
@@ -1074,7 +1373,7 @@ async function send(text, isRetry, retryImage) {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text, image }),
+      body: JSON.stringify({ message: text, image, lang: currentLang }),
       signal: ac.signal,
     });
     const limitedFor = parseInt(res.headers.get("x-ratelimited") || "0", 10);
@@ -1110,8 +1409,8 @@ async function send(text, isRetry, retryImage) {
   if (connErr) {
     stopSpeaking(); // no point speaking an error message
     bubble.textContent = full
-      ? full + "\n\n(connection lost mid-reply)"
-      : "(couldn't reach the server — is it still running?)";
+      ? full + t("connLostMidReply")
+      : t("connLostInitial");
     addRetry(bubble, () => send(text, true, image));
     scrollChat();
     announce(bubble.textContent);
@@ -1124,7 +1423,7 @@ async function send(text, isRetry, retryImage) {
     addCopy(bubble, full);
     setTimeout(maybeListen, 600); // voice off: reply is done once text lands
   }
-  announce("Lissa: " + full);
+  announce(t("exportLissa") + full);
   if (++exchanges % 4 === 0) memorize(); // fire-and-forget memory refresh
 }
 
@@ -1140,7 +1439,7 @@ let nudgeAudio = null; // greeting clip replayed after an autoplay block
 
 function speakingUI(on) {
   avatarWrap.classList.toggle("speaking", on);
-  if (!busy && !rec) setStatus(on ? "speaking…" : "online", on);
+  if (!busy && !rec) setStatus(on ? t("statusSpeaking") : t("statusOnline"), on);
 }
 
 function stopSpeaking() {
@@ -1279,7 +1578,7 @@ let autoplayNudged = false;
 function nudgeAutoplay(blob) {
   if (autoplayNudged) return;
   autoplayNudged = true;
-  toast("your browser muted her 🔇 — tap anywhere to hear her voice");
+  toast(t("autoplayBlocked"));
   document.addEventListener("pointerdown", () => {
     if (pipeline || busy || rec) return; // don't talk over anything live
     const url = URL.createObjectURL(blob);
@@ -1401,7 +1700,7 @@ voiceBtn.onclick = () => {
     stopSpeaking();
     if (handsFree) setHandsFree(false); // muting her ends the conversation loop
   }
-  toast(voiceOn ? "voice on" : "voice off");
+  toast(voiceOn ? t("voiceOn") : t("voiceOff"));
 };
 
 /* ---------- theme ----------
@@ -1428,7 +1727,7 @@ themeBtn.onclick = () => {
   else document.documentElement.removeAttribute("data-theme");
   try { localStorage.setItem(THEME_KEY, light ? "light" : "dark"); } catch {}
   syncThemeUI();
-  toast(light ? "light theme" : "dark theme");
+  toast(light ? t("themeLight") : t("themeDark"));
 };
 
 avatarWrap.onclick = stopSpeaking;
@@ -1454,7 +1753,7 @@ function resumeHandsFree() {
   if (!handsFree) return;
   if (++hfFails >= 3) {
     setHandsFree(false);
-    toast("hands-free off — I couldn't hear you");
+    toast(t("hfOffNoHear"));
     return;
   }
   setTimeout(maybeListen, 600);
@@ -1471,11 +1770,11 @@ function setHandsFree(on) {
       voiceBtn.classList.remove("off");
       voiceBtn.setAttribute("aria-pressed", "true");
     }
-    toast("hands-free on — just start talking, pause to send");
+    toast(t("hfOn"));
     setTimeout(maybeListen, 300);
   } else {
     if (rec && rec.auto) teardownRecording();
-    toast("hands-free off");
+    toast(t("hfOff"));
   }
 }
 
@@ -1512,7 +1811,7 @@ function autoVad(level) {
   } else if (!r.voiced && now - r.started > 10000) {
     teardownRecording();
     setHandsFree(false);
-    toast("didn't hear anything — hands-free off");
+    toast(t("hfOffSilence"));
   } else if (now - r.started > 30000) {
     r.stopping = true;
     stopRecording(); // hard cap on one turn
@@ -1521,7 +1820,7 @@ function autoVad(level) {
 
 async function startRecording(auto) {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    toast("mic needs a secure origin — open the app via http://localhost:8000");
+    toast(t("micSecureOrigin"));
     return;
   }
   let stream;
@@ -1529,11 +1828,11 @@ async function startRecording(auto) {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch (e) {
     if (e.name === "NotFoundError" || e.name === "DevicesNotFoundError") {
-      toast("no microphone found — is one plugged in and enabled?");
+      toast(t("micNotFound"));
     } else if (e.name === "NotAllowedError" || e.name === "PermissionDeniedError") {
-      toast("microphone blocked — click the 🔒/camera icon in the address bar to allow it");
+      toast(t("micBlocked"));
     } else {
-      toast("mic error: " + (e.message || e.name));
+      toast(t("micError", { msg: e.message || e.name }));
     }
     return;
   }
@@ -1587,10 +1886,10 @@ async function startRecording(auto) {
             auto: !!auto, started, voiced: false, lastVoice: 0, stopping: false };
     recTime.textContent = "0:00";
     setRecordingUI(true);
-    setStatus("listening…", true);
+    setStatus(t("statusListening"), true);
   } catch (e) {
     stream.getTracks().forEach((t) => t.stop());
-    toast("couldn't start recording: " + (e.message || e.name));
+    toast(t("micStartFailed", { msg: e.message || e.name }));
   }
 }
 
@@ -1603,7 +1902,7 @@ function teardownRecording() {
   r.ctx.close();
   bars.forEach((b) => (b.style.height = ""));
   setRecordingUI(false);
-  setStatus("online");
+  setStatus(t("statusOnline"));
   return r;
 }
 
@@ -1612,22 +1911,22 @@ async function stopRecording() {
 
   const total = chunks.reduce((n, c) => n + c.length, 0);
   if (total < rate / 2) {
-    toast("didn't catch anything — try again");
+    toast(t("noAudioCaught"));
     resumeHandsFree();
     return;
   }
   let peak = 0;
   for (const c of chunks) for (let i = 0; i < c.length; i++) peak = Math.max(peak, Math.abs(c[i]));
   if (peak < 0.005) {
-    toast("only silence came through — check the mic isn't muted (Windows Settings → Privacy → Microphone)");
+    toast(t("onlySilence"));
     resumeHandsFree();
     return;
   }
 
   micBtn.classList.add("busy");
-  setStatus("understanding…", true);
+  setStatus(t("statusUnderstanding"), true);
   try {
-    const res = await fetch("/api/transcribe", {
+    const res = await fetch("/api/transcribe?lang=" + encodeURIComponent(currentLang), {
       method: "POST",
       headers: { "Content-Type": "audio/wav" },
       body: encodeWav(chunks, total, rate),
@@ -1635,18 +1934,18 @@ async function stopRecording() {
     const { text, error } = await res.json();
     if (error) { toast(error); resumeHandsFree(); return; }
     if (!text) {
-      toast("couldn't make out any words — try again");
+      toast(t("noWordsHeard"));
       resumeHandsFree();
       return;
     }
     hfFails = 0;
     send(text);
   } catch (e) {
-    toast("transcription failed — try again");
+    toast(t("transcriptionFailed"));
     resumeHandsFree();
   } finally {
     micBtn.classList.remove("busy");
-    if (!busy) setStatus("online");
+    if (!busy) setStatus(t("statusOnline"));
   }
 }
 
@@ -1703,7 +2002,7 @@ document.getElementById("recCancel").onclick = () => {
   const wasAuto = rec.auto;
   teardownRecording();
   if (wasAuto) setHandsFree(false); // cancelling means "stop listening to me"
-  else toast("recording discarded");
+  else toast(t("recordingDiscarded"));
 };
 
 /* ---------- memory panel ---------- */
@@ -1714,10 +2013,13 @@ const forgetBtn = document.getElementById("forgetBtn");
 function closePanel() {
   overlay.classList.remove("show");
   forgetBtn.classList.remove("confirm");
-  forgetBtn.textContent = "Forget me";
+  forgetBtn.textContent = t("forgetBtn");
 }
 
-document.getElementById("memBtn").onclick = () => {
+/* rebuilt on open AND on a language switch while the panel is open — the
+   list is generated content, so applyI18n()'s attribute scan can't reach
+   the "nothing yet" placeholder the way it reaches the rest of the panel */
+function renderFacts() {
   const ul = document.getElementById("facts");
   ul.innerHTML = "";
   if (facts.length) {
@@ -1729,9 +2031,13 @@ document.getElementById("memBtn").onclick = () => {
   } else {
     const li = document.createElement("li");
     li.className = "empty";
-    li.textContent = "Nothing yet — she starts remembering after you've chatted a little.";
+    li.textContent = t("noFactsYet");
     ul.appendChild(li);
   }
+}
+
+document.getElementById("memBtn").onclick = () => {
+  renderFacts();
   overlay.classList.add("show");
 };
 
@@ -1745,7 +2051,7 @@ document.getElementById("exportBtn").onclick = () => {
     if (el.classList.contains("timestamp")) {
       lines.push("[" + el.textContent + "]");
     } else if (el.classList.contains("bubble")) {
-      const who = el.classList.contains("user") ? "You: " : "Lissa: ";
+      const who = el.classList.contains("user") ? t("exportYou") : t("exportLissa");
       const photo = el.querySelector("img") ? "📷 " : "";
       lines.push(who + photo + el.textContent.trim());
     }
@@ -1756,13 +2062,13 @@ document.getElementById("exportBtn").onclick = () => {
   a.download = "lissa-chat.txt";
   a.click();
   URL.revokeObjectURL(a.href);
-  toast("chat saved");
+  toast(t("chatSaved"));
 };
 
 forgetBtn.onclick = async () => {
   if (!forgetBtn.classList.contains("confirm")) {
     forgetBtn.classList.add("confirm");
-    forgetBtn.textContent = "Sure? Click again";
+    forgetBtn.textContent = t("confirmAgain");
     return;
   }
   facts = [];
@@ -1770,14 +2076,14 @@ forgetBtn.onclick = async () => {
   const { text } = await (await fetch("/api/reset", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ facts: [] }),
+    body: JSON.stringify({ facts: [], lang: currentLang }),
   })).json();
   closePanel();
   chat.innerHTML = "";
   lastStamp = 0;
   addBubble("lissa", text);
-  announce("Lissa: " + text);
-  toast("memory wiped — she's meeting you for the first time again");
+  announce(t("exportLissa") + text);
+  toast(t("memoryWiped"));
 };
 
 const resetBtn = document.getElementById("resetBtn");
@@ -1788,7 +2094,7 @@ resetBtn.onclick = async () => {
   // two-step confirm: an accidental tap shouldn't wipe the conversation
   if (!resetBtn.classList.contains("confirm")) {
     resetBtn.classList.add("confirm");
-    toast("tap again to start a new conversation");
+    toast(t("resetConfirm"));
     clearTimeout(resetArmTimer);
     resetArmTimer = setTimeout(() => resetBtn.classList.remove("confirm"), 3500);
     return;
@@ -1796,19 +2102,19 @@ resetBtn.onclick = async () => {
   clearTimeout(resetArmTimer);
   resetBtn.classList.remove("confirm");
   stopSpeaking();
-  setStatus("saving memories…", true);
+  setStatus(t("statusSaving"), true);
   await memorize(); // capture this conversation before it's cleared
   const { text } = await (await fetch("/api/reset", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ facts }),
+    body: JSON.stringify({ facts, lang: currentLang }),
   })).json();
-  setStatus("online");
+  setStatus(t("statusOnline"));
   chat.innerHTML = "";
   lastStamp = 0;
   addBubble("lissa", text);
-  announce("Lissa: " + text);
-  toast("new conversation — she'll remember you");
+  announce(t("exportLissa") + text);
+  toast(t("resetDone"));
 };
 
 /* ---------- wiring ---------- */
@@ -1856,7 +2162,7 @@ async function boot() {
     if (messages && messages.length) {
       for (const m of messages) addBubble(m.who, m.text);
       scrollChat(true);
-      toast("picked up where you left off");
+      toast(t("pickedUpWhereLeftOff"));
       msg.focus();
       return;
     }
@@ -1867,7 +2173,7 @@ async function boot() {
     const { text } = await (await fetch("/api/hello", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ facts }),
+      body: JSON.stringify({ facts, lang: currentLang }),
     })).json();
     if (voiceOn) {
       speak(text, bubble);
@@ -1875,9 +2181,9 @@ async function boot() {
       bubble.textContent = text;
       addCopy(bubble, text);
     }
-    announce("Lissa: " + text);
+    announce(t("exportLissa") + text);
   } catch (e) {
-    bubble.textContent = "(couldn't reach the server — is it running?)";
+    bubble.textContent = t("bootConnError");
     addRetry(bubble, boot);
     announce(bubble.textContent);
   }

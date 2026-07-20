@@ -43,14 +43,30 @@ DAILY_CALLS = int(os.environ.get("LISSA_DAILY_CALLS", "600"))
 _daily_lock = threading.Lock()
 _daily = {"day": "", "count": 0}
 
+# These are canned strings (not Gemini output), so unlike her actual replies
+# they don't automatically follow the visitor's language — localize by hand.
+RATE_LIMIT_MSG = {
+    "en": "(whoa, you're fast 😅 — give me about {wait}s to catch my breath)",
+    "sw": "(lo, wewe ni mwepesi 😅 — nipe sekunde {wait} nipumzike)",
+    "fr": "(waouh, tu es rapide 😅 — laisse-moi environ {wait}s pour reprendre mon souffle)",
+    "pt": "(uau, você é rápido 😅 — me dê uns {wait}s para recuperar o fôlego)",
+}
+DAILY_CAP_MSG = {
+    "en": "(I've been chatting all day and I need to rest my voice — come back tomorrow? 💋)",
+    "sw": "(Nimekuwa nikizungumza siku nzima na ninahitaji kupumzisha sauti yangu — unaweza kurudi kesho? 💋)",
+    "fr": "(J'ai discuté toute la journée et j'ai besoin de reposer ma voix — tu reviens demain ? 💋)",
+    "pt": "(Eu conversei o dia todo e preciso descansar minha voz — pode voltar amanhã? 💋)",
+}
+
 app = FastAPI(title="Lissa")
 
 
-def take_quota(sess: "UserSession", per_minute: bool = True) -> tuple[str, int] | None:
+def take_quota(sess: "UserSession", lang: str = "en", per_minute: bool = True) -> tuple[str, int] | None:
     """Spend one quota-burning Gemini call. Returns None when allowed,
     otherwise (in-character message, seconds to wait; 0 = no countdown).
     Background calls (memory distillation) pass per_minute=False so they
     only count against the daily cap, never starve the visitor's chatting."""
+    lang = lang if lang in lissa.SUPPORTED_LANGS else "en"
     if per_minute:
         now = time.time()
         sess.tokens = min(
@@ -59,14 +75,14 @@ def take_quota(sess: "UserSession", per_minute: bool = True) -> tuple[str, int] 
         sess.tokens_at = now
         if sess.tokens < 1.0:
             wait = int((1.0 - sess.tokens) * 60.0 / RATE_PER_MIN) + 1
-            return (f"(whoa, you're fast 😅 — give me about {wait}s to catch my breath)", wait)
+            msg = RATE_LIMIT_MSG.get(lang, RATE_LIMIT_MSG["en"]).format(wait=wait)
+            return (msg, wait)
     with _daily_lock:
         today = time.strftime("%Y-%m-%d")
         if _daily["day"] != today:
             _daily["day"], _daily["count"] = today, 0
         if _daily["count"] >= DAILY_CALLS:
-            return ("(I've been chatting all day and I need to rest my voice — "
-                    "come back tomorrow? 💋)", 0)
+            return (DAILY_CAP_MSG.get(lang, DAILY_CAP_MSG["en"]), 0)
         _daily["count"] += 1
     if per_minute:
         sess.tokens -= 1.0
@@ -131,6 +147,7 @@ MAX_IMAGE_BYTES = 4 * 1024 * 1024
 class ChatIn(BaseModel):
     message: str = ""
     image: str | None = None  # optional data URL (image/*)
+    lang: str = "en"  # UI language, for the rate-limit message only
 
 
 def decode_image(data_url: str) -> tuple[bytes, str] | None:
@@ -155,6 +172,7 @@ class TTSIn(BaseModel):
 
 class FactsIn(BaseModel):
     facts: list[str] = []
+    lang: str = "en"  # UI language, for the greeting only
 
 
 def clean_facts(raw: list[str]) -> list[str]:
@@ -191,7 +209,7 @@ def hello(body: FactsIn, sid: str | None = Cookie(None)) -> dict:
     with sess.lock:
         if not lissa.transcript_of(sess.session):
             sess.rebuild(facts)
-    return {"text": lissa.greeting(sess.facts)}
+    return {"text": lissa.greeting(sess.facts, body.lang)}
 
 
 @app.post("/api/memorize")
@@ -245,7 +263,7 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
     if not parts:
         return StreamingResponse(iter([]), media_type="text/plain; charset=utf-8")
 
-    limited = take_quota(sess)
+    limited = take_quota(sess, body.lang)
     if limited:
         text, wait = limited
         return StreamingResponse(
@@ -287,9 +305,9 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
 
 
 @app.post("/api/transcribe")
-async def transcribe(request: Request, sid: str | None = Cookie(None)) -> dict:
+async def transcribe(request: Request, lang: str = "en", sid: str | None = Cookie(None)) -> dict:
     _, sess = get_or_create_session(sid)
-    limited = take_quota(sess)
+    limited = take_quota(sess, lang)
     if limited:
         return {"text": None, "error": limited[0]}
     wav_bytes = await request.body()
@@ -346,6 +364,7 @@ def reset(body: FactsIn | None = None, sid: str | None = Cookie(None)) -> dict:
     visitor's browser sends (none = she meets them fresh)."""
     _, sess = get_or_create_session(sid)
     facts = clean_facts(body.facts) if body else []
+    lang = body.lang if body else "en"
     with sess.lock:
         sess.rebuild(facts)
-    return {"text": lissa.greeting(facts)}
+    return {"text": lissa.greeting(facts, lang)}

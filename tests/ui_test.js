@@ -458,6 +458,42 @@ const check = (cond, name) => {
   check(await isLight() === themeLightAfter,
     "theme: survives a reload with no flash (set before first paint)");
 
+  /* ---- UI localization ---- */
+  const enPlaceholder = await page.$eval("#msg", (el) => el.placeholder);
+  await page.click("#memBtn"); // the language select lives in the panel
+  await page.selectOption("#langSelect", "fr");
+  await page.click("#closeBtn");
+  await page.waitForTimeout(100);
+  check(
+    await page.$eval("#msg", (el) => el.placeholder) !== enPlaceholder,
+    "i18n: switching language changes chrome text (placeholder)"
+  );
+  check(
+    await page.evaluate(() => document.documentElement.lang) === "fr",
+    "i18n: <html lang> follows the selected language"
+  );
+  const langStored = await page.evaluate(() => localStorage.getItem("lissa_lang"));
+  check(langStored === "fr", "i18n: choice persisted to localStorage");
+
+  await page.fill("#msg", "dis bonjour en un mot");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() => !document.getElementById("send").classList.contains("stop"),
+    null, { timeout: 30000 });
+  check(true, "i18n: chat still works with a non-English UI language");
+
+  await page.reload();
+  await page.waitForFunction(() => {
+    const b = document.querySelector(".bubble.lissa");
+    return b && !b.querySelector(".typing-dots");
+  }, null, { timeout: 30000 });
+  check(
+    await page.$eval("#msg", (el) => el.placeholder) !== enPlaceholder,
+    "i18n: chosen language survives a reload"
+  );
+  await page.click("#memBtn");
+  await page.selectOption("#langSelect", "en"); // restore for cleanliness
+  await page.click("#closeBtn");
+
   await browser.close();
   console.log(failures === 0 ? "\nALL PASSED" : `\n${failures} FAILURE(S)`);
   process.exit(failures === 0 ? 0 : 1);

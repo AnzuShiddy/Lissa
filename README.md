@@ -59,6 +59,12 @@ The web chat also gives you:
 - **Light/dark theme** — the sun/moon toggle in the header switches
   instantly, remembers your choice, and matches your system preference on
   first visit. No flash of the wrong theme on reload.
+- **Localized interface** — English, Kiswahili, Français, or Português for
+  the app's own buttons, labels, and messages (a switcher lives in the 🧠
+  panel, defaulting to your browser's language). Her actual replies
+  already follow whatever language you type in — this only covers the
+  chrome around them, plus the scripted greeting and rate-limit messages,
+  which are canned text rather than Gemini output.
 
 **Terminal version**:
 

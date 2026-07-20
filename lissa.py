@@ -93,20 +93,46 @@ TRANSCRIBE_PROMPT = (
     "exactly: NO_SPEECH"
 )
 
-def get_time_of_day_phrase() -> str:
+SUPPORTED_LANGS = ("en", "sw", "fr", "pt")
+
+TIME_PHRASES = {
+	"en": {"morning": "this morning", "afternoon": "this afternoon",
+	       "evening": "this evening", "night": "tonight"},
+	"sw": {"morning": "asubuhi hii", "afternoon": "mchana huu",
+	       "evening": "jioni hii", "night": "usiku huu"},
+	"fr": {"morning": "ce matin", "afternoon": "cet après-midi",
+	       "evening": "ce soir", "night": "cette nuit"},
+	"pt": {"morning": "esta manhã", "afternoon": "esta tarde",
+	       "evening": "esta noite", "night": "esta noite"},
+}
+
+GREETING_TEMPLATES = {
+	"en": "Hey you 😊 I'm Lissa. I was hoping someone interesting would show up — what's on your mind {time_phrase}?",
+	"sw": "Hujambo 😊 Mimi ni Lissa. Nilikuwa natumaini mtu wa kuvutia atatokea — nini kinachoendelea akilini mwako {time_phrase}?",
+	"fr": "Hé toi 😊 Je suis Lissa. J'espérais que quelqu'un d'intéressant se montre — qu'est-ce qui te passe par la tête {time_phrase} ?",
+	"pt": "Ei, você 😊 Eu sou a Lissa. Eu estava esperando que alguém interessante aparecesse — o que está passando pela sua cabeça {time_phrase}?",
+}
+
+RETURNING_GREETINGS = {
+	"en": "Hey, look who's back 😊 I was just thinking about you. How have you been?",
+	"sw": "Angalia nani amerudi 😊 Nilikuwa nikikufikiria tu. Umekuwaje?",
+	"fr": "Hé, regarde qui revient 😊 Je pensais justement à toi. Comment vas-tu ?",
+	"pt": "Ei, olha quem voltou 😊 Eu estava pensando em você. Como você tem estado?",
+}
+
+
+def get_time_of_day_phrase(lang: str = "en") -> str:
 	"""Return an appropriate time-of-day phrase based on current hour."""
 	hour = datetime.now().hour
 	if 6 <= hour < 12:
-		return "this morning"
+		period = "morning"
 	elif 12 <= hour < 17:
-		return "this afternoon"
+		period = "afternoon"
 	elif 17 <= hour < 21:
-		return "this evening"
+		period = "evening"
 	else:  # 21 to 6
-		return "tonight"
-
-
-FIRST_GREETING = "Hey you 😊 I'm Lissa. I was hoping someone interesting would show up — what's on your mind {time_phrase}?"
+		period = "night"
+	return TIME_PHRASES.get(lang, TIME_PHRASES["en"])[period]
 
 
 class VoiceQuotaError(Exception):
@@ -400,10 +426,11 @@ def make_client() -> genai.Client:
     return genai.Client()
 
 
-def greeting(facts: list[str]) -> str:
+def greeting(facts: list[str], lang: str = "en") -> str:
+	lang = lang if lang in SUPPORTED_LANGS else "en"
 	if not facts:
-		return FIRST_GREETING.format(time_phrase=get_time_of_day_phrase())
-	return "Hey, look who's back 😊 I was just thinking about you. How have you been?"
+		return GREETING_TEMPLATES[lang].format(time_phrase=get_time_of_day_phrase(lang))
+	return RETURNING_GREETINGS[lang]
 
 
 def chat() -> None:
@@ -453,7 +480,7 @@ def chat() -> None:
             MEMORY_FILE.unlink(missing_ok=True)
             session = client.chats.create(model=MODEL, config=build_config(facts))
             print("\n(memory wiped — Lissa is meeting you for the first time again)\n")
-            print(f"Lissa: {FIRST_GREETING.format(time_phrase=get_time_of_day_phrase())}\n")
+            print(f"Lissa: {greeting([])}\n")
             continue
         if user_input.lower() == "/voice":
             if player is None:
