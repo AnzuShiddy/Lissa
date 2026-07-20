@@ -1,0 +1,58 @@
+name: tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  ui-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # The suite drives the real Gemini API; without the secret we skip
+      # gracefully instead of failing every fork/PR.
+      - name: Check for API key
+        run: |
+          if [ -z "${{ secrets.GEMINI_API_KEY }}" ]; then
+            echo "GEMINI_API_KEY secret not set — skipping the UI suite."
+            echo "SKIP=1" >> "$GITHUB_ENV"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: env.SKIP != '1'
+        with:
+          python-version: "3.12"
+
+      - name: Install server dependencies
+        if: env.SKIP != '1'
+        run: pip install -r requirements.txt
+
+      - uses: actions/setup-node@v4
+        if: env.SKIP != '1'
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        if: env.SKIP != '1'
+        run: |
+          npm init -y > /dev/null
+          npm install playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start Lissa
+        if: env.SKIP != '1'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          uvicorn app:app --port 8765 &
+          for i in $(seq 1 30); do
+            curl -s -o /dev/null http://localhost:8765/ && break
+            sleep 1
+          done
+
+      - name: Run the UI suite
+        if: env.SKIP != '1'
+        run: node tests/ui_test.js
