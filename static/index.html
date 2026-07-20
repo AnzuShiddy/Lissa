@@ -901,9 +901,13 @@ function menuItems() {
 
 function closeMenu(focusTrigger) {
   if (menuEl.hidden) return;
+  // Focus must never be left inside a hidden subtree: a key pressed there
+  // still routes through the menu's own handler, which would swallow the
+  // Escape meant for whatever the item just opened.
+  const heldFocus = menuEl.contains(document.activeElement);
   menuEl.hidden = true;
   menuBtn.setAttribute("aria-expanded", "false");
-  if (focusTrigger) menuBtn.focus();
+  if (focusTrigger || heldFocus) menuBtn.focus();
 }
 
 function openMenu(focusFirst) {
@@ -923,6 +927,7 @@ document.addEventListener("pointerdown", (e) => {
 });
 
 menuEl.addEventListener("keydown", (e) => {
+  if (menuEl.hidden) return; // belt and braces: never act for a closed menu
   const items = menuItems();
   const i = items.indexOf(document.activeElement);
   if (e.key === "ArrowDown" || e.key === "ArrowUp") {

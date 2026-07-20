@@ -478,6 +478,20 @@ const check = (cond, name) => {
   await page.click("#title"); // click outside
   check(await menuHidden(), "menu: clicking outside dismisses it");
 
+  // closing must not strand focus inside the hidden menu: a key pressed
+  // there still routes through the menu's handler and would swallow the
+  // Escape meant for whatever the item opened (caught by CI, not locally)
+  await menuClick("#memBtn"); // opens the panel and closes the menu
+  check(
+    await page.evaluate(() => !document.getElementById("menu").contains(document.activeElement)),
+    "menu: closing moves focus out of the hidden menu"
+  );
+  await page.keyboard.press("Escape");
+  check(
+    await page.$eval("#overlay", (el) => !el.classList.contains("show")),
+    "menu: Escape still reaches the panel opened from the menu"
+  );
+
   /* ---- time-of-day greeting follows the VISITOR's clock ----
      The server runs in UTC on Render, hours off from most visitors, so
      the phrase has to come from the browser's own hour. Two timezones a
