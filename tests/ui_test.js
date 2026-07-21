@@ -168,7 +168,10 @@ const check = (cond, name) => {
     "language: French message gets a French reply (got: " + frReply.slice(0, 70) + ")");
   const swReply = await sendAndGetReply(
     "Jibu kwa sentensi fupi moja tu kwa Kiswahili: unaendeleaje leo?");
-  check(/\b(na|ni|sana|wewe|leo|habari|nzuri|karibu)\b/i.test(swReply),
+  // no strict \b boundaries: Swahili is agglutinative, so subject/tense
+  // markers are prefixes glued onto the verb (e.g. "Ninaendelea" = ni-
+  // na-endelea, "I am continuing") rather than separate words like "ni"
+  check(/asante|karibu|habari|nzuri|vizuri|vyema|wewe|leo|ninaendelea|naendelea/i.test(swReply),
     "language: switches to Swahili mid-conversation (got: " + swReply.slice(0, 70) + ")");
 
   /* ---- fix 4: stop button mid-stream ---- */

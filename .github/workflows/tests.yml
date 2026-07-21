@@ -46,6 +46,12 @@ jobs:
         if: env.SKIP != '1'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # The suite fires ~20 real chat calls with none of the pacing a
+          # human conversation has, easily exceeding the 8/min default
+          # meant to protect the shared API key from real visitors — that
+          # throttle then replaces expected replies with an in-character
+          # "give me a sec" message, failing unrelated checks downstream.
+          LISSA_RATE_PER_MIN: "60"
         run: |
           uvicorn app:app --port 8765 &
           for i in $(seq 1 30); do
