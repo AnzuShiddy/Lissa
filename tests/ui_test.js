@@ -144,20 +144,31 @@ const check = (cond, name) => {
      is model-generated and non-deterministic, so match on common
      function words rather than anything exact. A mid-conversation
      switch (same session, no reset) covers "even if she was just
-     speaking another language". Placed early, on a fresh session — deep
-     in a long-lived test session that's sent dozens of prior messages,
-     an occasional genuinely empty reply has been observed from the API
-     itself (reproduced directly against the endpoint, not a client
-     race), so one retry guards against that transient case here too. */
+     speaking another language".
+
+     Runs in its OWN browser context (own cookies = own server session),
+     not the shared `page` the rest of the suite uses: these messages
+     would otherwise sit in the same conversation transcript that a later
+     test distills into memory facts, and "the user speaks multiple
+     languages" competing with "the user's name is Zanzibar" for the
+     model's attention measurably changed what got remembered — caught
+     because that later test started failing once this ran in the shared
+     session. An occasional genuinely empty reply has also been observed
+     from the API directly (reproduced against the bare endpoint, not a
+     client race), so one retry guards that transient case too. */
+  const langCtx = await browser.newContext();
+  const langPage = await langCtx.newPage();
+  await langPage.goto("http://localhost:8765/");
+  await langPage.waitForSelector(".bubble.lissa", { timeout: 30000 });
   const sendAndGetReply = async (text) => {
     for (let attempt = 0; attempt < 2; attempt++) {
-      await page.fill("#msg", text);
-      await page.keyboard.press("Enter");
-      await page.waitForFunction(
+      await langPage.fill("#msg", text);
+      await langPage.keyboard.press("Enter");
+      await langPage.waitForFunction(
         () => !document.getElementById("send").classList.contains("stop"),
         null, { timeout: 30000 }
       );
-      const reply = await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
+      const reply = await langPage.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
       if (reply.trim()) return reply;
     }
     return "";
@@ -173,6 +184,7 @@ const check = (cond, name) => {
   // na-endelea, "I am continuing") rather than separate words like "ni"
   check(/asante|karibu|habari|nzuri|vizuri|vyema|wewe|leo|ninaendelea|naendelea/i.test(swReply),
     "language: switches to Swahili mid-conversation (got: " + swReply.slice(0, 70) + ")");
+  await langCtx.close();
 
   /* ---- fix 4: stop button mid-stream ---- */
   await page.fill("#msg", "tell me a long detailed story about the sea, at least 300 words");
