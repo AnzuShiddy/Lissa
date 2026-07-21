@@ -1280,11 +1280,22 @@ function localHour() {
 
 const MEM_KEY = "lissa_facts";
 
+/* Facts are weighted records — { text, weight, core, ... } — that fade
+   unless a later conversation brings them up again. Memory saved by the
+   previous version is a plain string list; keep it and let the server
+   normalize it back on the next /api/memorize. */
 function loadFacts() {
   try {
     const f = JSON.parse(localStorage.getItem(MEM_KEY)) || [];
-    return Array.isArray(f) ? f.filter((x) => typeof x === "string") : [];
+    if (!Array.isArray(f)) return [];
+    return f.filter(
+      (x) => typeof x === "string" || (x && typeof x.text === "string")
+    );
   } catch { return []; }
+}
+
+function factText(f) {
+  return typeof f === "string" ? f : f.text;
 }
 
 function saveFacts(f) {
@@ -1302,7 +1313,10 @@ async function memorize() {
       body: JSON.stringify({ facts }),
     });
     const data = await r.json();
-    if (Array.isArray(data.facts) && data.facts.length) {
+    /* An empty array is a real answer now — facts fade out — so accept it.
+       The server echoes the facts it was given when it can't distill, so
+       this never wipes memory over a hiccup or a quota block. */
+    if (Array.isArray(data.facts)) {
       facts = data.facts;
       saveFacts(facts);
     }
@@ -2217,7 +2231,7 @@ function renderFacts() {
   if (facts.length) {
     for (const f of facts) {
       const li = document.createElement("li");
-      li.textContent = f;
+      li.textContent = factText(f);
       ul.appendChild(li);
     }
   } else {

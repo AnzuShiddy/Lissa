@@ -150,14 +150,27 @@ sudo apt install -y pulseaudio-utils
 
 ## Tests
 
+`tests/test_memory_store.py` covers the long-term memory model — decay,
+reinforcement, contradiction handling and the old-format migration. Pure
+logic: no API key, no network, no dependencies beyond the standard library,
+so it runs on every push and every PR.
+
+```bash
+python -m unittest discover -s tests -t . -v
+```
+
 `tests/ui_test.js` drives the web app end-to-end in headless Chromium
-(Playwright) — 39 checks covering streaming, stop/retry, scrolling, voice
-recording through a fake mic, clipboard, and accessibility. With the
-server running on port 8765:
+(Playwright) — 96 checks covering streaming, stop/retry, scrolling, voice
+recording through a fake mic, photos, long-term memory, the PWA, i18n,
+clipboard, and accessibility. It talks to the real Gemini API, so it needs
+a key and spends quota. With the server running on port 8765:
 
 ```bash
 NODE_PATH=$(npm root -g) node tests/ui_test.js
 ```
+
+The voice path occasionally fails on a `503` from the TTS backend rather
+than a real regression; re-run before chasing a red result there.
 
 ## Free-tier limits
 

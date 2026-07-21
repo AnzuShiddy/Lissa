@@ -26,6 +26,7 @@ from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
 import lissa
+import memory_store
 
 STATIC_DIR = Path(__file__).parent / "static"
 
@@ -99,7 +100,7 @@ class UserSession:
         self.last_used = time.time()
         self.tokens = RATE_PER_MIN  # rate-limit token bucket
         self.tokens_at = time.time()
-        self.facts: list[str] = []
+        self.facts: list[dict] = []
         self.session = self.client.chats.create(
             model=lissa.MODEL, config=lissa.build_config([])  # personalized later via /api/hello
         )
@@ -108,7 +109,7 @@ class UserSession:
         """Update last-used timestamp for cleanup."""
         self.last_used = time.time()
 
-    def rebuild(self, facts: list[str]) -> None:
+    def rebuild(self, facts: list[dict]) -> None:
         """Start a fresh chat session personalized with the given facts.
         Call with the session lock held."""
         self.facts = facts
@@ -171,7 +172,9 @@ class TTSIn(BaseModel):
 
 
 class FactsIn(BaseModel):
-    facts: list[str] = []
+    # Weighted records ({text, weight, core, ...}); bare strings are still
+    # accepted so browsers holding memory from the old version keep it.
+    facts: list[dict | str] = []
     lang: str = "en"  # UI language, for the greeting only
     hour: int | None = None  # visitor's local hour, for the greeting only
 
@@ -182,10 +185,12 @@ def clean_hour(hour: int | None) -> int | None:
     return hour if isinstance(hour, int) and 0 <= hour <= 23 else None
 
 
-def clean_facts(raw: list[str]) -> list[str]:
+def clean_facts(raw: list) -> list[dict]:
     """Sanitize client-supplied memory facts (they live in the visitor's
-    browser and personalize only their own session)."""
-    return [f.strip()[:200] for f in raw if isinstance(f, str) and f.strip()][: lissa.MAX_FACTS]
+    browser and personalize only their own session), and coerce them into
+    weighted records. normalize() drops anything malformed rather than
+    raising — this is unvalidated data straight out of localStorage."""
+    return memory_store.normalize(raw, lissa.MAX_FACTS)
 
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")

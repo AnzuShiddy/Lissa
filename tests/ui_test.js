@@ -492,9 +492,14 @@ const check = (cond, name) => {
     () => document.querySelectorAll(".bubble").length === 1, null, { timeout: 60000 });
   const stored = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("lissa_facts") || "[]"));
+  // Facts are weighted records now — { text, weight, core, ... } — so read
+  // .text instead of treating each entry as a bare string.
+  const factTexts = stored.map((f) => (typeof f === "string" ? f : f.text));
   check(stored.length > 0, "memory: facts distilled into localStorage on reset");
-  check(stored.join(" ").toLowerCase().includes("zanzibar"),
-    "memory: facts captured the name (got: " + stored.join(" | ").slice(0, 80) + ")");
+  check(factTexts.join(" ").toLowerCase().includes("zanzibar"),
+    "memory: facts captured the name (got: " + factTexts.join(" | ").slice(0, 80) + ")");
+  check(stored.every((f) => typeof f.text === "string" && typeof f.weight === "number"),
+    "memory: facts stored as weighted records");
 
   await page.reload();
   await page.waitForFunction(() => {

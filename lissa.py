@@ -26,6 +26,8 @@ from pathlib import Path
 from google import genai
 from google.genai import errors, types
 
+import memory_store
+
 MODEL = "gemini-flash-lite-latest"  # lite: much higher free-tier daily quota than gemini-3.5-flash's 20/day
 TTS_MODEL = "gemini-3.1-flash-tts-preview"
 TTS_VOICE = "Leda"  # warm, youthful prebuilt voice
@@ -77,18 +79,49 @@ MEMORY_UPDATE_PROMPT = """\
 You maintain the long-term memory of Lissa, a companion chatbot, about the
 person she talks to.
 
-Current remembered facts (may be empty):
+Facts she already remembers (may be empty):
 {facts}
 
 Latest conversation transcript:
 {transcript}
 
-Return the updated list of short facts about the PERSON worth remembering for
-future conversations: their name, preferences, life details, ongoing topics,
-moods and how they like to talk. Merge with the current facts, correct
-anything outdated, and drop trivial or one-off details. At most {max_facts}
-facts, each a single short sentence.
+Report only what THIS conversation tells you about the PERSON. Do not repeat
+a remembered fact unless this conversation supports it again — unmentioned
+facts fade on their own, and re-listing them keeps stale ones alive forever.
+
+Return JSON with two keys:
+
+- "facts": everything this conversation supports about them — their name,
+  preferences, life details, ongoing topics, moods, how they like to talk.
+  Include a remembered fact here only if this conversation confirms or
+  updates it. Each is one short sentence. Set "core": true only for stable
+  identity facts (name, where they live, work, family) and false for
+  everything else — tastes, moods, what they're up to this week.
+- "outdated": the exact text of any remembered fact this conversation shows
+  is now wrong. Contradictions only — leave things out here just because
+  they went unmentioned.
+
+At most {max_facts} entries in "facts".
 """
+
+MEMORY_SCHEMA = {
+    "type": "OBJECT",
+    "properties": {
+        "facts": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "text": {"type": "STRING"},
+                    "core": {"type": "BOOLEAN"},
+                },
+                "required": ["text", "core"],
+            },
+        },
+        "outdated": {"type": "ARRAY", "items": {"type": "STRING"}},
+    },
+    "required": ["facts", "outdated"],
+}
 
 TRANSCRIBE_PROMPT = (
     "Transcribe this voice recording word for word, in whatever "
@@ -149,24 +182,31 @@ class VoiceQuotaError(Exception):
     """Raised when the TTS free-tier quota is exhausted."""
 
 
-def load_memory() -> list[str]:
+def load_memory() -> list[dict]:
+    """Load remembered facts as weighted records. Files written by the old
+    string-list version still load — normalize() seeds them with a weight."""
     try:
-        facts = json.loads(MEMORY_FILE.read_text())
-        return [f for f in facts if isinstance(f, str)][:MAX_FACTS]
+        return memory_store.normalize(json.loads(MEMORY_FILE.read_text()), MAX_FACTS)
     except (FileNotFoundError, json.JSONDecodeError):
         return []
 
 
-def save_memory(facts: list[str]) -> None:
-    MEMORY_FILE.write_text(json.dumps(facts, indent=2, ensure_ascii=False))
+def save_memory(facts: list[dict]) -> None:
+    """Write memory atomically: a crash mid-write would otherwise leave a
+    truncated file, and load_memory() would greet a regular as a stranger."""
+    tmp = MEMORY_FILE.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(facts, indent=2, ensure_ascii=False))
+    os.replace(tmp, MEMORY_FILE)
 
 
-def build_config(facts: list[str]) -> types.GenerateContentConfig:
+def build_config(facts: list[dict]) -> types.GenerateContentConfig:
     system = SYSTEM_PROMPT
     if facts:
+        # Strongest first, so if the model skims, it skims the things that
+        # matter most about this person.
         system += (
             "\nWhat you remember about this person from previous chats:\n"
-            + "\n".join(f"- {f}" for f in facts)
+            + "\n".join(f"- {f}" for f in memory_store.texts(facts))
             + "\nGreet them like someone you know and genuinely missed — "
             "weave these memories in naturally, don't recite them as a list.\n"
         )
@@ -189,10 +229,18 @@ def transcript_of(session) -> str:
     return "\n".join(lines)
 
 
-def distill_facts(client: genai.Client, session, facts: list[str]) -> list[str]:
+def distill_facts(client: genai.Client, session, facts: list[dict]) -> list[dict]:
     """Distill the conversation into an updated fact list, with no side
     effects. Returns the old list unchanged on failure or when the session
-    holds nothing new. Best-effort by design."""
+    holds nothing new. Best-effort by design.
+
+    The model only reports what this conversation supports; the weighting,
+    fading and forgetting all happen locally in memory_store.merge(). Note
+    that the transcript is the whole session, so a fact mentioned once early
+    keeps being reinforced for the rest of that conversation — decay bites
+    between conversations, which is where staleness actually accumulates.
+    """
+    facts = memory_store.normalize(facts, MAX_FACTS)
     transcript = transcript_of(session)
     if transcript.count("User:") == 0:
         return facts
@@ -200,29 +248,32 @@ def distill_facts(client: genai.Client, session, facts: list[str]) -> list[str]:
         response = client.models.generate_content(
             model=MODEL,
             contents=MEMORY_UPDATE_PROMPT.format(
-                facts=json.dumps(facts, ensure_ascii=False),
+                facts=json.dumps(memory_store.texts(facts), ensure_ascii=False),
                 transcript=transcript,
                 max_facts=MAX_FACTS,
             ),
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                response_schema=list[str],
+                response_schema=MEMORY_SCHEMA,
                 thinking_config=types.ThinkingConfig(thinking_budget=0),
             ),
         )
-        new_facts = [f for f in json.loads(response.text) if isinstance(f, str)]
-        if new_facts:
-            return new_facts[:MAX_FACTS]
+        observed = json.loads(response.text)
+        return memory_store.merge(
+            facts,
+            observed.get("facts", []),
+            observed.get("outdated", []),
+            MAX_FACTS,
+        )
     except Exception:
         pass  # memory is a nice-to-have; never let it break the goodbye
     return facts
 
 
-def update_memory(client: genai.Client, session, facts: list[str]) -> list[str]:
+def update_memory(client: genai.Client, session, facts: list[dict]) -> list[dict]:
     """Distill and persist to the terminal app's memory file."""
     new_facts = distill_facts(client, session, facts)
-    if new_facts is not facts:
-        save_memory(new_facts)
+    save_memory(new_facts)
     return new_facts
 
 
@@ -436,7 +487,7 @@ def make_client() -> genai.Client:
     return genai.Client()
 
 
-def greeting(facts: list[str], lang: str = "en", hour: int | None = None) -> str:
+def greeting(facts: list[dict], lang: str = "en", hour: int | None = None) -> str:
 	lang = lang if lang in SUPPORTED_LANGS else "en"
 	if not facts:
 		return GREETING_TEMPLATES[lang].format(
@@ -482,7 +533,10 @@ def chat() -> None:
             if facts:
                 print("\nWhat Lissa remembers about you:")
                 for f in facts:
-                    print(f"  - {f}")
+                    # Show how firmly each one is held: core facts are
+                    # permanent, the rest fade unless you bring them up.
+                    strength = "core" if f["core"] else f"{f['weight']:.1f}"
+                    print(f"  - {f['text']}  ({strength})")
                 print()
             else:
                 print("\n(no memories yet — they're saved when a chat ends)\n")
