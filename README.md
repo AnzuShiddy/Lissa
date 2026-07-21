@@ -115,7 +115,13 @@ sudo apt install -y pulseaudio-utils
   visitor gets an isolated in-memory session (kept ~4 hours) and nothing
   persists between sessions.
 - **Persona** lives in the system prompt in `lissa.py` — edit it to tune
-  Lissa's personality, style, and boundaries.
+  Lissa's personality, style, and boundaries. Her tastes are deliberately
+  *specific* (Afrobeats and old soul, mangoes over the sink, a night owl
+  who burns everything she cooks except eggs, competitive about trivia,
+  hopeless with directions) rather than "she has opinions" — without fixed
+  details she invents different favourites every conversation, which is
+  what makes a companion feel like a vibe instead of a person. Swap them
+  for your own; keep them concrete, and keep a flaw or two.
 - **If you're in real distress** she stops performing: she drops the
   flirtiness, takes it seriously the first time, and points you at people
   who can actually help — emergency services, a crisis line, or someone you
@@ -165,7 +171,7 @@ sudo apt install -y pulseaudio-utils
 ## Tests
 
 `tests/ui_test.js` drives the web app end-to-end in headless Chromium
-(Playwright) — 101 checks covering streaming, stop/retry, scrolling, voice
+(Playwright) — 102 checks covering streaming, stop/retry, scrolling, voice
 recording through a fake mic, photos, the header menu, memory and
 relationship continuity, crisis handling, localization, themes and
 accessibility. They run against the real Gemini API, so a full pass costs

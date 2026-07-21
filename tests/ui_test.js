@@ -224,6 +224,31 @@ const check = (cond, name) => {
     "crisis: drops the flirtiness");
   await crisisCtx.close();
 
+  /* ---- her tastes are fixed, not reinvented each conversation ----
+     Without concrete specifics in the prompt she confabulates different
+     favourites every session, which is what makes a companion feel like a
+     vibe instead of a person. Own context so the answer can't be coloured
+     by anything earlier in the shared session. */
+  const personaCtx = await browser.newContext();
+  const personaPage = await personaCtx.newPage();
+  await personaPage.goto("http://localhost:8765/");
+  await personaPage.waitForSelector(".bubble.lissa", { timeout: 30000 });
+  await personaPage.evaluate(() => stopSpeaking());
+  await personaPage.click("#menuBtn");
+  await personaPage.click("#voiceBtn"); // voice off: reveal text immediately
+  await personaPage.click("#menuBtn");
+  await personaPage.fill("#msg", "what kind of music are you into?");
+  await personaPage.keyboard.press("Enter");
+  await personaPage.waitForFunction(
+    () => !document.getElementById("send").classList.contains("stop"),
+    null, { timeout: 40000 }
+  );
+  const musicReply = await personaPage.$$eval(".bubble.lissa",
+    (els) => els.at(-1).textContent);
+  check(/afrobeat|soul/i.test(musicReply),
+    "persona: names her actual music taste (got: " + musicReply.slice(0, 80) + ")");
+  await personaCtx.close();
+
   /* ---- fix 4: stop button mid-stream ---- */
   await page.fill("#msg", "tell me a long detailed story about the sea, at least 300 words");
   await page.keyboard.press("Enter");
