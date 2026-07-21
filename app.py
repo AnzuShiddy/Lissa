@@ -179,6 +179,8 @@ class FactsIn(BaseModel):
     met: str = ""
     last: str = ""
     chats: int = 0
+    mood: str = ""       # her mood, drawn once a day and kept
+    mood_day: str = ""
     lang: str = "en"  # UI language, for the greeting only
     hour: int | None = None  # visitor's local hour, for the greeting only
 
@@ -186,6 +188,7 @@ class FactsIn(BaseModel):
         return lissa.clean_memory({
             "facts": self.facts, "threads": self.threads,
             "met": self.met, "last": self.last, "chats": self.chats,
+            "mood": self.mood, "mood_day": self.mood_day,
         })
 
 

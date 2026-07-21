@@ -134,6 +134,12 @@ sudo apt install -y pulseaudio-utils
   preferences, ongoing topics — saved to `lissa_memory.json`. On the next
   start those facts are woven into her persona, so she greets you like
   someone she knows. Delete the file (or use `/forget`) to start over.
+- **She has her own day**: a mood is drawn once per calendar day and kept,
+  so she's recognisably herself through a conversation rather than lurching
+  about — restless, mellow, wistful, mischievous. It colours her tone and
+  what she brings up unprompted, but it's *her* mood, not yours: she's
+  never cold or short with you because of it, and it stops mattering
+  entirely the moment you need her. The mood list lives in `lissa.py`.
 - **Relationship continuity**: memory holds more than facts. She tracks
   **open threads** — things you left unresolved — and asks about one of
   them in her first reply next time ("wait, first — did you ever hear back
@@ -171,7 +177,7 @@ sudo apt install -y pulseaudio-utils
 ## Tests
 
 `tests/ui_test.js` drives the web app end-to-end in headless Chromium
-(Playwright) — 102 checks covering streaming, stop/retry, scrolling, voice
+(Playwright) — 104 checks covering streaming, stop/retry, scrolling, voice
 recording through a fake mic, photos, the header menu, memory and
 relationship continuity, crisis handling, localization, themes and
 accessibility. They run against the real Gemini API, so a full pass costs

@@ -13,6 +13,7 @@ the current conversation, /quit (or Ctrl-D) exits.
 import io
 import json
 import os
+import random
 import re
 import shutil
 import signal
@@ -33,6 +34,20 @@ MEMORY_FILE = Path(__file__).parent / "lissa_memory.json"
 MAX_FACTS = 30
 MAX_THREADS = 8  # open loops she's waiting to hear about
 AWHILE_DAYS = 10  # gap after which she greets you like it's been a while
+
+# She's had her own day before you showed up. One mood is drawn per calendar
+# day and kept, so she's recognisably herself across a conversation instead of
+# lurching about message to message. Deliberately mild and never sour toward
+# the visitor — see the guardrail in build_config.
+MOODS = (
+    "wide awake and restless, with more energy than you know what to do with",
+    "sleepy and mellow, the wrapped-in-a-blanket kind of comfortable",
+    "a little wistful today, in the warm way that makes you nostalgic",
+    "in a mischievous mood and looking for someone to wind up",
+    "unusually thoughtful and in the mood for a proper conversation",
+    "distracted by a song you can't stop replaying",
+    "quietly pleased with yourself for no particular reason",
+)
 
 AUDIO_PLAYERS = ("paplay", "aplay", "ffplay", "mpv", "play")
 RECORD_RATE = 16000  # 16 kHz mono s16le — plenty for speech, small uploads
@@ -219,7 +234,8 @@ def _days_since(stamp: str) -> int | None:
 
 
 def blank_memory() -> dict:
-    return {"facts": [], "threads": [], "met": "", "last": "", "chats": 0}
+    return {"facts": [], "threads": [], "met": "", "last": "", "chats": 0,
+            "mood": "", "mood_day": ""}
 
 
 def clean_memory(raw) -> dict:
@@ -241,12 +257,26 @@ def clean_memory(raw) -> dict:
         mem[key] = val if isinstance(val, str) and _days_since(val) is not None else ""
     chats = raw.get("chats")
     mem["chats"] = chats if isinstance(chats, int) and 0 <= chats < 100000 else 0
+    # only ever one of the moods we wrote — never free text from a client
+    mood = raw.get("mood")
+    mem["mood"] = mood if mood in MOODS else ""
+    day = raw.get("mood_day")
+    mem["mood_day"] = day if isinstance(day, str) and _days_since(day) is not None else ""
+    return mem
+
+
+def roll_mood(mem: dict) -> dict:
+    """Draw a fresh mood if the stored one isn't from today."""
+    mem = clean_memory(mem)
+    if not mem["mood"] or mem["mood_day"] != today():
+        mem["mood"] = random.choice(MOODS)
+        mem["mood_day"] = today()
     return mem
 
 
 def touch_memory(mem: dict) -> dict:
     """Record that a conversation happened today."""
-    mem = clean_memory(mem)
+    mem = roll_mood(mem)
     mem["chats"] += 1
     mem["met"] = mem["met"] or today()
     mem["last"] = today()
@@ -290,6 +320,15 @@ def build_config(mem: dict) -> types.GenerateContentConfig:
     mem = clean_memory(mem)
     system = SYSTEM_PROMPT
     facts, threads = mem["facts"], mem["threads"]
+    if mem["mood"]:
+        system += (
+            f"\nYou had your own day before they turned up: right now you're "
+            f"{mem['mood']}. Let it colour your tone and what you bring up "
+            "unprompted. But it's YOUR mood, not theirs — never be cold, "
+            "short or distant with them because of it, don't announce it "
+            "like a status update, and the moment they need you it stops "
+            "mattering entirely.\n"
+        )
     if facts:
         system += (
             "\nWhat you remember about this person from previous chats:\n"

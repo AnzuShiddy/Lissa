@@ -1295,7 +1295,7 @@ function localHour() {
 const MEM_KEY = "lissa_facts";
 
 function blankMemory() {
-  return { facts: [], threads: [], met: "", last: "", chats: 0 };
+  return { facts: [], threads: [], met: "", last: "", chats: 0, mood: "", mood_day: "" };
 }
 
 function loadMemory() {
@@ -1310,6 +1310,9 @@ function loadMemory() {
       met: typeof src.met === "string" ? src.met : "",
       last: typeof src.last === "string" ? src.last : "",
       chats: Number.isInteger(src.chats) ? src.chats : 0,
+      // her mood rides along so it survives a reload; the server owns it
+      mood: typeof src.mood === "string" ? src.mood : "",
+      mood_day: typeof src.mood_day === "string" ? src.mood_day : "",
     };
   } catch { return blankMemory(); }
 }

@@ -571,6 +571,13 @@ const check = (cond, name) => {
   check(bumped.chats > stored.chats,
     `memory: each visit increments the conversation count (${stored.chats} -> ${bumped.chats})`);
 
+  // she's had her own day: one mood is drawn per calendar day and kept, so
+  // she doesn't lurch between moods message to message or across a reload
+  check(!!bumped.mood && bumped.mood_day === new Date().toISOString().slice(0, 10),
+    "mood: a mood is drawn and dated for today");
+  check(bumped.mood === stored.mood,
+    "mood: the same mood survives a reload within the day");
+
   // open threads show in the panel, phrased as things she's waiting to hear
   await page.evaluate(() => {
     const m = JSON.parse(localStorage.getItem("lissa_facts") || "{}");
