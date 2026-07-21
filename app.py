@@ -99,21 +99,22 @@ class UserSession:
         self.last_used = time.time()
         self.tokens = RATE_PER_MIN  # rate-limit token bucket
         self.tokens_at = time.time()
-        self.facts: list[str] = []
+        self.mem: dict = lissa.blank_memory()
         self.session = self.client.chats.create(
-            model=lissa.MODEL, config=lissa.build_config([])  # personalized later via /api/hello
+            model=lissa.MODEL,
+            config=lissa.build_config(lissa.blank_memory()),  # personalized later via /api/hello
         )
 
     def touch(self) -> None:
         """Update last-used timestamp for cleanup."""
         self.last_used = time.time()
 
-    def rebuild(self, facts: list[str]) -> None:
-        """Start a fresh chat session personalized with the given facts.
+    def rebuild(self, mem: dict) -> None:
+        """Start a fresh chat session personalized with the given memory.
         Call with the session lock held."""
-        self.facts = facts
+        self.mem = mem
         self.session = self.client.chats.create(
-            model=lissa.MODEL, config=lissa.build_config(facts)
+            model=lissa.MODEL, config=lissa.build_config(mem)
         )
 
 
@@ -171,9 +172,21 @@ class TTSIn(BaseModel):
 
 
 class FactsIn(BaseModel):
+    # The visitor's whole memory record, kept in their own browser. `facts`
+    # stays a top-level field for older clients that predate the rest.
     facts: list[str] = []
+    threads: list[str] = []
+    met: str = ""
+    last: str = ""
+    chats: int = 0
     lang: str = "en"  # UI language, for the greeting only
     hour: int | None = None  # visitor's local hour, for the greeting only
+
+    def memory(self) -> dict:
+        return lissa.clean_memory({
+            "facts": self.facts, "threads": self.threads,
+            "met": self.met, "last": self.last, "chats": self.chats,
+        })
 
 
 def clean_hour(hour: int | None) -> int | None:
@@ -182,10 +195,8 @@ def clean_hour(hour: int | None) -> int | None:
     return hour if isinstance(hour, int) and 0 <= hour <= 23 else None
 
 
-def clean_facts(raw: list[str]) -> list[str]:
-    """Sanitize client-supplied memory facts (they live in the visitor's
-    browser and personalize only their own session)."""
-    return [f.strip()[:200] for f in raw if isinstance(f, str) and f.strip()][: lissa.MAX_FACTS]
+# Client-supplied memory is sanitized by lissa.clean_memory: it lives in the
+# visitor's browser and personalizes only their own session.
 
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -217,11 +228,14 @@ def hello(body: FactsIn, sid: str | None = Cookie(None)) -> dict:
     (stored in their browser) and return the matching greeting. An ongoing
     conversation is never rebuilt — the page restores it via /api/history."""
     _, sess = get_or_create_session(sid)
-    facts = clean_facts(body.facts)
+    mem = lissa.touch_memory(body.memory())  # this visit counts as one
     with sess.lock:
         if not lissa.transcript_of(sess.session):
-            sess.rebuild(facts)
-    return {"text": lissa.greeting(sess.facts, body.lang, clean_hour(body.hour))}
+            sess.rebuild(mem)
+    return {
+        "text": lissa.greeting(sess.mem, body.lang, clean_hour(body.hour)),
+        "memory": sess.mem,  # the bumped chats/met/last go back to the browser
+    }
 
 
 @app.post("/api/memorize")
@@ -229,12 +243,12 @@ def memorize(body: FactsIn, sid: str | None = Cookie(None)) -> dict:
     """Distill the conversation so far into updated facts for the visitor's
     browser to keep. Counts against the daily quota cap only."""
     _, sess = get_or_create_session(sid)
-    facts = clean_facts(body.facts)
+    mem = body.memory()
     if take_quota(sess, per_minute=False):
-        return {"facts": facts}
+        return {"memory": mem}
     with sess.lock:
-        facts = lissa.distill_facts(sess.client, sess.session, facts)
-    return {"facts": facts}
+        mem = lissa.distill_facts(sess.client, sess.session, mem)
+    return {"memory": mem}
 
 
 @app.get("/api/history")
@@ -375,9 +389,9 @@ def reset(body: FactsIn | None = None, sid: str | None = Cookie(None)) -> dict:
     """Start a new conversation, personalized with whatever facts the
     visitor's browser sends (none = she meets them fresh)."""
     _, sess = get_or_create_session(sid)
-    facts = clean_facts(body.facts) if body else []
+    mem = body.memory() if body else lissa.blank_memory()
     lang = body.lang if body else "en"
     hour = clean_hour(body.hour) if body else None
     with sess.lock:
-        sess.rebuild(facts)
-    return {"text": lissa.greeting(facts, lang, hour)}
+        sess.rebuild(mem)
+    return {"text": lissa.greeting(mem, lang, hour), "memory": mem}

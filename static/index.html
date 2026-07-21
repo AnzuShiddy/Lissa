@@ -676,6 +676,13 @@
     animation: pop 0.25s ease both;
   }
   #facts li.empty { color: var(--muted); background: none; border: 1px dashed var(--border); text-align: center; }
+  /* open threads read as her intentions, not as stored facts about you */
+  #facts li.thread {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    font-style: italic;
+  }
   #panel .row { display: flex; gap: 10px; justify-content: flex-end; }
   .menuItem.langRow { cursor: default; }
   .menuItem.langRow:hover { background: none; }
@@ -1038,6 +1045,7 @@ const I18N = {
     transcriptionFailed: "transcription failed — try again",
     recordingDiscarded: "recording discarded",
     noFactsYet: "Nothing yet — she starts remembering after you've chatted a little.",
+    waitingToHear: "Waiting to hear:",
     memoryWiped: "memory wiped — she's meeting you for the first time again",
     chatSaved: "chat saved",
     resetConfirm: "tap again to start a new conversation",
@@ -1097,6 +1105,7 @@ const I18N = {
     transcriptionFailed: "imeshindwa kuandika maneno — jaribu tena",
     recordingDiscarded: "rekodi imetupwa",
     noFactsYet: "Bado hakuna — ataanza kukumbuka baada ya kuzungumza kidogo.",
+    waitingToHear: "Anasubiri kusikia:",
     memoryWiped: "kumbukumbu imefutwa — anakukutana nawe kwa mara ya kwanza tena",
     chatSaved: "mazungumzo yamehifadhiwa",
     resetConfirm: "gusa tena kuanza mazungumzo mapya",
@@ -1156,6 +1165,7 @@ const I18N = {
     transcriptionFailed: "échec de la transcription — réessaie",
     recordingDiscarded: "enregistrement abandonné",
     noFactsYet: "Rien pour l'instant — elle commence à se souvenir après un peu de conversation.",
+    waitingToHear: "En attente de savoir :",
     memoryWiped: "mémoire effacée — elle te rencontre à nouveau pour la première fois",
     chatSaved: "conversation enregistrée",
     resetConfirm: "touche à nouveau pour démarrer une nouvelle conversation",
@@ -1215,6 +1225,7 @@ const I18N = {
     transcriptionFailed: "falha na transcrição — tente novamente",
     recordingDiscarded: "gravação descartada",
     noFactsYet: "Nada ainda — ela começa a lembrar depois que vocês conversarem um pouco.",
+    waitingToHear: "Esperando saber:",
     memoryWiped: "memória apagada — ela está te conhecendo pela primeira vez outra vez",
     chatSaved: "conversa salva",
     resetConfirm: "toque novamente para começar uma nova conversa",
@@ -1275,23 +1286,39 @@ function localHour() {
 }
 
 /* ---------- long-term memory ----------
-   Facts about the visitor live in THIS browser (localStorage) and are sent
-   up only to personalize their own session; the server stores nothing. */
+   What she remembers about the visitor lives in THIS browser
+   (localStorage) and is sent up only to personalize their own session; the
+   server stores nothing. Beyond facts it tracks the shape of the
+   relationship — open threads to follow up on, when they first talked, how
+   many times, and when they last did. */
 
 const MEM_KEY = "lissa_facts";
 
-function loadFacts() {
+function blankMemory() {
+  return { facts: [], threads: [], met: "", last: "", chats: 0 };
+}
+
+function loadMemory() {
   try {
-    const f = JSON.parse(localStorage.getItem(MEM_KEY)) || [];
-    return Array.isArray(f) ? f.filter((x) => typeof x === "string") : [];
-  } catch { return []; }
+    const raw = JSON.parse(localStorage.getItem(MEM_KEY));
+    // a bare array is the pre-threads format from an earlier version
+    const src = Array.isArray(raw) ? { facts: raw } : (raw || {});
+    const list = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === "string") : []);
+    return {
+      facts: list(src.facts),
+      threads: list(src.threads),
+      met: typeof src.met === "string" ? src.met : "",
+      last: typeof src.last === "string" ? src.last : "",
+      chats: Number.isInteger(src.chats) ? src.chats : 0,
+    };
+  } catch { return blankMemory(); }
 }
 
-function saveFacts(f) {
-  try { localStorage.setItem(MEM_KEY, JSON.stringify(f)); } catch {}
+function saveMemory(m) {
+  try { localStorage.setItem(MEM_KEY, JSON.stringify(m)); } catch {}
 }
 
-let facts = loadFacts();
+let memory = loadMemory();
 let exchanges = 0; // completed replies since load — memory refreshes every 4th
 
 async function memorize() {
@@ -1299,12 +1326,12 @@ async function memorize() {
     const r = await fetch("/api/memorize", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ facts }),
+      body: JSON.stringify(memory),
     });
     const data = await r.json();
-    if (Array.isArray(data.facts) && data.facts.length) {
-      facts = data.facts;
-      saveFacts(facts);
+    if (data.memory && Array.isArray(data.memory.facts) && data.memory.facts.length) {
+      memory = data.memory;
+      saveMemory(memory);
     }
   } catch {} // memory is a nice-to-have, never break the chat over it
 }
@@ -2214,10 +2241,16 @@ function closePanel() {
 function renderFacts() {
   const ul = document.getElementById("facts");
   ul.innerHTML = "";
-  if (facts.length) {
-    for (const f of facts) {
+  if (memory.facts.length || memory.threads.length) {
+    for (const f of memory.facts) {
       const li = document.createElement("li");
       li.textContent = f;
+      ul.appendChild(li);
+    }
+    for (const th of memory.threads) {
+      const li = document.createElement("li");
+      li.className = "thread";
+      li.textContent = t("waitingToHear") + " " + th;
       ul.appendChild(li);
     }
   } else {
@@ -2270,12 +2303,12 @@ forgetBtn.onclick = async () => {
     forgetBtn.textContent = t("confirmAgain");
     return;
   }
-  facts = [];
+  memory = blankMemory();
   try { localStorage.removeItem(MEM_KEY); } catch {}
   const { text } = await (await fetch("/api/reset", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ facts: [], lang: currentLang, hour: localHour() }),
+    body: JSON.stringify({ ...blankMemory(), lang: currentLang, hour: localHour() }),
   })).json();
   closePanel();
   chat.innerHTML = "";
@@ -2307,7 +2340,7 @@ resetBtn.onclick = async () => {
   const { text } = await (await fetch("/api/reset", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ facts, lang: currentLang, hour: localHour() }),
+    body: JSON.stringify({ ...memory, lang: currentLang, hour: localHour() }),
   })).json();
   setStatus(t("statusOnline"));
   chat.innerHTML = "";
@@ -2370,11 +2403,14 @@ async function boot() {
 
   const bubble = typingBubble();
   try {
-    const { text } = await (await fetch("/api/hello", {
+    const helloData = await (await fetch("/api/hello", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ facts, lang: currentLang, hour: localHour() }),
+      body: JSON.stringify({ ...memory, lang: currentLang, hour: localHour() }),
     })).json();
+    const { text } = helloData;
+    // the server bumped chats/met/last for this visit — keep them
+    if (helloData.memory) { memory = helloData.memory; saveMemory(memory); }
     if (voiceOn) {
       speak(text, bubble);
     } else {

@@ -116,11 +116,25 @@ sudo apt install -y pulseaudio-utils
   persists between sessions.
 - **Persona** lives in the system prompt in `lissa.py` — edit it to tune
   Lissa's personality, style, and boundaries.
+- **If you're in real distress** she stops performing: she drops the
+  flirtiness, takes it seriously the first time, and points you at people
+  who can actually help — emergency services, a crisis line, or someone you
+  trust ([findahelpline.com](https://findahelpline.com) lists free lines by
+  country). She's told plainly that she isn't a therapist and shouldn't try
+  to talk anyone through a crisis alone. An ordinary bad day just gets a
+  friend, not a hotline.
 - **Long-term memory**: when a chat ends (`/quit`, Ctrl-D, or `/reset`),
   Lissa distills the conversation into short facts about you — name,
   preferences, ongoing topics — saved to `lissa_memory.json`. On the next
   start those facts are woven into her persona, so she greets you like
   someone she knows. Delete the file (or use `/forget`) to start over.
+- **Relationship continuity**: memory holds more than facts. She tracks
+  **open threads** — things you left unresolved — and asks about one of
+  them in her first reply next time ("wait, first — did you ever hear back
+  about that interview?"). She also knows how long she's known you and how
+  many times you've talked, which colours how she talks to you, and greets
+  you differently after a long gap than after a day. Older `lissa_memory.json`
+  files in the previous plain-list format upgrade automatically.
 - **In-session memory**: the SDK's chat session keeps the conversation
   history, so Lissa remembers everything said in the session.
 - **Voice input**: your speech is recorded (in the web app by the browser;
@@ -151,9 +165,11 @@ sudo apt install -y pulseaudio-utils
 ## Tests
 
 `tests/ui_test.js` drives the web app end-to-end in headless Chromium
-(Playwright) — 39 checks covering streaming, stop/retry, scrolling, voice
-recording through a fake mic, clipboard, and accessibility. With the
-server running on port 8765:
+(Playwright) — 101 checks covering streaming, stop/retry, scrolling, voice
+recording through a fake mic, photos, the header menu, memory and
+relationship continuity, crisis handling, localization, themes and
+accessibility. They run against the real Gemini API, so a full pass costs
+roughly 20 calls of free-tier quota. With the server running on port 8765:
 
 ```bash
 NODE_PATH=$(npm root -g) node tests/ui_test.js

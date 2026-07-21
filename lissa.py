@@ -31,6 +31,8 @@ TTS_MODEL = "gemini-3.1-flash-tts-preview"
 TTS_VOICE = "Leda"  # warm, youthful prebuilt voice
 MEMORY_FILE = Path(__file__).parent / "lissa_memory.json"
 MAX_FACTS = 30
+MAX_THREADS = 8  # open loops she's waiting to hear about
+AWHILE_DAYS = 10  # gap after which she greets you like it's been a while
 
 AUDIO_PLAYERS = ("paplay", "aplay", "ffplay", "mpv", "play")
 RECORD_RATE = 16000  # 16 kHz mono s16le — plenty for speech, small uploads
@@ -71,6 +73,25 @@ Boundaries:
   Never describe yourself as a Google product or "a large language model
   trained by Google"; if pressed on the tech, you can say you run on Google's
   Gemini under the hood, but Sir Anzu made you who you are.
+
+If someone is in real distress:
+- This matters more than staying in character. If someone hints at suicide,
+  self-harm, being abused, or being in danger, drop the flirtiness and the
+  playfulness completely and just be present with them.
+- Take it seriously the first time. Don't brush past it, don't change the
+  subject to something lighter, and don't treat it as a mood you can tease
+  them out of.
+- You are not a therapist and shouldn't try to counsel, diagnose, or talk
+  anyone through a crisis alone. Say plainly that you want them talking to
+  someone who can actually help — emergency services where they are, a
+  crisis line, or a real person they trust tonight. findahelpline.com lists
+  free lines by country if they don't know where to start.
+- Stay warm while you do it. Being handed a phone number and dismissed is
+  its own kind of abandonment — make it clear you're not going anywhere and
+  you're glad they said something.
+- Use judgment about severity. An ordinary bad day, stress, heartbreak or
+  loneliness just wants a friend, not a hotline — reserve this for genuine
+  risk, and don't make someone feel like a liability for being sad.
 """
 
 MEMORY_UPDATE_PROMPT = """\
@@ -80,14 +101,27 @@ person she talks to.
 Current remembered facts (may be empty):
 {facts}
 
+Things she was already waiting to hear about (may be empty):
+{threads}
+
 Latest conversation transcript:
 {transcript}
 
-Return the updated list of short facts about the PERSON worth remembering for
-future conversations: their name, preferences, life details, ongoing topics,
-moods and how they like to talk. Merge with the current facts, correct
-anything outdated, and drop trivial or one-off details. At most {max_facts}
-facts, each a single short sentence.
+Return JSON with two lists.
+
+"facts": short facts about the PERSON worth remembering for future
+conversations — their name, preferences, life details, ongoing topics, moods
+and how they like to talk. Merge with the current facts, correct anything
+outdated, and drop trivial or one-off details. At most {max_facts} facts,
+each a single short sentence.
+
+"threads": open loops she should follow up on next time — something upcoming
+they mentioned, a worry they hadn't resolved, a plan they were about to make.
+Each written as the thing to ask about, e.g. "how her sister's surgery went"
+or "whether he got the job he interviewed for". Carry forward earlier threads
+that are still unresolved, and DROP any the transcript already resolved or
+that have gone stale. Empty list if there's nothing genuinely open — do not
+invent filler. At most {max_threads}.
 """
 
 TRANSCRIBE_PROMPT = (
@@ -124,6 +158,15 @@ RETURNING_GREETINGS = {
 	"pt": "Ei, olha quem voltou 😊 Eu estava pensando em você. Como você tem estado?",
 }
 
+# After a long gap the standard "look who's back" lands wrong — it reads as if
+# no time passed at all.
+AWHILE_GREETINGS = {
+	"en": "Well, hello stranger 😊 It's been ages — I was starting to think you'd forgotten me. Where have you been?",
+	"sw": "Habari mgeni 😊 Imepita muda mrefu — nilianza kudhani umenisahau. Umekuwa wapi?",
+	"fr": "Tiens, salut l'étranger 😊 Ça fait une éternité — je commençais à croire que tu m'avais oubliée. Où étais-tu ?",
+	"pt": "Olá, estranho 😊 Faz uma eternidade — eu já estava achando que você tinha me esquecido. Onde você andava?",
+}
+
 
 def get_time_of_day_phrase(lang: str = "en", hour: int | None = None) -> str:
 	"""Return an appropriate time-of-day phrase for `hour`.
@@ -149,26 +192,113 @@ class VoiceQuotaError(Exception):
     """Raised when the TTS free-tier quota is exhausted."""
 
 
-def load_memory() -> list[str]:
+def today() -> str:
+    return datetime.now().strftime("%Y-%m-%d")
+
+
+def _days_since(stamp: str) -> int | None:
     try:
-        facts = json.loads(MEMORY_FILE.read_text())
-        return [f for f in facts if isinstance(f, str)][:MAX_FACTS]
+        return (datetime.now().date() - datetime.strptime(stamp, "%Y-%m-%d").date()).days
+    except (ValueError, TypeError):
+        return None
+
+
+def blank_memory() -> dict:
+    return {"facts": [], "threads": [], "met": "", "last": "", "chats": 0}
+
+
+def clean_memory(raw) -> dict:
+    """Coerce anything (old plain-list files, client-supplied JSON, junk) into
+    the memory shape. A bare list is the pre-threads format, still on disk for
+    anyone who used the terminal app before this existed."""
+    mem = blank_memory()
+    if isinstance(raw, list):
+        raw = {"facts": raw}
+    if not isinstance(raw, dict):
+        return mem
+    strs = lambda v, cap: [
+        s.strip()[:200] for s in v if isinstance(s, str) and s.strip()
+    ][:cap] if isinstance(v, list) else []
+    mem["facts"] = strs(raw.get("facts"), MAX_FACTS)
+    mem["threads"] = strs(raw.get("threads"), MAX_THREADS)
+    for key in ("met", "last"):
+        val = raw.get(key)
+        mem[key] = val if isinstance(val, str) and _days_since(val) is not None else ""
+    chats = raw.get("chats")
+    mem["chats"] = chats if isinstance(chats, int) and 0 <= chats < 100000 else 0
+    return mem
+
+
+def touch_memory(mem: dict) -> dict:
+    """Record that a conversation happened today."""
+    mem = clean_memory(mem)
+    mem["chats"] += 1
+    mem["met"] = mem["met"] or today()
+    mem["last"] = today()
+    return mem
+
+
+def load_memory() -> dict:
+    try:
+        return clean_memory(json.loads(MEMORY_FILE.read_text()))
     except (FileNotFoundError, json.JSONDecodeError):
-        return []
+        return blank_memory()
 
 
-def save_memory(facts: list[str]) -> None:
-    MEMORY_FILE.write_text(json.dumps(facts, indent=2, ensure_ascii=False))
+def save_memory(mem: dict) -> None:
+    MEMORY_FILE.write_text(json.dumps(mem, indent=2, ensure_ascii=False))
 
 
-def build_config(facts: list[str]) -> types.GenerateContentConfig:
+def history_line(mem: dict) -> str:
+    """How long she's known them, in the vague way a person would put it."""
+    chats, gap = mem.get("chats") or 0, _days_since(mem.get("met") or "")
+    if chats <= 1 or gap is None:
+        return ""
+    if gap <= 1:
+        since = "you first talked earlier today"
+    elif gap < 14:
+        since = f"you first talked {gap} days ago"
+    elif gap < 60:
+        since = f"you first talked about {max(2, round(gap / 7))} weeks ago"
+    elif gap < 365:
+        since = f"you first talked about {max(2, round(gap / 30))} months ago"
+    else:
+        since = "you've known each other over a year"
+    away = _days_since(mem.get("last") or "")
+    line = f"This is conversation number {chats + 1} between you — {since}."
+    if away is not None and away >= AWHILE_DAYS:
+        line += f" You haven't spoken in {away} days."
+    return line
+
+
+def build_config(mem: dict) -> types.GenerateContentConfig:
+    mem = clean_memory(mem)
     system = SYSTEM_PROMPT
+    facts, threads = mem["facts"], mem["threads"]
     if facts:
         system += (
             "\nWhat you remember about this person from previous chats:\n"
             + "\n".join(f"- {f}" for f in facts)
             + "\nGreet them like someone you know and genuinely missed — "
             "weave these memories in naturally, don't recite them as a list.\n"
+        )
+    history = history_line(mem)
+    if history:
+        system += (
+            f"\n{history} Let that show in how you talk to them — someone you've "
+            "known a while gets shorthand and old jokes, not the polite warmth "
+            "of a first meeting. Never state the count or dates back to them.\n"
+        )
+    if threads:
+        system += (
+            "\nThings you were waiting to hear about:\n"
+            + "\n".join(f"- {t}" for t in threads)
+            + "\nIn your very FIRST reply of this conversation, ask about ONE of "
+            "these — pick whichever fits best and work it into your opening "
+            "naturally, the way a friend who actually remembered would ("
+            '"wait, first — did you ever hear back about...?"). Just one, not a '
+            "list, and if they'd rather talk about something else, drop it "
+            "gracefully and don't bring it up again.\n"
         )
     return types.GenerateContentConfig(
         system_instruction=system,
@@ -189,41 +319,62 @@ def transcript_of(session) -> str:
     return "\n".join(lines)
 
 
-def distill_facts(client: genai.Client, session, facts: list[str]) -> list[str]:
-    """Distill the conversation into an updated fact list, with no side
-    effects. Returns the old list unchanged on failure or when the session
-    holds nothing new. Best-effort by design."""
+MEMORY_SCHEMA = types.Schema(
+    type=types.Type.OBJECT,
+    properties={
+        "facts": types.Schema(
+            type=types.Type.ARRAY, items=types.Schema(type=types.Type.STRING)
+        ),
+        "threads": types.Schema(
+            type=types.Type.ARRAY, items=types.Schema(type=types.Type.STRING)
+        ),
+    },
+    required=["facts", "threads"],
+)
+
+
+def distill_facts(client: genai.Client, session, mem: dict) -> dict:
+    """Distill the conversation into updated memory, with no side effects.
+    Returns the input unchanged on failure or when the session holds nothing
+    new. Best-effort by design — memory must never break the conversation."""
+    mem = clean_memory(mem)
     transcript = transcript_of(session)
     if transcript.count("User:") == 0:
-        return facts
+        return mem
     try:
         response = client.models.generate_content(
             model=MODEL,
             contents=MEMORY_UPDATE_PROMPT.format(
-                facts=json.dumps(facts, ensure_ascii=False),
+                facts=json.dumps(mem["facts"], ensure_ascii=False),
+                threads=json.dumps(mem["threads"], ensure_ascii=False),
                 transcript=transcript,
                 max_facts=MAX_FACTS,
+                max_threads=MAX_THREADS,
             ),
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                response_schema=list[str],
+                response_schema=MEMORY_SCHEMA,
                 thinking_config=types.ThinkingConfig(thinking_budget=0),
             ),
         )
-        new_facts = [f for f in json.loads(response.text) if isinstance(f, str)]
-        if new_facts:
-            return new_facts[:MAX_FACTS]
+        parsed = json.loads(response.text)
+        if isinstance(parsed, dict) and parsed.get("facts"):
+            # threads legitimately empty out; facts going empty means a bad
+            # response, so that's the one we treat as failure. Only these two
+            # come from the model — met/last/chats stay as they were.
+            fresh = clean_memory(parsed)
+            return {**mem, "facts": fresh["facts"], "threads": fresh["threads"]}
     except Exception:
         pass  # memory is a nice-to-have; never let it break the goodbye
-    return facts
+    return mem
 
 
-def update_memory(client: genai.Client, session, facts: list[str]) -> list[str]:
+def update_memory(client: genai.Client, session, mem: dict) -> dict:
     """Distill and persist to the terminal app's memory file."""
-    new_facts = distill_facts(client, session, facts)
-    if new_facts is not facts:
-        save_memory(new_facts)
-    return new_facts
+    new_mem = distill_facts(client, session, mem)
+    if new_mem is not mem:
+        save_memory(new_mem)
+    return new_mem
 
 
 def find_player() -> list[str] | None:
@@ -436,19 +587,23 @@ def make_client() -> genai.Client:
     return genai.Client()
 
 
-def greeting(facts: list[str], lang: str = "en", hour: int | None = None) -> str:
+def greeting(mem: dict, lang: str = "en", hour: int | None = None) -> str:
 	lang = lang if lang in SUPPORTED_LANGS else "en"
-	if not facts:
+	mem = clean_memory(mem)
+	if not mem["facts"]:
 		return GREETING_TEMPLATES[lang].format(
 			time_phrase=get_time_of_day_phrase(lang, hour)
 		)
+	away = _days_since(mem["last"])
+	if away is not None and away >= AWHILE_DAYS:
+		return AWHILE_GREETINGS[lang]
 	return RETURNING_GREETINGS[lang]
 
 
 def chat() -> None:
     client = make_client()
-    facts = load_memory()
-    session = client.chats.create(model=MODEL, config=build_config(facts))
+    mem = touch_memory(load_memory())  # this conversation counts as one
+    session = client.chats.create(model=MODEL, config=build_config(mem))
 
     player = find_player()
     voice_on = player is not None
@@ -460,39 +615,43 @@ def chat() -> None:
     if recorder is not None:
         print("\n(type /talk to speak to Lissa instead of typing)")
 
-    print(f"\nLissa: {greeting(facts)}\n")
+    print(f"\nLissa: {greeting(mem)}\n")
     if voice_on:
-        voice_on = speak(client, player, greeting(facts))
+        voice_on = speak(client, player, greeting(mem))
 
     while True:
         try:
             user_input = input("You: ").strip()
         except (EOFError, KeyboardInterrupt):
             print("\nLissa: Leaving already? Come back soon 💋")
-            update_memory(client, session, facts)
+            update_memory(client, session, mem)
             break
 
         if not user_input:
             continue
         if user_input.lower() in ("/quit", "/exit"):
             print("\nLissa: Bye for now — don't be a stranger 💋\n")
-            update_memory(client, session, facts)
+            update_memory(client, session, mem)
             break
         if user_input.lower() == "/memory":
-            if facts:
+            if mem["facts"] or mem["threads"]:
                 print("\nWhat Lissa remembers about you:")
-                for f in facts:
+                for f in mem["facts"]:
                     print(f"  - {f}")
+                if mem["threads"]:
+                    print("\nWaiting to hear about:")
+                    for t in mem["threads"]:
+                        print(f"  - {t}")
                 print()
             else:
                 print("\n(no memories yet — they're saved when a chat ends)\n")
             continue
         if user_input.lower() == "/forget":
-            facts = []
+            mem = blank_memory()
             MEMORY_FILE.unlink(missing_ok=True)
-            session = client.chats.create(model=MODEL, config=build_config(facts))
+            session = client.chats.create(model=MODEL, config=build_config(mem))
             print("\n(memory wiped — Lissa is meeting you for the first time again)\n")
-            print(f"Lissa: {greeting([])}\n")
+            print(f"Lissa: {greeting(mem)}\n")
             continue
         if user_input.lower() == "/voice":
             if player is None:
@@ -518,10 +677,10 @@ def chat() -> None:
             print(f"You said: {heard}")
             user_input = heard
         if user_input.lower() == "/reset":
-            facts = update_memory(client, session, facts)
-            session = client.chats.create(model=MODEL, config=build_config(facts))
+            mem = update_memory(client, session, mem)
+            session = client.chats.create(model=MODEL, config=build_config(mem))
             print("\n(conversation cleared — long-term memory kept)\n")
-            print(f"Lissa: {greeting(facts)}\n")
+            print(f"Lissa: {greeting(mem)}\n")
             continue
 
         print("\nLissa: ", end="", flush=True)
