@@ -172,6 +172,11 @@ and how they like to talk. Merge with the current facts, correct anything
 outdated, and drop trivial or one-off details. At most {max_facts} facts,
 each a single short sentence.
 
+If their name has been mentioned, the FIRST fact must be their name. Nothing
+else in this list matters as much: forgetting someone's name while still
+recalling their taste in music is exactly the kind of hollow that makes a
+companion feel fake. Only drop it if they've asked to be forgotten.
+
 "threads": open loops she should follow up on next time — something upcoming
 they mentioned, a worry they hadn't resolved, a plan they were about to make.
 Each written as the thing to ask about, e.g. "how her sister's surgery went"
