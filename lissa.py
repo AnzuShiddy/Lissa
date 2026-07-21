@@ -27,6 +27,7 @@ from google import genai
 from google.genai import errors, types
 
 import memory_store
+import recall
 
 MODEL = "gemini-flash-lite-latest"  # lite: much higher free-tier daily quota than gemini-3.5-flash's 20/day
 TTS_MODEL = "gemini-3.1-flash-tts-preview"
@@ -582,7 +583,11 @@ def chat() -> None:
 
         reply_parts: list[str] = []
         try:
-            for chunk in session.send_message_stream(user_input):
+            # Send only the memories this message calls for. The session's
+            # own config holds all of them, so a failed lookup just falls
+            # back to the fuller prompt.
+            turn_config = build_config(recall.relevant(client, facts, user_input))
+            for chunk in session.send_message_stream(user_input, config=turn_config):
                 if chunk.text:
                     reply_parts.append(chunk.text)
                     print(chunk.text, end="", flush=True)

@@ -151,7 +151,8 @@ sudo apt install -y pulseaudio-utils
 ## Tests
 
 `tests/test_memory_store.py` covers the long-term memory model — decay,
-reinforcement, contradiction handling and the old-format migration. Pure
+reinforcement, contradiction handling, semantic recall and the old-format
+migration. Pure
 logic: no API key, no network, no dependencies beyond the standard library,
 so it runs on every push and every PR.
 

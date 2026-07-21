@@ -27,6 +27,7 @@ from starlette.concurrency import run_in_threadpool
 
 import lissa
 import memory_store
+import recall
 
 STATIC_DIR = Path(__file__).parent / "static"
 
@@ -299,7 +300,14 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
         try:
             with sess.lock:
                 try:
-                    for chunk in sess.session.send_message_stream(parts):
+                    # Narrow the remembered facts to the ones this message
+                    # calls for. Runs here rather than in the handler because
+                    # it costs an API round-trip; a photo with no caption has
+                    # nothing to match on and keeps the full set.
+                    turn_config = lissa.build_config(
+                        recall.relevant(sess.client, sess.facts, text)
+                    )
+                    for chunk in sess.session.send_message_stream(parts, config=turn_config):
                         if chunk.text:
                             q.put(chunk.text)
                 except errors.ClientError as e:

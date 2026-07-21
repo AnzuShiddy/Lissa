@@ -50,6 +50,22 @@ MAX_WEIGHT = 5.0      # ceiling, so an obsession can't dominate forever
 
 MAX_TEXT = 200        # per-fact character cap (client-supplied data)
 
+# Semantic recall: how many non-core facts to put in front of the model for
+# a given message, and how similar they must be to earn the slot. Core facts
+# ride along regardless — her name is relevant to every message.
+RECALL_K = 6
+# Relevance is judged *relative to the best match*, not against a fixed
+# cosine. Short sentences in this embedding space all sit in a narrow, high
+# band — an unrelated fact scores ~0.51 where the right one scores ~0.65 —
+# so any absolute floor either admits everything or nothing. A fact earns a
+# slot by scoring within RECALL_MARGIN of the best fact for this message.
+# The side effect is desirable: a sharply on-topic message pulls a tight set,
+# a vague one pulls broader context.
+RECALL_MARGIN = 0.07
+# Below this many facts, retrieval isn't worth an embedding call per turn:
+# just send everything, exactly as before.
+RECALL_MIN_FACTS = 8
+
 # Token overlap above which two phrasings are treated as the same fact.
 # Deliberately lenient: the LLM rewords facts between cycles ("likes jazz" →
 # "enjoys jazz music"), and a missed match costs a duplicate plus a lost
@@ -164,6 +180,62 @@ def _rank(records: list[dict], max_facts: int) -> list[dict]:
 def texts(records: Iterable[dict]) -> list[str]:
     """Just the sentences — for prompts and for display."""
     return [r["text"] for r in records if isinstance(r, dict) and r.get("text")]
+
+
+def cosine(a: list[float], b: list[float]) -> float:
+    """Cosine similarity of two vectors. Normalizes as it goes rather than
+    assuming unit length — Gemini returns unnormalized vectors at any output
+    dimension below 3072, and a bare dot product would silently rank by
+    magnitude instead of by direction."""
+    if not a or not b or len(a) != len(b):
+        return 0.0
+    dot = na = nb = 0.0
+    for x, y in zip(a, b):
+        dot += x * y
+        na += x * x
+        nb += y * y
+    if na <= 0.0 or nb <= 0.0:
+        return 0.0
+    return dot / ((na ** 0.5) * (nb ** 0.5))
+
+
+def select(
+    records: list[dict],
+    query_vec: list[float] | None,
+    vectors: list[list[float] | None],
+    k: int = RECALL_K,
+    margin: float = RECALL_MARGIN,
+) -> list[dict]:
+    """Pick the facts worth putting in front of the model for one message.
+
+    ``vectors`` runs parallel to ``records``. Core facts are always kept:
+    someone's name is context for every message, however the cosine falls.
+    The rest compete for ``k`` slots and must score within ``margin`` of the
+    best-matching fact — see RECALL_MARGIN for why the test is relative.
+
+    Returns records in their existing (strongest-first) order — the ranking
+    decides *membership*, not the order the model reads them in.
+
+    Degrades to returning everything whenever it can't do better: no query
+    vector, or any fact missing one. Sending too much context is the old
+    behaviour; sending the *wrong* subset would be a regression.
+    """
+    if query_vec is None or len(vectors) != len(records):
+        return records
+    if any(v is None for r, v in zip(records, vectors) if not r["core"]):
+        return records
+
+    scored = [
+        (i, cosine(query_vec, vec))
+        for i, (rec, vec) in enumerate(zip(records, vectors))
+        if not rec["core"]
+    ]
+    if not scored:
+        return records
+    scored.sort(key=lambda pair: pair[1], reverse=True)
+    floor = scored[0][1] - margin
+    keep = {i for i, sim in scored[:k] if sim >= floor}
+    return [r for i, r in enumerate(records) if r["core"] or i in keep]
 
 
 def merge(

@@ -200,6 +200,94 @@ class TestMergeHygiene(unittest.TestCase):
         self.assertEqual(ms.texts(out), ["Likes jazz"])
 
 
+class TestCosine(unittest.TestCase):
+    def test_identical_direction_scores_one(self):
+        self.assertAlmostEqual(ms.cosine([1.0, 0.0], [1.0, 0.0]), 1.0)
+
+    def test_ignores_magnitude(self):
+        """Gemini returns unnormalized vectors below 3072 dimensions, so a
+        long vector must not outrank a well-aimed short one."""
+        self.assertAlmostEqual(ms.cosine([1.0, 0.0], [50.0, 0.0]), 1.0)
+
+    def test_orthogonal_is_zero(self):
+        self.assertAlmostEqual(ms.cosine([1.0, 0.0], [0.0, 1.0]), 0.0)
+
+    def test_degenerate_inputs_are_zero(self):
+        self.assertEqual(ms.cosine([], [1.0]), 0.0)
+        self.assertEqual(ms.cosine([1.0, 0.0], [1.0]), 0.0)
+        self.assertEqual(ms.cosine([0.0, 0.0], [1.0, 0.0]), 0.0)
+
+
+class TestSelect(unittest.TestCase):
+    def setUp(self):
+        self.facts = ms.normalize([
+            {"text": "Their name is Aziza", "core": True},
+            {"text": "Loves jazz"},
+            {"text": "Works as a nurse"},
+        ], 30)
+        # Hand-built orthogonal vectors: index 0 is the "music" direction,
+        # index 1 "work", index 2 nothing in particular.
+        self.vectors = [[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]
+
+    def test_keeps_the_relevant_fact(self):
+        out = ms.select(self.facts, [1.0, 0.0, 0.0], self.vectors)
+        self.assertIn("Loves jazz", ms.texts(out))
+        self.assertNotIn("Works as a nurse", ms.texts(out))
+
+    def test_core_facts_always_ride_along(self):
+        """Whatever the message is about, she should still know your name."""
+        out = ms.select(self.facts, [1.0, 0.0, 0.0], self.vectors)
+        self.assertIn("Their name is Aziza", ms.texts(out))
+
+    def test_nothing_standing_out_keeps_everything(self):
+        """When no fact beats the others, they all tie at the top and all
+        survive — the relative threshold degrades to the old send-everything
+        behaviour, which is the safe direction to fail in."""
+        out = ms.select(self.facts, [0.0, 0.0, 1.0], self.vectors)
+        self.assertEqual(len(out), 3)
+
+    def test_threshold_is_relative_to_the_best_match(self):
+        """Absolute cosines between short sentences sit in a narrow, high
+        band, so relevance is judged against the top scorer."""
+        facts = ms.normalize(["on topic", "near miss", "unrelated"], 30)
+        vectors = [[1.0, 0.0], [0.99, 0.14], [0.6, 0.8]]  # ~1.00, ~0.99, ~0.60
+        self.assertEqual(ms.texts(ms.select(facts, [1.0, 0.0], vectors)),
+                         ["on topic", "near miss"])
+
+    def test_respects_k(self):
+        facts = ms.normalize([f"fact {i}" for i in range(20)], 30)
+        vectors = [[1.0, 0.0]] * 20
+        self.assertEqual(len(ms.select(facts, [1.0, 0.0], vectors, k=3)), 3)
+
+    def test_preserves_strongest_first_order(self):
+        facts = ms.normalize([
+            {"text": "strong", "weight": 5.0},
+            {"text": "weak", "weight": 1.0},
+        ], 30)
+        # Both clear the margin, but "weak" is the better semantic match —
+        # membership is by similarity, order stays strongest-first.
+        out = ms.select(facts, [1.0, 0.0], [[0.99, 0.14], [1.0, 0.0]], k=2)
+        self.assertEqual(ms.texts(out), ["strong", "weak"])
+
+    def test_no_query_vector_returns_everything(self):
+        self.assertEqual(ms.select(self.facts, None, self.vectors), self.facts)
+
+    def test_missing_fact_vector_returns_everything(self):
+        """A partial embedding failure must not silently drop memories."""
+        broken = [[0.0, 0.0, 1.0], None, [0.0, 1.0, 0.0]]
+        self.assertEqual(ms.select(self.facts, [1.0, 0.0, 0.0], broken), self.facts)
+
+    def test_missing_core_vector_is_tolerated(self):
+        """Core facts are kept regardless of similarity, so their vector is
+        never consulted and its absence must not trigger the fallback."""
+        vectors = [None, [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]
+        out = ms.select(self.facts, [1.0, 0.0, 0.0], vectors)
+        self.assertEqual(ms.texts(out), ["Their name is Aziza", "Loves jazz"])
+
+    def test_mismatched_lengths_return_everything(self):
+        self.assertEqual(ms.select(self.facts, [1.0, 0.0, 0.0], [[1.0]]), self.facts)
+
+
 class TestSimilarity(unittest.TestCase):
     def test_identical(self):
         self.assertEqual(ms.similarity("likes jazz", "likes jazz"), 1.0)
