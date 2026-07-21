@@ -49,6 +49,33 @@ MOODS = (
     "quietly pleased with yourself for no particular reason",
 )
 
+# Keep replies snappy and cheap by asking for as little internal "thinking"
+# as the model allows. MODEL is a rolling `-latest` alias, and the accepted
+# spelling of this has already changed once under us: thinking_budget=0 was
+# valid until the alias rolled to a model that rejects it with a 400, which
+# took the deployment down until it was swapped for thinking_level. Treated
+# as best-effort ever since — see drop_thinking().
+THINKING_LEVEL = "minimal"
+
+
+def thinking() -> "types.ThinkingConfig | None":
+    return types.ThinkingConfig(thinking_level=THINKING_LEVEL) if THINKING_LEVEL else None
+
+
+def drop_thinking() -> bool:
+    """Stop sending the thinking setting after the API has rejected it.
+    Returns True the first time, so the caller knows a retry is worthwhile."""
+    global THINKING_LEVEL
+    if THINKING_LEVEL is None:
+        return False
+    THINKING_LEVEL = None
+    return True
+
+
+def is_bad_argument(e: Exception) -> bool:
+    return isinstance(e, errors.ClientError) and e.code == 400
+
+
 AUDIO_PLAYERS = ("paplay", "aplay", "ffplay", "mpv", "play")
 RECORD_RATE = 16000  # 16 kHz mono s16le — plenty for speech, small uploads
 
@@ -359,7 +386,7 @@ def build_config(mem: dict) -> types.GenerateContentConfig:
         max_output_tokens=2048,
         # Skip Gemini's internal "thinking" step — snappier replies and less
         # free-tier quota burned per message.
-        thinking_config=types.ThinkingConfig(thinking_budget=0),
+        thinking_config=thinking(),
     )
 
 
@@ -408,7 +435,7 @@ def distill_facts(client: genai.Client, session, mem: dict) -> dict:
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
                 response_schema=MEMORY_SCHEMA,
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
+                thinking_config=thinking(),
             ),
         )
         parsed = json.loads(response.text)
@@ -495,7 +522,7 @@ def transcribe_wav(client: genai.Client, wav_bytes: bytes) -> str | None:
                 TRANSCRIBE_PROMPT,
             ],
             config=types.GenerateContentConfig(
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
+                thinking_config=thinking(),
             ),
         )
     except errors.ClientError as e:

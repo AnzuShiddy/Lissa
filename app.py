@@ -311,11 +311,28 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
         try:
             with sess.lock:
                 try:
+                    sent = False
                     for chunk in sess.session.send_message_stream(parts):
+                        sent = True
                         if chunk.text:
                             q.put(chunk.text)
                 except errors.ClientError as e:
-                    if e.code == 429:
+                    # A 400 before any output usually means the request carried
+                    # something this model no longer accepts. MODEL is a rolling
+                    # alias, and exactly this took the deployment down once when
+                    # thinking_budget=0 stopped being valid — so drop the
+                    # optional thinking setting and rebuild rather than serving
+                    # an error to every visitor until someone notices.
+                    if e.code == 400 and not sent and lissa.drop_thinking():
+                        try:
+                            sess.rebuild(sess.mem)
+                            for chunk in sess.session.send_message_stream(parts):
+                                if chunk.text:
+                                    q.put(chunk.text)
+                            return
+                        except errors.APIError as retry_err:
+                            e = retry_err
+                    if getattr(e, "code", None) == 429:
                         q.put("\n\n(Free-tier rate limit hit — wait a few seconds and try again.)")
                     else:
                         q.put(f"\n\n(API error {e.code}: {e.message})")

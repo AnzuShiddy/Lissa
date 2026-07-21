@@ -817,23 +817,23 @@ const check = (cond, name) => {
 
   // ...but a long one must still scroll all the way back up: the auto-margin
   // that anchors it has to collapse once the content overflows
+  // Assert the mechanism rather than driving the scrollbar: the anchoring
+  // margin must collapse to 0 once the content overflows. Scrolling to the
+  // top to check instead means racing the app's own auto-scroll and the
+  // smooth-scroll animation, which is timing-dependent and flaky.
   await page.evaluate(() => { chat.innerHTML = ""; lastStamp = 0;
     for (let i = 0; i < 40; i++) addBubble(i % 2 ? "user" : "lissa", "message " + i); });
-  // let the auto-scroll-to-bottom settle first, then jump up with smooth
-  // scrolling off — otherwise this races that animation and reads a stale
-  // scrollTop rather than testing the layout at all
-  await page.waitForTimeout(400);
-  await page.evaluate(() => { chat.style.scrollBehavior = "auto"; chat.scrollTop = 0; });
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(300);
+  const overflowing = await page.evaluate(() => ({
+    overflows: chat.scrollHeight > chat.clientHeight + 10,
+    anchorMargin: getComputedStyle(chat, "::before").marginTop,
+    firstBubbleAboveOrigin: document.querySelector(".bubble").offsetTop < 0,
+  }));
   check(
-    await page.evaluate(() => {
-      const first = document.querySelector(".bubble").getBoundingClientRect();
-      const c = chat.getBoundingClientRect();
-      return chat.scrollTop === 0 && first.top >= c.top - 2;
-    }),
-    "layout: a long chat still scrolls to the very first message"
+    overflowing.overflows && overflowing.anchorMargin === "0px" &&
+      !overflowing.firstBubbleAboveOrigin,
+    `layout: the bottom-anchor collapses when the chat overflows, so nothing is stranded above the scroll origin (margin ${overflowing.anchorMargin})`
   );
-  await page.evaluate(() => { chat.style.scrollBehavior = ""; });
 
   // consecutive messages from one speaker read as a single turn: tight
   // spacing, and only the last of the run keeps its tail
