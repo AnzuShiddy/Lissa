@@ -1733,7 +1733,12 @@ function playClip(p, raw, blob) {
     let revealed = false;
     const finish = () => {
       URL.revokeObjectURL(url);
-      if (!revealed) { revealed = true; queueReveal(p, raw, 300); }
+      // No clip ever played (blocked autoplay, or a playback error) — type
+      // it out at the same guessed pace used elsewhere, not a 300ms dump.
+      // A silent instant paste for the very first message (the one most
+      // likely to hit a cold autoplay block) reads as broken next to
+      // every other message's typing animation.
+      if (!revealed) { revealed = true; queueReveal(p, raw, Math.max(1000, raw.length * 50)); }
       done();
     };
     a.onended = finish;
@@ -1764,7 +1769,11 @@ function nudgeAutoplay(blob) {
   autoplayNudged = true;
   toast(t("autoplayBlocked"));
   document.addEventListener("pointerdown", () => {
-    if (pipeline || busy || rec) return; // don't talk over anything live
+    // `pipeline` isn't a fit check here: it stays set to the (finished,
+    // non-dead) greeting pipeline forever after natural completion, only
+    // cleared by an explicit stop — so it doesn't mean "still speaking".
+    // The UI's own speaking state is the right source of truth.
+    if (avatarWrap.classList.contains("speaking") || busy || rec) return;
     const url = URL.createObjectURL(blob);
     nudgeAudio = new Audio(url);
     nudgeAudio.onplaying = () => speakingUI(true);

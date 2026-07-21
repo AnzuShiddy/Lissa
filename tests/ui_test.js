@@ -49,11 +49,32 @@ const check = (cond, name) => {
   await page.goto("http://localhost:8765/");
 
   /* ---- greeting renders (fresh session) ---- */
+  // dots gone = the reveal has begun (network latency for /api/hello and
+  // the clip fetch happens before this point, so timing from here on is
+  // purely the text-reveal pace, not fetch time)
   await page.waitForFunction(() => {
     const b = document.querySelector(".bubble.lissa");
-    return b && !b.querySelector(".typing-dots") && b.textContent.length > 10;
+    return b && !b.querySelector(".typing-dots");
   }, null, { timeout: 30000 });
+  const revealStart = Date.now();
+  await page.waitForFunction(() => {
+    const b = document.querySelector(".bubble.lissa");
+    return b && b.textContent.length > 10;
+  }, null, { timeout: 15000 });
   check(true, "greeting bubble rendered");
+
+  /* ---- unvoiced first message still types at a natural pace ----
+     Autoplay is blocked in this suite's browser context (see the play()
+     override above), so the greeting's clip never plays — it must still
+     type out gradually like every other message, not paste in within a
+     couple hundred ms just because there's no audio to pace against. */
+  await page.waitForFunction(() => {
+    const b = document.querySelector(".bubble.lissa");
+    return b && b.textContent.trim().endsWith("?");
+  }, null, { timeout: 15000 });
+  const revealMs = Date.now() - revealStart;
+  check(revealMs > 800,
+    "unvoiced greeting: types out gradually, not pasted instantly (took " + revealMs + "ms)");
 
   /* ---- fix 6: autoplay-blocked hint ---- */
   let nudged = true;
@@ -619,9 +640,9 @@ const check = (cond, name) => {
     await page.$eval("#msg", (el) => el.placeholder) !== enPlaceholder,
     "i18n: chosen language survives a reload"
   );
-  await menuClick("#memBtn");
+  if (await page.$eval("#menu", (el) => el.hidden)) await page.click("#menuBtn");
   await page.selectOption("#langSelect", "en"); // restore for cleanliness
-  await page.click("#closeBtn");
+  await page.click("#menuBtn"); // close the menu
 
   /* ---- privacy page ---- */
   await menuClick("#memBtn");
