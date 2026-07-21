@@ -449,9 +449,17 @@ const check = (cond, name) => {
     "menu: trigger reports expanded"
   );
   check(
-    (await page.$$eval("#menu .menuItem", (els) => els.map((e) => e.id))).join() ===
+    (await page.$$eval("#menu .menuItem:not(.langRow)", (els) => els.map((e) => e.id))).join() ===
       "hfBtn,voiceBtn,themeBtn,memBtn,resetBtn",
     "menu: holds all five relocated controls"
+  );
+  check(
+    await page.$eval("#menu #langSelect", (el) => !!el),
+    "menu: language select lives in the menu, not the memory panel"
+  );
+  check(
+    (await page.$$("#panel #langSelect")).length === 0,
+    "menu: memory panel no longer has a language select"
   );
   // a toggle keeps the menu open so its new state is visible
   await page.click("#voiceBtn");
@@ -516,6 +524,17 @@ const check = (cond, name) => {
     "menu: Escape still reaches the panel opened from the menu"
   );
 
+  // Tab must reach the language <select> — it's excluded from arrow-key
+  // roving (a native <select> isn't a roving-tabindex item) but still
+  // needs to be keyboard-reachable
+  await page.click("#menuBtn");
+  await page.keyboard.press("ArrowDown"); // focuses hfBtn
+  for (let i = 0; i < 5; i++) await page.keyboard.press("Tab"); // through the 5 items
+  check(await page.evaluate(() => document.activeElement.id === "langSelect"),
+    "menu: Tab reaches the language select after the five items");
+  await page.keyboard.press("Tab"); // leaves the menu entirely
+  check(await menuHidden(), "menu: tabbing out of it closes it");
+
   /* ---- time-of-day greeting follows the VISITOR's clock ----
      The server runs in UTC on Render, hours off from most visitors, so
      the phrase has to come from the browser's own hour. Two timezones a
@@ -570,9 +589,9 @@ const check = (cond, name) => {
 
   /* ---- UI localization ---- */
   const enPlaceholder = await page.$eval("#msg", (el) => el.placeholder);
-  await menuClick("#memBtn"); // the language select lives in the panel
+  if (await page.$eval("#menu", (el) => el.hidden)) await page.click("#menuBtn");
   await page.selectOption("#langSelect", "fr");
-  await page.click("#closeBtn");
+  await page.click("#menuBtn"); // close the menu
   await page.waitForTimeout(100);
   check(
     await page.$eval("#msg", (el) => el.placeholder) !== enPlaceholder,

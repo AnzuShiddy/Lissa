@@ -677,14 +677,16 @@
   }
   #facts li.empty { color: var(--muted); background: none; border: 1px dashed var(--border); text-align: center; }
   #panel .row { display: flex; gap: 10px; justify-content: flex-end; }
-  #panel .row.lang-row { justify-content: flex-start; margin-bottom: 12px; }
+  .menuItem.langRow { cursor: default; }
+  .menuItem.langRow:hover { background: none; }
+  .menuItem.langRow .mLabel { cursor: default; }
   #langSelect {
     border: 1px solid var(--border);
     background: var(--glass);
     color: var(--text);
-    border-radius: 12px;
-    padding: 8px 14px;
-    font-size: 14px;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 13.5px;
     font-family: inherit;
     cursor: pointer;
   }
@@ -806,6 +808,17 @@
           <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
           <span class="mLabel" data-i18n="resetLabel">New conversation</span>
         </button>
+        <div class="menuSep" role="separator"></div>
+        <div class="menuItem langRow">
+          <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+          <label for="langSelect" class="mLabel" data-i18n="langLabel">Language</label>
+          <select id="langSelect">
+            <option value="en">English</option>
+            <option value="sw">Kiswahili</option>
+            <option value="fr">Français</option>
+            <option value="pt">Português</option>
+          </select>
+        </div>
       </div>
     </div>
   </header>
@@ -862,15 +875,6 @@
     <div class="sub" data-i18n="panelSub">Stored in this browser only — memories update as you chat and when you start a new conversation.</div>
     <a class="privacyLink" href="/privacy" target="_blank" rel="noopener" data-i18n="privacyLink">Privacy</a>
     <ul id="facts"></ul>
-    <div class="row lang-row">
-      <label for="langSelect" class="visually-hidden" data-i18n="langLabel">Language</label>
-      <select id="langSelect">
-        <option value="en">English</option>
-        <option value="sw">Kiswahili</option>
-        <option value="fr">Français</option>
-        <option value="pt">Português</option>
-      </select>
-    </div>
     <div class="row">
       <button id="exportBtn" data-i18n="exportBtn">Save chat</button>
       <button id="forgetBtn" class="danger" data-i18n="forgetBtn">Forget me</button>
@@ -901,7 +905,9 @@ const meter = document.getElementById("meter");
    visible; anything that takes over the screen closes it. */
 
 function menuItems() {
-  return [...menuEl.querySelectorAll(".menuItem")];
+  // excludes .langRow: it's a static wrapper around the <select>, not a
+  // focusable roving item — Tab (not arrow keys) reaches the select
+  return [...menuEl.querySelectorAll(".menuItem:not(.langRow)")];
 }
 
 function closeMenu(focusTrigger) {
@@ -945,9 +951,13 @@ menuEl.addEventListener("keydown", (e) => {
   } else if (e.key === "Escape") {
     e.stopPropagation(); // don't also close the memory panel
     closeMenu(true);
-  } else if (e.key === "Tab") {
-    closeMenu(false);
   }
+});
+
+// Tab needs to reach the language <select>, so it isn't intercepted like
+// the other keys — instead, close only once focus actually leaves the menu
+menuEl.addEventListener("focusout", (e) => {
+  if (!menuEl.contains(e.relatedTarget)) closeMenu(false);
 });
 
 menuBtn.addEventListener("keydown", (e) => {
