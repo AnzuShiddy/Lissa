@@ -137,6 +137,40 @@ const check = (cond, name) => {
     "reply streamed in"
   );
 
+  /* ---- she replies in whatever language the message is in ----
+     Her conversational language, separate from the UI chrome's language
+     (#langSelect, tested elsewhere) — a French message should get a
+     French reply regardless of what the buttons are labeled in. Wording
+     is model-generated and non-deterministic, so match on common
+     function words rather than anything exact. A mid-conversation
+     switch (same session, no reset) covers "even if she was just
+     speaking another language". Placed early, on a fresh session — deep
+     in a long-lived test session that's sent dozens of prior messages,
+     an occasional genuinely empty reply has been observed from the API
+     itself (reproduced directly against the endpoint, not a client
+     race), so one retry guards against that transient case here too. */
+  const sendAndGetReply = async (text) => {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await page.fill("#msg", text);
+      await page.keyboard.press("Enter");
+      await page.waitForFunction(
+        () => !document.getElementById("send").classList.contains("stop"),
+        null, { timeout: 30000 }
+      );
+      const reply = await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
+      if (reply.trim()) return reply;
+    }
+    return "";
+  };
+  const frReply = await sendAndGetReply(
+    "Réponds uniquement par une courte phrase en français : comment vas-tu ?");
+  check(/[éèêàçùâî]|\b(je|tu|et|le|la|les)\b/i.test(frReply),
+    "language: French message gets a French reply (got: " + frReply.slice(0, 70) + ")");
+  const swReply = await sendAndGetReply(
+    "Jibu kwa sentensi fupi moja tu kwa Kiswahili: unaendeleaje leo?");
+  check(/\b(na|ni|sana|wewe|leo|habari|nzuri|karibu)\b/i.test(swReply),
+    "language: switches to Swahili mid-conversation (got: " + swReply.slice(0, 70) + ")");
+
   /* ---- fix 4: stop button mid-stream ---- */
   await page.fill("#msg", "tell me a long detailed story about the sea, at least 300 words");
   await page.keyboard.press("Enter");
