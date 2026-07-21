@@ -160,6 +160,14 @@ const check = (cond, name) => {
   const langPage = await langCtx.newPage();
   await langPage.goto("http://localhost:8765/");
   await langPage.waitForSelector(".bubble.lissa", { timeout: 30000 });
+  // voice off: with it on, a reply renders through the speech pipeline,
+  // which reveals text only as sentences are synthesized/paced rather
+  // than immediately — reading the bubble right after the network stream
+  // finishes can catch it before the pipeline has written anything in
+  await langPage.evaluate(() => stopSpeaking());
+  await langPage.click("#menuBtn");
+  await langPage.click("#voiceBtn");
+  await langPage.click("#menuBtn");
   const sendAndGetReply = async (text) => {
     for (let attempt = 0; attempt < 2; attempt++) {
       await langPage.fill("#msg", text);
