@@ -336,15 +336,24 @@
     padding: 22px 18px 12px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    /* base gap is the within-a-run spacing; a new turn adds margin on top
+       of it (see .bubble), so messages read as turns rather than a flat
+       list of equally-spaced events */
+    gap: 4px;
     scroll-behavior: smooth;
   }
+  /* Sit the conversation on the composer instead of stranding it at the top
+     with a void underneath. `justify-content: flex-end` would do it but makes
+     overflowing content unreachable above the scroll origin; an auto margin
+     on a leading pseudo-element collapses away once the content overflows. */
+  #chat::before { content: ""; margin-top: auto; }
   #chat::-webkit-scrollbar { width: 8px; }
   #chat::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 8px; }
   #chat::-webkit-scrollbar-track { background: transparent; }
 
   .timestamp {
     align-self: center;
+    margin-top: 10px;
     font-size: 11.5px;
     color: var(--muted);
     padding: 4px 0 0;
@@ -368,7 +377,13 @@
     white-space: pre-wrap;
     overflow-wrap: break-word;
     animation: pop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+    margin-top: 10px; /* a new turn breathes; .grouped below cancels it */
   }
+  /* consecutive messages from the same speaker are one turn: tight spacing,
+     and only the final bubble of the run keeps the tail pointing at them */
+  .bubble.grouped { margin-top: 0; }
+  .lissa.midRun { border-bottom-left-radius: 20px; }
+  .user.midRun { border-bottom-right-radius: 20px; }
   @keyframes pop {
     from { opacity: 0; transform: translateY(10px) scale(0.96); }
   }
@@ -464,7 +479,16 @@
     max-height: 120px;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
-  #msg::placeholder { color: var(--muted); }
+  /* The box is one line tall, but a textarea placeholder wraps — at phone
+     widths "Say something to Lissa…" spilled onto a second line and was cut
+     off mid-word. Keep it to one line and ellipsize instead. Typed text is
+     unaffected and still wraps, since this only targets the placeholder. */
+  #msg::placeholder {
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   #msg:focus {
     border-color: rgba(255, 92, 143, 0.55);
     box-shadow: 0 0 0 3px rgba(255, 92, 143, 0.12);
@@ -1435,9 +1459,20 @@ function addBubble(who, text, image) {
     div.textContent = text;
   }
   if (who === "lissa") addCopy(div, text);
+  groupWithPrevious(div, who);
   chat.appendChild(div);
   scrollChat(who === "user"); // sending your own message always snaps down
   return div;
+}
+
+/* Join `div` to the run above it when the previous element is a bubble from
+   the same speaker. A timestamp in between deliberately breaks the run —
+   time passed, so it reads as a new turn. */
+function groupWithPrevious(div, who) {
+  const prev = chat.lastElementChild;
+  if (!prev || !prev.classList.contains("bubble") || !prev.classList.contains(who)) return;
+  div.classList.add("grouped");
+  prev.classList.add("midRun"); // the tail belongs to the last of the run
 }
 
 function typingBubble() {
@@ -1445,6 +1480,7 @@ function typingBubble() {
   const div = document.createElement("div");
   div.className = "bubble lissa";
   div.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>';
+  groupWithPrevious(div, "lissa");
   chat.appendChild(div);
   scrollChat();
   return div;

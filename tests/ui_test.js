@@ -789,6 +789,65 @@ const check = (cond, name) => {
   await page.selectOption("#langSelect", "en"); // restore for cleanliness
   await page.click("#menuBtn"); // close the menu
 
+  /* ---- chat layout ---- */
+  // The composer is one line tall but a textarea placeholder wraps, so at
+  // phone widths the placeholder used to spill to a second line and get cut
+  // off mid-word — the first thing anyone saw on a phone.
+  for (const w of [320, 360, 420]) {
+    await page.setViewportSize({ width: w, height: 800 });
+    await page.waitForTimeout(120);
+    const box = await page.$eval("#msg", (el) => ({
+      ch: el.clientHeight, sh: el.scrollHeight }));
+    check(box.sh <= box.ch + 1,
+      `layout: placeholder fits one line at ${w}px (box ${box.ch}px, content ${box.sh}px)`);
+  }
+  await page.setViewportSize({ width: 900, height: 800 });
+  await page.waitForTimeout(120);
+
+  // a short conversation rests on the composer instead of stranding itself
+  // at the top with a void beneath it
+  await page.evaluate(() => { chat.innerHTML = ""; lastStamp = 0;
+    addBubble("lissa", "a short conversation"); });
+  await page.waitForTimeout(150);
+  const anchored = await page.evaluate(() => {
+    const b = document.querySelector(".bubble").getBoundingClientRect();
+    return Math.round(chat.getBoundingClientRect().bottom - b.bottom);
+  });
+  check(anchored < 60, `layout: short chat sits at the bottom (${anchored}px below last bubble)`);
+
+  // ...but a long one must still scroll all the way back up: the auto-margin
+  // that anchors it has to collapse once the content overflows
+  await page.evaluate(() => { chat.innerHTML = ""; lastStamp = 0;
+    for (let i = 0; i < 40; i++) addBubble(i % 2 ? "user" : "lissa", "message " + i); });
+  // let the auto-scroll-to-bottom settle first, then jump up with smooth
+  // scrolling off — otherwise this races that animation and reads a stale
+  // scrollTop rather than testing the layout at all
+  await page.waitForTimeout(400);
+  await page.evaluate(() => { chat.style.scrollBehavior = "auto"; chat.scrollTop = 0; });
+  await page.waitForTimeout(250);
+  check(
+    await page.evaluate(() => {
+      const first = document.querySelector(".bubble").getBoundingClientRect();
+      const c = chat.getBoundingClientRect();
+      return chat.scrollTop === 0 && first.top >= c.top - 2;
+    }),
+    "layout: a long chat still scrolls to the very first message"
+  );
+  await page.evaluate(() => { chat.style.scrollBehavior = ""; });
+
+  // consecutive messages from one speaker read as a single turn: tight
+  // spacing, and only the last of the run keeps its tail
+  await page.evaluate(() => { chat.innerHTML = ""; lastStamp = 0;
+    addBubble("lissa", "one"); addBubble("lissa", "two"); addBubble("user", "mine"); });
+  await page.waitForTimeout(150);
+  const grouped = await page.evaluate(() =>
+    [...chat.querySelectorAll(".bubble")].map((e) => ({
+      grouped: e.classList.contains("grouped"), midRun: e.classList.contains("midRun") })));
+  check(!grouped[0].grouped && grouped[0].midRun && grouped[1].grouped && !grouped[1].midRun,
+    "layout: a run of same-speaker messages groups, tail on the last only");
+  check(!grouped[2].grouped,
+    "layout: switching speaker starts a new turn");
+
   /* ---- privacy page ---- */
   await menuClick("#memBtn");
   const privacyHref = await page.$eval(".privacyLink", (el) => el.getAttribute("href"));
