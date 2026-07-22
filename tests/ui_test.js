@@ -548,9 +548,17 @@ const check = (cond, name) => {
   const stored = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("lissa_facts") || "{}"));
   const storedFacts = stored.facts || [];
+  // facts are weighted records now — { text, weight, core, ... } — so read
+  // .text instead of treating each entry as a bare string
+  const factTexts = storedFacts.map((f) => (typeof f === "string" ? f : f.text));
   check(storedFacts.length > 0, "memory: facts distilled into localStorage on reset");
-  check(storedFacts.join(" ").toLowerCase().includes("zanzibar"),
-    "memory: facts captured the name (got: " + storedFacts.join(" | ").slice(0, 80) + ")");
+  check(factTexts.join(" ").toLowerCase().includes("zanzibar"),
+    "memory: facts captured the name (got: " + factTexts.join(" | ").slice(0, 80) + ")");
+  check(storedFacts.every((f) => typeof f.text === "string" && typeof f.weight === "number"),
+    "memory: facts stored as weighted records");
+  const nameRec = storedFacts.find((f) => f.text && f.text.toLowerCase().includes("zanzibar"));
+  check(nameRec && nameRec.core === true,
+    "memory: the name is kept as a core (non-decaying) fact");
 
   // the record also tracks the shape of the relationship, not just facts
   check(Array.isArray(stored.threads),

@@ -27,6 +27,9 @@ from pathlib import Path
 from google import genai
 from google.genai import errors, types
 
+import memory_store
+import recall
+
 MODEL = "gemini-flash-lite-latest"  # lite: much higher free-tier daily quota than gemini-3.5-flash's 20/day
 TTS_MODEL = "gemini-3.1-flash-tts-preview"
 TTS_VOICE = "Leda"  # warm, youthful prebuilt voice
@@ -155,7 +158,7 @@ MEMORY_UPDATE_PROMPT = """\
 You maintain the long-term memory of Lissa, a companion chatbot, about the
 person she talks to.
 
-Current remembered facts (may be empty):
+Facts she already remembers (may be empty):
 {facts}
 
 Things she was already waiting to hear about (may be empty):
@@ -164,18 +167,22 @@ Things she was already waiting to hear about (may be empty):
 Latest conversation transcript:
 {transcript}
 
-Return JSON with two lists.
+Return JSON with three keys.
 
-"facts": short facts about the PERSON worth remembering for future
-conversations — their name, preferences, life details, ongoing topics, moods
-and how they like to talk. Merge with the current facts, correct anything
-outdated, and drop trivial or one-off details. At most {max_facts} facts,
-each a single short sentence.
+"facts": everything THIS conversation tells you about the PERSON — their
+name, preferences, life details, ongoing topics, moods, how they like to
+talk. Report a fact here only if this conversation confirms or updates it;
+do NOT re-list a remembered fact that went unmentioned — unmentioned facts
+fade on their own, and re-listing them keeps stale ones alive forever. Each
+is one short sentence. Set "core": true only for stable identity facts — a
+name, where they live, their work, their family — and false for everything
+else (tastes, moods, what they're up to this week). Their name, whenever
+it's been said, is the most important thing to remember: always include it
+and always mark it core. At most {max_facts} entries.
 
-If their name has been mentioned, the FIRST fact must be their name. Nothing
-else in this list matters as much: forgetting someone's name while still
-recalling their taste in music is exactly the kind of hollow that makes a
-companion feel fake. Only drop it if they've asked to be forgotten.
+"outdated": the exact text of any remembered fact this conversation shows is
+now wrong. Contradictions only — don't list something here just because it
+went unmentioned.
 
 "threads": open loops she should follow up on next time — something upcoming
 they mentioned, a worry they hadn't resolved, a plan they were about to make.
@@ -282,7 +289,9 @@ def clean_memory(raw) -> dict:
     strs = lambda v, cap: [
         s.strip()[:200] for s in v if isinstance(s, str) and s.strip()
     ][:cap] if isinstance(v, list) else []
-    mem["facts"] = strs(raw.get("facts"), MAX_FACTS)
+    # facts are weighted, decaying records ({text, weight, core, ...});
+    # normalize also accepts the old bare-string list and seeds it.
+    mem["facts"] = memory_store.normalize(raw.get("facts"), MAX_FACTS)
     mem["threads"] = strs(raw.get("threads"), MAX_THREADS)
     for key in ("met", "last"):
         val = raw.get(key)
@@ -323,7 +332,11 @@ def load_memory() -> dict:
 
 
 def save_memory(mem: dict) -> None:
-    MEMORY_FILE.write_text(json.dumps(mem, indent=2, ensure_ascii=False))
+    # Write atomically: a crash mid-write would otherwise leave a truncated
+    # file, and load_memory() would greet a regular as a stranger.
+    tmp = MEMORY_FILE.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(mem, indent=2, ensure_ascii=False))
+    os.replace(tmp, MEMORY_FILE)
 
 
 def history_line(mem: dict) -> str:
@@ -362,9 +375,11 @@ def build_config(mem: dict) -> types.GenerateContentConfig:
             "mattering entirely.\n"
         )
     if facts:
+        # Strongest first (memory_store ranks them), so if the model skims,
+        # it skims what matters most about this person.
         system += (
             "\nWhat you remember about this person from previous chats:\n"
-            + "\n".join(f"- {f}" for f in facts)
+            + "\n".join(f"- {t}" for t in memory_store.texts(facts))
             + "\nGreet them like someone you know and genuinely missed — "
             "weave these memories in naturally, don't recite them as a list.\n"
         )
@@ -395,6 +410,14 @@ def build_config(mem: dict) -> types.GenerateContentConfig:
     )
 
 
+def turn_config(client: genai.Client, mem: dict, message: str) -> types.GenerateContentConfig:
+    """A per-message config that puts only the memories this message calls
+    for in front of her — the rest of the memory (threads, mood, history)
+    is unchanged. recall.relevant() degrades to all facts on any failure."""
+    mem = clean_memory(mem)
+    return build_config({**mem, "facts": recall.relevant(client, mem["facts"], message)})
+
+
 def transcript_of(session) -> str:
     lines = []
     for content in session.get_history():
@@ -409,13 +432,24 @@ MEMORY_SCHEMA = types.Schema(
     type=types.Type.OBJECT,
     properties={
         "facts": types.Schema(
+            type=types.Type.ARRAY,
+            items=types.Schema(
+                type=types.Type.OBJECT,
+                properties={
+                    "text": types.Schema(type=types.Type.STRING),
+                    "core": types.Schema(type=types.Type.BOOLEAN),
+                },
+                required=["text", "core"],
+            ),
+        ),
+        "outdated": types.Schema(
             type=types.Type.ARRAY, items=types.Schema(type=types.Type.STRING)
         ),
         "threads": types.Schema(
             type=types.Type.ARRAY, items=types.Schema(type=types.Type.STRING)
         ),
     },
-    required=["facts", "threads"],
+    required=["facts", "outdated", "threads"],
 )
 
 
@@ -431,7 +465,7 @@ def distill_facts(client: genai.Client, session, mem: dict) -> dict:
         response = client.models.generate_content(
             model=MODEL,
             contents=MEMORY_UPDATE_PROMPT.format(
-                facts=json.dumps(mem["facts"], ensure_ascii=False),
+                facts=json.dumps(memory_store.texts(mem["facts"]), ensure_ascii=False),
                 threads=json.dumps(mem["threads"], ensure_ascii=False),
                 transcript=transcript,
                 max_facts=MAX_FACTS,
@@ -443,13 +477,23 @@ def distill_facts(client: genai.Client, session, mem: dict) -> dict:
                 thinking_config=thinking(),
             ),
         )
-        parsed = json.loads(response.text)
-        if isinstance(parsed, dict) and parsed.get("facts"):
-            # threads legitimately empty out; facts going empty means a bad
-            # response, so that's the one we treat as failure. Only these two
-            # come from the model — met/last/chats stay as they were.
-            fresh = clean_memory(parsed)
-            return {**mem, "facts": fresh["facts"], "threads": fresh["threads"]}
+        observed = json.loads(response.text)
+        if not isinstance(observed, dict):
+            return mem
+        # The model reports only what this conversation supports; the
+        # weighting, fading and forgetting happen locally in merge(). Facts
+        # legitimately fading to empty is a valid outcome now, so — unlike
+        # the old flat list — an empty "facts" is not treated as failure.
+        # threads still overwrite wholesale (they're not weighted); met,
+        # last, chats and mood are ours and never come from the model.
+        new_facts = memory_store.merge(
+            mem["facts"],
+            observed.get("facts", []),
+            observed.get("outdated", []),
+            MAX_FACTS,
+        )
+        fresh_threads = clean_memory({"threads": observed.get("threads", [])})["threads"]
+        return {**mem, "facts": new_facts, "threads": fresh_threads}
     except Exception:
         pass  # memory is a nice-to-have; never let it break the goodbye
     return mem
@@ -723,7 +767,10 @@ def chat() -> None:
             if mem["facts"] or mem["threads"]:
                 print("\nWhat Lissa remembers about you:")
                 for f in mem["facts"]:
-                    print(f"  - {f}")
+                    # Show how firmly each is held: core facts are permanent,
+                    # the rest fade unless you keep bringing them up.
+                    strength = "core" if f["core"] else f"{f['weight']:.1f}"
+                    print(f"  - {f['text']}  ({strength})")
                 if mem["threads"]:
                     print("\nWaiting to hear about:")
                     for t in mem["threads"]:
@@ -773,7 +820,10 @@ def chat() -> None:
 
         reply_parts: list[str] = []
         try:
-            for chunk in session.send_message_stream(user_input):
+            # Send only the memories this message calls for. The session's own
+            # config holds the fuller set, so a failed lookup just falls back.
+            cfg = turn_config(client, mem, user_input)
+            for chunk in session.send_message_stream(user_input, config=cfg):
                 if chunk.text:
                     reply_parts.append(chunk.text)
                     print(chunk.text, end="", flush=True)

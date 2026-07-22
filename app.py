@@ -173,8 +173,9 @@ class TTSIn(BaseModel):
 
 class FactsIn(BaseModel):
     # The visitor's whole memory record, kept in their own browser. `facts`
-    # stays a top-level field for older clients that predate the rest.
-    facts: list[str] = []
+    # are weighted records ({text, weight, core, ...}); bare strings are
+    # still accepted so browsers holding memory from an older version keep it.
+    facts: list[dict | str] = []
     threads: list[str] = []
     met: str = ""
     last: str = ""
@@ -312,7 +313,13 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
             with sess.lock:
                 try:
                     sent = False
-                    for chunk in sess.session.send_message_stream(parts):
+                    # Narrow the remembered facts to the ones this message
+                    # calls for (an embedding round-trip; skipped for small
+                    # memories and for a caption-less photo, which has nothing
+                    # to match on). The session's own config holds the fuller
+                    # set, so a failed lookup just falls back to it.
+                    cfg = lissa.turn_config(sess.client, sess.mem, text)
+                    for chunk in sess.session.send_message_stream(parts, config=cfg):
                         sent = True
                         if chunk.text:
                             q.put(chunk.text)
@@ -326,7 +333,8 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
                     if e.code == 400 and not sent and lissa.drop_thinking():
                         try:
                             sess.rebuild(sess.mem)
-                            for chunk in sess.session.send_message_stream(parts):
+                            cfg = lissa.turn_config(sess.client, sess.mem, text)
+                            for chunk in sess.session.send_message_stream(parts, config=cfg):
                                 if chunk.text:
                                     q.put(chunk.text)
                             return

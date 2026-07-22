@@ -1322,14 +1322,24 @@ function blankMemory() {
   return { facts: [], threads: [], met: "", last: "", chats: 0, mood: "", mood_day: "" };
 }
 
+// Facts are weighted records — { text, weight, core, ... } — that fade
+// unless a later conversation brings them up again. The server owns the
+// weighting; the browser just carries them. Bare strings are still accepted
+// so memory saved by an older version survives (the server re-seeds it).
+function factText(f) {
+  return typeof f === "string" ? f : (f && f.text) || "";
+}
+
 function loadMemory() {
   try {
     const raw = JSON.parse(localStorage.getItem(MEM_KEY));
     // a bare array is the pre-threads format from an earlier version
     const src = Array.isArray(raw) ? { facts: raw } : (raw || {});
     const list = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === "string") : []);
+    const factList = (v) => (Array.isArray(v)
+      ? v.filter((x) => typeof x === "string" || (x && typeof x.text === "string")) : []);
     return {
-      facts: list(src.facts),
+      facts: factList(src.facts),
       threads: list(src.threads),
       met: typeof src.met === "string" ? src.met : "",
       last: typeof src.last === "string" ? src.last : "",
@@ -1356,7 +1366,10 @@ async function memorize() {
       body: JSON.stringify(memory),
     });
     const data = await r.json();
-    if (data.memory && Array.isArray(data.memory.facts) && data.memory.facts.length) {
+    // An empty facts array is a real answer now — facts fade out — so accept
+    // it. When the server can't distill (quota block, a hiccup) it echoes
+    // back the memory it was given, so this never wipes memory over nothing.
+    if (data.memory && Array.isArray(data.memory.facts)) {
       memory = data.memory;
       saveMemory(memory);
     }
@@ -2283,7 +2296,7 @@ function renderFacts() {
   if (memory.facts.length || memory.threads.length) {
     for (const f of memory.facts) {
       const li = document.createElement("li");
-      li.textContent = f;
+      li.textContent = factText(f);
       ul.appendChild(li);
     }
     for (const th of memory.threads) {

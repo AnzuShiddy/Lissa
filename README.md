@@ -129,11 +129,24 @@ sudo apt install -y pulseaudio-utils
   country). She's told plainly that she isn't a therapist and shouldn't try
   to talk anyone through a crisis alone. An ordinary bad day just gets a
   friend, not a hotline.
-- **Long-term memory**: when a chat ends (`/quit`, Ctrl-D, or `/reset`),
-  Lissa distills the conversation into short facts about you — name,
-  preferences, ongoing topics — saved to `lissa_memory.json`. On the next
-  start those facts are woven into her persona, so she greets you like
-  someone she knows. Delete the file (or use `/forget`) to start over.
+- **Long-term memory** (weighted and decaying): when a chat ends (`/quit`,
+  Ctrl-D, or `/reset`), Lissa distills the conversation into short facts
+  about you — name, preferences, ongoing topics — saved to
+  `lissa_memory.json`. Rather than a flat list she rewrites wholesale, each
+  fact is a **weighted record that fades unless you bring it up again**: a
+  one-off remark decays over a few conversations while something you mention
+  often hardens and sticks. Identity facts (your name, where you live, your
+  work) are marked **core** and never decay. On the next start those facts
+  are woven into her persona, so she greets you like someone she knows.
+  Delete the file (or use `/forget`) to start over. The weighting, decay and
+  matching live in `memory_store.py` (with a dependency-free unit suite in
+  `tests/test_memory_store.py`).
+- **Relevant recall**: rather than dumping every fact into every prompt, each
+  message is embedded and only the facts close to it (plus core facts, which
+  are context for everything) ride along — ask about music and she isn't also
+  holding your job and your sister's name. It degrades to sending everything
+  on any hiccup, and skips the embedding call entirely when there are only a
+  handful of facts. Lives in `recall.py`.
 - **She has her own day**: a mood is drawn once per calendar day and kept,
   so she's recognisably herself through a conversation rather than lurching
   about — restless, mellow, wistful, mischievous. It colours her tone and
@@ -146,7 +159,8 @@ sudo apt install -y pulseaudio-utils
   about that interview?"). She also knows how long she's known you and how
   many times you've talked, which colours how she talks to you, and greets
   you differently after a long gap than after a day. Older `lissa_memory.json`
-  files in the previous plain-list format upgrade automatically.
+  files in the previous plain-list format upgrade automatically — each string
+  becomes a seeded record.
 - **In-session memory**: the SDK's chat session keeps the conversation
   history, so Lissa remembers everything said in the session.
 - **Voice input**: your speech is recorded (in the web app by the browser;

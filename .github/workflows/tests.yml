@@ -6,6 +6,22 @@ on:
   pull_request:
 
 jobs:
+  # Pure-logic tests: no API key, no network, no dependencies beyond the
+  # standard library. Unlike the UI suite below these run on every push and
+  # every fork's PRs, so they're the gate that actually protects the branch.
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run the unit suite
+        run: python -m unittest discover -s tests -t . -v
+
   ui-suite:
     runs-on: ubuntu-latest
     timeout-minutes: 20
