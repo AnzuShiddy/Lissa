@@ -1,5 +1,6 @@
 .env
 .venv
+analytics.jsonl
 __pycache__/
 node_modules/
 android/

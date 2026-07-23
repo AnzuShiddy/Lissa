@@ -18,16 +18,20 @@ import time
 from pathlib import Path
 
 import edge_tts
-from fastapi import Cookie, FastAPI, Request
+from fastapi import Cookie, FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from google.genai import errors, types
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
+import analytics
 import lissa
 
 STATIC_DIR = Path(__file__).parent / "static"
+
+# When set, /api/stats requires ?token=<this>; unset leaves it open.
+STATS_TOKEN = os.environ.get("LISSA_STATS_TOKEN", "")
 
 # Free neural voice for greetings and for when Gemini's TTS quota is spent.
 EDGE_VOICE = "en-US-AvaMultilingualNeural"
@@ -234,6 +238,10 @@ def hello(body: FactsIn, sid: str | None = Cookie(None)) -> dict:
     (stored in their browser) and return the matching greeting. An ongoing
     conversation is never rebuilt — the page restores it via /api/history."""
     _, sess = get_or_create_session(sid)
+    # chats/met arrive from the browser's own memory record, so new-vs-return
+    # is known without any server-side visitor tracking
+    analytics.record("visit", sid, lang=body.lang, chats=body.chats,
+                     met=body.met[:10], last=body.last[:10])
     mem = lissa.touch_memory(body.memory())  # this visit counts as one
     with sess.lock:
         if not lissa.transcript_of(sess.session):
@@ -296,6 +304,11 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
         return StreamingResponse(iter([]), media_type="text/plain; charset=utf-8")
 
     limited = take_quota(sess, body.lang)
+    # lengths and flags only — message content is never logged
+    analytics.record("message", sid, len=len(text), image=bool(body.image),
+                     lang=body.lang,
+                     limited=("day" if limited and not limited[1] else
+                              "rate" if limited else None))
     if limited:
         text, wait = limited
         return StreamingResponse(
@@ -364,6 +377,7 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
 async def transcribe(request: Request, lang: str = "en", sid: str | None = Cookie(None)) -> dict:
     _, sess = get_or_create_session(sid)
     limited = take_quota(sess, lang)
+    analytics.record("transcribe", sid, limited=bool(limited))
     if limited:
         return {"text": None, "error": limited[0]}
     wav_bytes = await request.body()
@@ -383,6 +397,7 @@ async def say(body: TTSIn, sid: str | None = Cookie(None)) -> Response:
     text = lissa.clean_for_speech(body.text)
     if not text:
         return Response(status_code=204)
+    analytics.record("say", sid, edge=body.edge)
     if not body.edge and time.time() >= sess.tts_retry_at:
         try:
             wav = await run_in_threadpool(lissa.synthesize, sess.client, text)
@@ -419,9 +434,21 @@ def reset(body: FactsIn | None = None, sid: str | None = Cookie(None)) -> dict:
     """Start a new conversation, personalized with whatever facts the
     visitor's browser sends (none = she meets them fresh)."""
     _, sess = get_or_create_session(sid)
+    analytics.record("reset", sid)
     mem = body.memory() if body else lissa.blank_memory()
     lang = body.lang if body else "en"
     hour = clean_hour(body.hour) if body else None
     with sess.lock:
         sess.rebuild(mem)
     return {"text": lissa.greeting(mem, lang, hour), "memory": mem}
+
+
+@app.get("/api/stats")
+def usage_stats(token: str = "") -> dict:
+    """Aggregate usage numbers (visitors, returning, messages…) for the last
+    two weeks — counts only, nothing personal. Note the free tier wipes the
+    event file on spin-down; the durable copy is the `analytics` lines in
+    Render's logs. Set LISSA_STATS_TOKEN to require ?token=."""
+    if STATS_TOKEN and not secrets.compare_digest(token, STATS_TOKEN):
+        raise HTTPException(status_code=403)
+    return analytics.stats()

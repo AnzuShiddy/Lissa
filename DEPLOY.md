@@ -44,6 +44,22 @@ Check logs under the **Logs** tab on your Render dashboard. Lissa logs:
 - Server startup/shutdown
 - API errors (rate limits, Gemini 429s)
 - TTS fallback events
+- `analytics {…}` lines — one JSON event per visit/message/voice use
+  (anonymous: hashed session, counts and lengths, never content)
+
+### Usage stats
+
+`GET /api/stats` returns the last two weeks of aggregate usage (visitors,
+returning visitors, messages, engaged sessions, minutes). Two caveats on the
+free tier:
+
+- The instance's `analytics.jsonl` is wiped every spin-down, so `/api/stats`
+  only covers the current instance's lifetime. The durable record is the
+  `analytics` lines in Render's logs — filter for `analytics ` and export
+  from the Logs tab.
+- Set `LISSA_STATS_TOKEN` as an environment variable to require
+  `?token=<value>` on `/api/stats`; without it the endpoint is public
+  (aggregate counts only, nothing sensitive).
 
 ## Auto-Deploy
 

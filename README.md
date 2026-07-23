@@ -174,6 +174,16 @@ sudo apt install -y pulseaudio-utils
   becomes a seeded record.
 - **In-session memory**: the SDK's chat session keeps the conversation
   history, so Lissa remembers everything said in the session.
+- **Anonymous usage analytics (web)**: the server records one JSON event per
+  visit, message, and voice use — timestamps, message *lengths*, feature
+  flags, and (from the visit counter the browser itself sends) whether the
+  visitor is new or returning. Never message content, and sessions appear
+  only as a one-way hash of the session cookie. Events append to
+  `analytics.jsonl` and mirror to stdout (so a host's log store keeps a
+  durable copy across restarts); `GET /api/stats` aggregates the last two
+  weeks into per-day visitors / returning / messages / engaged sessions /
+  minutes. Set `LISSA_STATS_TOKEN` to put the endpoint behind
+  `?token=`. Logic in `analytics.py`, suite in `tests/test_analytics.py`.
 - **Voice input**: your speech is recorded (in the web app by the browser;
   in the terminal via `/talk`, with WSLg routing your Windows mic through
   PulseAudio), sent to Gemini for transcription, and the transcript is
