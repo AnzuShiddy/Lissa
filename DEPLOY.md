@@ -34,6 +34,57 @@ If you prefer the web dashboard:
 - **Sessions:** Each Render instance keeps in-memory sessions. If scaled to multiple instances, users will lose session on reload (sessions not shared across instances)
 - **Memory:** Limited to ~512MB on free tier — fine for Lissa's per-user chat sessions
 
+## Keeping the instance warm
+
+The free tier spins down after ~15 min idle, and because the page itself is
+served by the sleeping server, a cold visitor waits ~30s on a blank tab
+before Lissa loads — most leave first. That bounce doesn't even show in the
+usage stats (the `visit` event fires *after* the page loads), so it reads as
+"nobody's interested" when it's really "nobody waited." Worth eliminating
+before driving traffic to the site.
+
+Two pingers keep it awake; run either or both.
+
+### Option A — GitHub Actions (already in the repo, zero setup)
+
+`.github/workflows/keepwarm.yml` pings `/api/stats` every 10 minutes. It's
+free on the public repo and needs no account. **Caveat:** GitHub's scheduler
+is best-effort and often fires late under load, so the real gap can stretch
+past the 15-min spin-down window — treat it as "usually warm," not a
+guarantee. GitHub also disables scheduled workflows after 60 days with no
+repo activity; any push re-arms them. Trigger a run by hand any time from the
+repo's **Actions → keep-warm → Run workflow**.
+
+### Option B — UptimeRobot (more reliable, ~5 min to set up)
+
+A dedicated uptime monitor fires on a far tighter, more dependable schedule
+than GitHub cron, so it's the better choice for an actual launch window. The
+free plan covers this completely.
+
+1. Sign up at [uptimerobot.com](https://uptimerobot.com) (free plan, no card).
+2. **+ New monitor** and set:
+   - **Monitor Type:** `HTTP(s)`
+   - **Friendly Name:** `Lissa keep-warm`
+   - **URL:** `https://lissa-02zl.onrender.com/api/stats`
+     (use `/api/stats`, not `/` — it's a tiny JSON response, so each ping
+     costs no Gemini quota and returns fast once the instance is awake)
+   - **Monitoring Interval:** `5 minutes` (the free-plan minimum, and
+     comfortably under the 15-min spin-down window)
+3. Under **Advanced / Timeout**, raise the request timeout if offered
+   (e.g. 30s+) so the very first ping against a *cold* instance — which takes
+   ~30s to wake — isn't scored as "down."
+4. **Alert Contacts:** add your email if you want to be told when the site is
+   actually unreachable (as opposed to just waking up). Optional — the point
+   here is keeping it warm, not alerting.
+5. **Create Monitor.** It starts pinging immediately; the dashboard shows
+   response time and uptime %, a free bonus signal on whether Render itself
+   is healthy.
+
+**Note on cost:** keeping the instance awake 24/7 consumes Render free-tier
+instance hours (750/month — roughly enough for one always-on service). If you
+only need it warm during launch pushes, pause the UptimeRobot monitor (and/or
+disable the GitHub workflow) when you're not actively sharing the link.
+
 ## Custom Domain (Optional)
 
 After deployment, under **Settings → Custom Domain**, add your own domain.
