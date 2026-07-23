@@ -1,4 +1,4 @@
-google-genai>=2.11.0
-fastapi>=0.110
-uvicorn[standard]>=0.29
-edge-tts>=6.1
+google-genai>=2.11.0,<3.0
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.29,<1.0
+edge-tts>=6.1,<8.0

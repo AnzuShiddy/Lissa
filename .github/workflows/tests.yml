@@ -6,9 +6,11 @@ on:
   pull_request:
 
 jobs:
-  # Pure-logic tests: no API key, no network, no dependencies beyond the
-  # standard library. Unlike the UI suite below these run on every push and
-  # every fork's PRs, so they're the gate that actually protects the branch.
+  # Pure-logic tests: no API key, no network. They import app.py and
+  # recall.py (which pull in the runtime deps) but never call out, so we
+  # install requirements — that also import-smoke-tests those modules.
+  # Unlike the UI suite below these run on every push and every fork's PRs,
+  # so they're the gate that actually protects the branch.
   unit:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -18,6 +20,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint
+        run: |
+          pip install ruff
+          ruff check .
 
       - name: Run the unit suite
         run: python -m unittest discover -s tests -t . -v

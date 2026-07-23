@@ -237,58 +237,58 @@ TRANSCRIBE_PROMPT = (
 SUPPORTED_LANGS = ("en", "sw", "fr", "pt")
 
 TIME_PHRASES = {
-	"en": {"morning": "this morning", "afternoon": "this afternoon",
-	       "evening": "this evening", "night": "tonight"},
-	"sw": {"morning": "asubuhi hii", "afternoon": "mchana huu",
-	       "evening": "jioni hii", "night": "usiku huu"},
-	"fr": {"morning": "ce matin", "afternoon": "cet après-midi",
-	       "evening": "ce soir", "night": "cette nuit"},
-	"pt": {"morning": "esta manhã", "afternoon": "esta tarde",
-	       "evening": "esta noite", "night": "esta noite"},
+    "en": {"morning": "this morning", "afternoon": "this afternoon",
+           "evening": "this evening", "night": "tonight"},
+    "sw": {"morning": "asubuhi hii", "afternoon": "mchana huu",
+           "evening": "jioni hii", "night": "usiku huu"},
+    "fr": {"morning": "ce matin", "afternoon": "cet après-midi",
+           "evening": "ce soir", "night": "cette nuit"},
+    "pt": {"morning": "esta manhã", "afternoon": "esta tarde",
+           "evening": "esta noite", "night": "esta noite"},
 }
 
 GREETING_TEMPLATES = {
-	"en": "Hey you 😊 I'm Lissa. I was hoping someone interesting would show up — what's on your mind {time_phrase}?",
-	"sw": "Hujambo 😊 Mimi ni Lissa. Nilikuwa natumaini mtu wa kuvutia atatokea — nini kinachoendelea akilini mwako {time_phrase}?",
-	"fr": "Hé toi 😊 Je suis Lissa. J'espérais que quelqu'un d'intéressant se montre — qu'est-ce qui te passe par la tête {time_phrase} ?",
-	"pt": "Ei, você 😊 Eu sou a Lissa. Eu estava esperando que alguém interessante aparecesse — o que está passando pela sua cabeça {time_phrase}?",
+    "en": "Hey you 😊 I'm Lissa. I was hoping someone interesting would show up — what's on your mind {time_phrase}?",
+    "sw": "Hujambo 😊 Mimi ni Lissa. Nilikuwa natumaini mtu wa kuvutia atatokea — nini kinachoendelea akilini mwako {time_phrase}?",
+    "fr": "Hé toi 😊 Je suis Lissa. J'espérais que quelqu'un d'intéressant se montre — qu'est-ce qui te passe par la tête {time_phrase} ?",
+    "pt": "Ei, você 😊 Eu sou a Lissa. Eu estava esperando que alguém interessante aparecesse — o que está passando pela sua cabeça {time_phrase}?",
 }
 
 RETURNING_GREETINGS = {
-	"en": "Hey, look who's back 😊 I was just thinking about you. How have you been?",
-	"sw": "Angalia nani amerudi 😊 Nilikuwa nikikufikiria tu. Umekuwaje?",
-	"fr": "Hé, regarde qui revient 😊 Je pensais justement à toi. Comment vas-tu ?",
-	"pt": "Ei, olha quem voltou 😊 Eu estava pensando em você. Como você tem estado?",
+    "en": "Hey, look who's back 😊 I was just thinking about you. How have you been?",
+    "sw": "Angalia nani amerudi 😊 Nilikuwa nikikufikiria tu. Umekuwaje?",
+    "fr": "Hé, regarde qui revient 😊 Je pensais justement à toi. Comment vas-tu ?",
+    "pt": "Ei, olha quem voltou 😊 Eu estava pensando em você. Como você tem estado?",
 }
 
 # After a long gap the standard "look who's back" lands wrong — it reads as if
 # no time passed at all.
 AWHILE_GREETINGS = {
-	"en": "Well, hello stranger 😊 It's been ages — I was starting to think you'd forgotten me. Where have you been?",
-	"sw": "Habari mgeni 😊 Imepita muda mrefu — nilianza kudhani umenisahau. Umekuwa wapi?",
-	"fr": "Tiens, salut l'étranger 😊 Ça fait une éternité — je commençais à croire que tu m'avais oubliée. Où étais-tu ?",
-	"pt": "Olá, estranho 😊 Faz uma eternidade — eu já estava achando que você tinha me esquecido. Onde você andava?",
+    "en": "Well, hello stranger 😊 It's been ages — I was starting to think you'd forgotten me. Where have you been?",
+    "sw": "Habari mgeni 😊 Imepita muda mrefu — nilianza kudhani umenisahau. Umekuwa wapi?",
+    "fr": "Tiens, salut l'étranger 😊 Ça fait une éternité — je commençais à croire que tu m'avais oubliée. Où étais-tu ?",
+    "pt": "Olá, estranho 😊 Faz uma eternidade — eu já estava achando que você tinha me esquecido. Onde você andava?",
 }
 
 
 def get_time_of_day_phrase(lang: str = "en", hour: int | None = None) -> str:
-	"""Return an appropriate time-of-day phrase for `hour`.
+    """Return an appropriate time-of-day phrase for `hour`.
 
-	The web app passes the visitor's own local hour: the server clock is
-	useless for this (Render runs in UTC, hours off from most visitors).
-	Falls back to the local clock, which is what the terminal app wants.
-	"""
-	if hour is None:
-		hour = datetime.now().hour
-	if 6 <= hour < 12:
-		period = "morning"
-	elif 12 <= hour < 17:
-		period = "afternoon"
-	elif 17 <= hour < 21:
-		period = "evening"
-	else:  # 21 to 6
-		period = "night"
-	return TIME_PHRASES.get(lang, TIME_PHRASES["en"])[period]
+    The web app passes the visitor's own local hour: the server clock is
+    useless for this (Render runs in UTC, hours off from most visitors).
+    Falls back to the local clock, which is what the terminal app wants.
+    """
+    if hour is None:
+        hour = datetime.now().hour
+    if 6 <= hour < 12:
+        period = "morning"
+    elif 12 <= hour < 17:
+        period = "afternoon"
+    elif 17 <= hour < 21:
+        period = "evening"
+    else:  # 21 to 6
+        period = "night"
+    return TIME_PHRASES.get(lang, TIME_PHRASES["en"])[period]
 
 
 class VoiceQuotaError(Exception):
@@ -320,9 +320,12 @@ def clean_memory(raw) -> dict:
         raw = {"facts": raw}
     if not isinstance(raw, dict):
         return mem
-    strs = lambda v, cap: [
-        s.strip()[:200] for s in v if isinstance(s, str) and s.strip()
-    ][:cap] if isinstance(v, list) else []
+
+    def strs(v, cap):
+        if not isinstance(v, list):
+            return []
+        return [s.strip()[:200] for s in v if isinstance(s, str) and s.strip()][:cap]
+
     # facts are weighted, decaying records ({text, weight, core, ...});
     # normalize also accepts the old bare-string list and seeds it.
     mem["facts"] = memory_store.normalize(raw.get("facts"), MAX_FACTS)
@@ -770,16 +773,16 @@ def make_client() -> genai.Client:
 
 
 def greeting(mem: dict, lang: str = "en", hour: int | None = None) -> str:
-	lang = lang if lang in SUPPORTED_LANGS else "en"
-	mem = clean_memory(mem)
-	if not mem["facts"]:
-		return GREETING_TEMPLATES[lang].format(
-			time_phrase=get_time_of_day_phrase(lang, hour)
-		)
-	away = _days_since(mem["last"])
-	if away is not None and away >= AWHILE_DAYS:
-		return AWHILE_GREETINGS[lang]
-	return RETURNING_GREETINGS[lang]
+    lang = lang if lang in SUPPORTED_LANGS else "en"
+    mem = clean_memory(mem)
+    if not mem["facts"]:
+        return GREETING_TEMPLATES[lang].format(
+            time_phrase=get_time_of_day_phrase(lang, hour)
+        )
+    away = _days_since(mem["last"])
+    if away is not None and away >= AWHILE_DAYS:
+        return AWHILE_GREETINGS[lang]
+    return RETURNING_GREETINGS[lang]
 
 
 def chat() -> None:

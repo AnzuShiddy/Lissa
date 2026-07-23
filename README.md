@@ -211,19 +211,44 @@ sudo apt install -y pulseaudio-utils
 
 ## Tests
 
-`tests/ui_test.js` drives the web app end-to-end in headless Chromium
-(Playwright) — 116 checks covering streaming, stop/retry, scrolling, voice
-recording through a fake mic, photos, the header menu, memory and
+**Unit suite** (pure logic — no API key, no network): the weighted memory
+store, semantic-recall plumbing, and the web server's rate-limit/image/hour
+helpers, all with fake clients. This is the gate that runs on every push and
+every fork's PRs:
+
+```bash
+python -m unittest discover -s tests -t . -v
+```
+
+**End-to-end UI suite**: `tests/ui_test.js` drives the web app in headless
+Chromium (Playwright) — 113 checks covering streaming, stop/retry, scrolling,
+voice recording through a fake mic, photos, the header menu, memory and
 relationship continuity, crisis handling, localization, themes and
-accessibility. They run against the real Gemini API, so a full pass costs
+accessibility. It runs against the real Gemini API, so a full pass costs
 roughly 20 calls of free-tier quota. With the server running on port 8765:
 
 ```bash
 NODE_PATH=$(npm root -g) node tests/ui_test.js
 ```
 
+**Linting**: `ruff check .` (config in `pyproject.toml`).
+
 ## Free-tier limits
 
 The Gemini free tier is rate-limited (around 15 requests per minute and a
 daily cap) — plenty for personal chatting. If you ever hit the limit, Lissa
 tells you to wait a few seconds; the conversation is not lost.
+
+Because the public deployment serves everyone from one shared API key, the
+web app adds its own throttle on top, tunable via environment variables:
+
+| Variable                 | Default | Effect                                              |
+|--------------------------|---------|-----------------------------------------------------|
+| `LISSA_RATE_PER_MIN`     | `8`     | Per-visitor quota-burning calls allowed per minute  |
+| `LISSA_DAILY_CALLS`      | `600`   | Global daily cap on quota-burning calls             |
+| `LISSA_MAX_SESSIONS`     | `2000`  | Hard ceiling on live in-memory sessions (LRU-evicted)|
+| `LISSA_MAX_MESSAGE_CHARS`| `4000`  | Longest single message relayed to Gemini            |
+
+None are required — the defaults suit a single shared instance. Running Lissa
+just for yourself? Raise `LISSA_RATE_PER_MIN` so the throttle stays out of
+your way.

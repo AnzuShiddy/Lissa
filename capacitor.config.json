@@ -12,7 +12,7 @@
     "preferredContentMode": "mobile"
   },
   "android": {
-    "allowMixedContent": true,
-    "usesCleartextTraffic": true
+    "allowMixedContent": false,
+    "usesCleartextTraffic": false
   }
 }
