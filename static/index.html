@@ -700,8 +700,10 @@
     animation: pop 0.25s ease both;
   }
   #facts li.empty { color: var(--muted); background: none; border: 1px dashed var(--border); text-align: center; }
-  /* open threads read as her intentions, not as stored facts about you */
-  #facts li.thread {
+  /* open threads and running jokes read as shared history and intentions,
+     not as stored facts about you — same soft dashed treatment */
+  #facts li.thread,
+  #facts li.joke {
     background: none;
     border: 1px dashed var(--border);
     color: var(--muted);
@@ -1070,6 +1072,7 @@ const I18N = {
     recordingDiscarded: "recording discarded",
     noFactsYet: "Nothing yet — she starts remembering after you've chatted a little.",
     waitingToHear: "Waiting to hear:",
+    runningJoke: "Running joke:",
     memoryWiped: "memory wiped — she's meeting you for the first time again",
     chatSaved: "chat saved",
     resetConfirm: "tap again to start a new conversation",
@@ -1130,6 +1133,7 @@ const I18N = {
     recordingDiscarded: "rekodi imetupwa",
     noFactsYet: "Bado hakuna — ataanza kukumbuka baada ya kuzungumza kidogo.",
     waitingToHear: "Anasubiri kusikia:",
+    runningJoke: "Utani wenu:",
     memoryWiped: "kumbukumbu imefutwa — anakukutana nawe kwa mara ya kwanza tena",
     chatSaved: "mazungumzo yamehifadhiwa",
     resetConfirm: "gusa tena kuanza mazungumzo mapya",
@@ -1190,6 +1194,7 @@ const I18N = {
     recordingDiscarded: "enregistrement abandonné",
     noFactsYet: "Rien pour l'instant — elle commence à se souvenir après un peu de conversation.",
     waitingToHear: "En attente de savoir :",
+    runningJoke: "Blague récurrente :",
     memoryWiped: "mémoire effacée — elle te rencontre à nouveau pour la première fois",
     chatSaved: "conversation enregistrée",
     resetConfirm: "touche à nouveau pour démarrer une nouvelle conversation",
@@ -1250,6 +1255,7 @@ const I18N = {
     recordingDiscarded: "gravação descartada",
     noFactsYet: "Nada ainda — ela começa a lembrar depois que vocês conversarem um pouco.",
     waitingToHear: "Esperando saber:",
+    runningJoke: "Piada interna:",
     memoryWiped: "memória apagada — ela está te conhecendo pela primeira vez outra vez",
     chatSaved: "conversa salva",
     resetConfirm: "toque novamente para começar uma nova conversa",
@@ -1313,13 +1319,13 @@ function localHour() {
    What she remembers about the visitor lives in THIS browser
    (localStorage) and is sent up only to personalize their own session; the
    server stores nothing. Beyond facts it tracks the shape of the
-   relationship — open threads to follow up on, when they first talked, how
-   many times, and when they last did. */
+   relationship — open threads to follow up on, running jokes to call back
+   to, when they first talked, how many times, and when they last did. */
 
 const MEM_KEY = "lissa_facts";
 
 function blankMemory() {
-  return { facts: [], threads: [], met: "", last: "", chats: 0, mood: "", mood_day: "" };
+  return { facts: [], threads: [], jokes: [], met: "", last: "", chats: 0, mood: "", mood_day: "" };
 }
 
 // Facts are weighted records — { text, weight, core, ... } — that fade
@@ -1341,6 +1347,7 @@ function loadMemory() {
     return {
       facts: factList(src.facts),
       threads: list(src.threads),
+      jokes: list(src.jokes),
       met: typeof src.met === "string" ? src.met : "",
       last: typeof src.last === "string" ? src.last : "",
       chats: Number.isInteger(src.chats) ? src.chats : 0,
@@ -2293,7 +2300,7 @@ function closePanel() {
 function renderFacts() {
   const ul = document.getElementById("facts");
   ul.innerHTML = "";
-  if (memory.facts.length || memory.threads.length) {
+  if (memory.facts.length || memory.threads.length || memory.jokes.length) {
     for (const f of memory.facts) {
       const li = document.createElement("li");
       li.textContent = factText(f);
@@ -2303,6 +2310,12 @@ function renderFacts() {
       const li = document.createElement("li");
       li.className = "thread";
       li.textContent = t("waitingToHear") + " " + th;
+      ul.appendChild(li);
+    }
+    for (const j of memory.jokes) {
+      const li = document.createElement("li");
+      li.className = "joke";
+      li.textContent = t("runningJoke") + " " + j;
       ul.appendChild(li);
     }
   } else {

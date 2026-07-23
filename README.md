@@ -122,6 +122,13 @@ sudo apt install -y pulseaudio-utils
   details she invents different favourites every conversation, which is
   what makes a companion feel like a vibe instead of a person. Swap them
   for your own; keep them concrete, and keep a flaw or two.
+- **Social calibration**: the prompt teaches her to read the room, not just
+  to be warm — match the other person's energy and message length, don't
+  end every message with a question (the classic chatbot tell), validate
+  before problem-solving when someone vents, and notice wind-down cues so a
+  conversation gets to land instead of being relaunched. She also has a
+  spine: she holds her opinions playfully instead of agreeing with
+  everything, and concedes only when actually convinced.
 - **If you're in real distress** she stops performing: she drops the
   flirtiness, takes it seriously the first time, and points you at people
   who can actually help — emergency services, a crisis line, or someone you
@@ -158,7 +165,11 @@ sudo apt install -y pulseaudio-utils
   them in her first reply next time ("wait, first — did you ever hear back
   about that interview?"). She also knows how long she's known you and how
   many times you've talked, which colours how she talks to you, and greets
-  you differently after a long gap than after a day. Older `lissa_memory.json`
+  you differently after a long gap than after a day. She also collects
+  **running jokes** — funny moments and callbacks distilled alongside the
+  facts — and is told to call one back only when the moment genuinely
+  invites it, never to explain the joke, and never to reach for one in a
+  serious moment. Older `lissa_memory.json`
   files in the previous plain-list format upgrade automatically — each string
   becomes a seeded record.
 - **In-session memory**: the SDK's chat session keeps the conversation
@@ -191,7 +202,7 @@ sudo apt install -y pulseaudio-utils
 ## Tests
 
 `tests/ui_test.js` drives the web app end-to-end in headless Chromium
-(Playwright) — 104 checks covering streaming, stop/retry, scrolling, voice
+(Playwright) — 116 checks covering streaming, stop/retry, scrolling, voice
 recording through a fake mic, photos, the header menu, memory and
 relationship continuity, crisis handling, localization, themes and
 accessibility. They run against the real Gemini API, so a full pass costs

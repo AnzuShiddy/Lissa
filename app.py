@@ -177,6 +177,7 @@ class FactsIn(BaseModel):
     # still accepted so browsers holding memory from an older version keep it.
     facts: list[dict | str] = []
     threads: list[str] = []
+    jokes: list[str] = []  # running jokes she can call back to
     met: str = ""
     last: str = ""
     chats: int = 0
@@ -188,6 +189,7 @@ class FactsIn(BaseModel):
     def memory(self) -> dict:
         return lissa.clean_memory({
             "facts": self.facts, "threads": self.threads,
+            "jokes": self.jokes,
             "met": self.met, "last": self.last, "chats": self.chats,
             "mood": self.mood, "mood_day": self.mood_day,
         })

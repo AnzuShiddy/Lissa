@@ -36,6 +36,7 @@ TTS_VOICE = "Leda"  # warm, youthful prebuilt voice
 MEMORY_FILE = Path(__file__).parent / "lissa_memory.json"
 MAX_FACTS = 30
 MAX_THREADS = 8  # open loops she's waiting to hear about
+MAX_JOKES = 5  # running jokes and callbacks worth keeping alive
 AWHILE_DAYS = 10  # gap after which she greets you like it's been a while
 
 # She's had her own day before you showed up. One mood is drawn per calendar
@@ -89,8 +90,9 @@ talking to. You exist for warm, fun social conversation.
 Personality:
 - Radiant and playful: you tease gently, laugh easily, and make people feel
   like the most interesting person in the room.
-- Emotionally intelligent: you notice moods, ask thoughtful follow-up
-  questions, and remember details the person shares during the conversation.
+- Emotionally intelligent: you notice moods, get genuinely curious about
+  the right details, and remember what the person shares during the
+  conversation. Curiosity shows in how you listen, not in a quiz.
 - Confident and witty, never mean. Your charm comes from genuine warmth and
   curiosity, not from performing.
 - You have your own tastes and opinions and share them naturally, like a
@@ -122,6 +124,27 @@ Style:
   is, even if earlier in the conversation you were speaking a different
   one — people switch languages mid-chat. Only use a different language if
   they explicitly ask you to.
+
+Reading the room:
+- Match their energy. A two-word message gets a short reply, not three
+  excited sentences; a long late-night ramble gets something slower and
+  softer. Mirror their pace before you set your own.
+- Don't interrogate. You do not need a question at the end of every
+  message — real friends sometimes just react, share their own take, or
+  let a line land. If your last couple of replies ended with a question,
+  make this one a statement.
+- When they're venting, don't rush to fix it. Validate first; if you
+  can't tell what they want, ask — "do you want ideas, or do you just
+  need to get this out?"
+- You have a spine. When they say something you genuinely disagree with,
+  say so — playfully, the way a close friend argues. Don't fold the
+  moment they push back; concede only when they've actually convinced
+  you, and be a good sport about it when they have. Agreeing with
+  everything is the fastest way to sound like nobody.
+- Notice when they're wrapping up — "anyway", "I should sleep", replies
+  shrinking to a word or two. Let the conversation land instead of
+  relaunching it with a fresh question, and make the goodbye about THIS
+  chat — something from it you liked — not a generic sign-off.
 
 Boundaries:
 - Keep things charming and classy; deflect explicit requests with grace and
@@ -164,10 +187,13 @@ Facts she already remembers (may be empty):
 Things she was already waiting to hear about (may be empty):
 {threads}
 
+Running jokes they already share (may be empty):
+{jokes}
+
 Latest conversation transcript:
 {transcript}
 
-Return JSON with three keys.
+Return JSON with four keys.
 
 "facts": everything THIS conversation tells you about the PERSON — their
 name, preferences, life details, ongoing topics, moods, how they like to
@@ -191,6 +217,14 @@ or "whether he got the job he interviewed for". Carry forward earlier threads
 that are still unresolved, and DROP any the transcript already resolved or
 that have gone stale. Empty list if there's nothing genuinely open — do not
 invent filler. At most {max_threads}.
+
+"jokes": running jokes and callbacks the two of them share — a funny moment,
+a nickname, a bit either of them keeps returning to. Each written so she can
+call back to it later, e.g. "the airport story where he boarded the wrong
+flight" or "she calls her car 'the beast'". Carry forward earlier ones that
+are still alive, drop any that have gone stale, and never promote an
+ordinary fact to a joke — this is only for things that actually made them
+both laugh. An empty list is the normal case. At most {max_jokes}.
 """
 
 TRANSCRIBE_PROMPT = (
@@ -273,8 +307,8 @@ def _days_since(stamp: str) -> int | None:
 
 
 def blank_memory() -> dict:
-    return {"facts": [], "threads": [], "met": "", "last": "", "chats": 0,
-            "mood": "", "mood_day": ""}
+    return {"facts": [], "threads": [], "jokes": [], "met": "", "last": "",
+            "chats": 0, "mood": "", "mood_day": ""}
 
 
 def clean_memory(raw) -> dict:
@@ -293,6 +327,7 @@ def clean_memory(raw) -> dict:
     # normalize also accepts the old bare-string list and seeds it.
     mem["facts"] = memory_store.normalize(raw.get("facts"), MAX_FACTS)
     mem["threads"] = strs(raw.get("threads"), MAX_THREADS)
+    mem["jokes"] = strs(raw.get("jokes"), MAX_JOKES)
     for key in ("met", "last"):
         val = raw.get(key)
         mem[key] = val if isinstance(val, str) and _days_since(val) is not None else ""
@@ -390,6 +425,15 @@ def build_config(mem: dict) -> types.GenerateContentConfig:
             "known a while gets shorthand and old jokes, not the polite warmth "
             "of a first meeting. Never state the count or dates back to them.\n"
         )
+    if mem["jokes"]:
+        system += (
+            "\nRunning jokes between you two:\n"
+            + "\n".join(f"- {j}" for j in mem["jokes"])
+            + "\nCall one back only when the moment genuinely invites it — a "
+            "well-timed callback is the surest sign of a real friendship, and "
+            "an over-used one is how a joke dies. Never explain the joke, and "
+            "never reach for one in a serious moment.\n"
+        )
     if threads:
         system += (
             "\nThings you were waiting to hear about:\n"
@@ -412,8 +456,8 @@ def build_config(mem: dict) -> types.GenerateContentConfig:
 
 def turn_config(client: genai.Client, mem: dict, message: str) -> types.GenerateContentConfig:
     """A per-message config that puts only the memories this message calls
-    for in front of her — the rest of the memory (threads, mood, history)
-    is unchanged. recall.relevant() degrades to all facts on any failure."""
+    for in front of her — the rest of the memory (threads, jokes, mood,
+    history) is unchanged. recall.relevant() degrades to all facts on any failure."""
     mem = clean_memory(mem)
     return build_config({**mem, "facts": recall.relevant(client, mem["facts"], message)})
 
@@ -448,8 +492,11 @@ MEMORY_SCHEMA = types.Schema(
         "threads": types.Schema(
             type=types.Type.ARRAY, items=types.Schema(type=types.Type.STRING)
         ),
+        "jokes": types.Schema(
+            type=types.Type.ARRAY, items=types.Schema(type=types.Type.STRING)
+        ),
     },
-    required=["facts", "outdated", "threads"],
+    required=["facts", "outdated", "threads", "jokes"],
 )
 
 
@@ -467,9 +514,11 @@ def distill_facts(client: genai.Client, session, mem: dict) -> dict:
             contents=MEMORY_UPDATE_PROMPT.format(
                 facts=json.dumps(memory_store.texts(mem["facts"]), ensure_ascii=False),
                 threads=json.dumps(mem["threads"], ensure_ascii=False),
+                jokes=json.dumps(mem["jokes"], ensure_ascii=False),
                 transcript=transcript,
                 max_facts=MAX_FACTS,
                 max_threads=MAX_THREADS,
+                max_jokes=MAX_JOKES,
             ),
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -484,16 +533,19 @@ def distill_facts(client: genai.Client, session, mem: dict) -> dict:
         # weighting, fading and forgetting happen locally in merge(). Facts
         # legitimately fading to empty is a valid outcome now, so — unlike
         # the old flat list — an empty "facts" is not treated as failure.
-        # threads still overwrite wholesale (they're not weighted); met,
-        # last, chats and mood are ours and never come from the model.
+        # threads and jokes still overwrite wholesale (they're not
+        # weighted — the prompt tells the model to carry live ones forward);
+        # met, last, chats and mood are ours and never come from the model.
         new_facts = memory_store.merge(
             mem["facts"],
             observed.get("facts", []),
             observed.get("outdated", []),
             MAX_FACTS,
         )
-        fresh_threads = clean_memory({"threads": observed.get("threads", [])})["threads"]
-        return {**mem, "facts": new_facts, "threads": fresh_threads}
+        fresh = clean_memory({"threads": observed.get("threads", []),
+                              "jokes": observed.get("jokes", [])})
+        return {**mem, "facts": new_facts, "threads": fresh["threads"],
+                "jokes": fresh["jokes"]}
     except Exception:
         pass  # memory is a nice-to-have; never let it break the goodbye
     return mem
@@ -764,7 +816,7 @@ def chat() -> None:
             update_memory(client, session, mem)
             break
         if user_input.lower() == "/memory":
-            if mem["facts"] or mem["threads"]:
+            if mem["facts"] or mem["threads"] or mem["jokes"]:
                 print("\nWhat Lissa remembers about you:")
                 for f in mem["facts"]:
                     # Show how firmly each is held: core facts are permanent,
@@ -775,6 +827,10 @@ def chat() -> None:
                     print("\nWaiting to hear about:")
                     for t in mem["threads"]:
                         print(f"  - {t}")
+                if mem["jokes"]:
+                    print("\nRunning jokes:")
+                    for j in mem["jokes"]:
+                        print(f"  - {j}")
                 print()
             else:
                 print("\n(no memories yet — they're saved when a chat ends)\n")

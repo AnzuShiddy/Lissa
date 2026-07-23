@@ -563,6 +563,8 @@ const check = (cond, name) => {
   // the record also tracks the shape of the relationship, not just facts
   check(Array.isArray(stored.threads),
     "memory: record carries a threads list");
+  check(Array.isArray(stored.jokes),
+    "memory: record carries a running-jokes list");
   check(stored.chats >= 1 && !!stored.met && !!stored.last,
     `memory: record tracks the relationship (chats=${stored.chats} met=${stored.met})`);
 
@@ -580,9 +582,14 @@ const check = (cond, name) => {
     `memory: each visit increments the conversation count (${stored.chats} -> ${bumped.chats})`);
 
   // she's had her own day: one mood is drawn per calendar day and kept, so
-  // she doesn't lurch between moods message to message or across a reload
-  check(!!bumped.mood && bumped.mood_day === new Date().toISOString().slice(0, 10),
-    "mood: a mood is drawn and dated for today");
+  // she doesn't lurch between moods message to message or across a reload.
+  // mood_day carries the SERVER's local date, and the server shares this
+  // machine's clock — so compare against the local date, not toISOString()'s
+  // UTC one, which disagrees for a few hours around local midnight
+  const localDay = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString().slice(0, 10);
+  check(!!bumped.mood && bumped.mood_day === localDay,
+    `mood: a mood is drawn and dated for today (got ${bumped.mood_day || "none"})`);
   check(bumped.mood === stored.mood,
     "mood: the same mood survives a reload within the day");
 
@@ -599,6 +606,33 @@ const check = (cond, name) => {
     els.map((e) => e.textContent).join(" "));
   check(threadShown.includes("sister"),
     "memory: panel lists open threads (got: " + threadShown.slice(0, 60) + ")");
+  await page.click("#closeBtn");
+
+  // running jokes ride the same record and show in the panel, softly styled
+  await page.evaluate(() => {
+    const m = JSON.parse(localStorage.getItem("lissa_facts") || "{}");
+    m.jokes = ["the airport story where he boarded the wrong flight"];
+    localStorage.setItem("lissa_facts", JSON.stringify(m));
+  });
+  await page.reload();
+  // wait for the greeting to finish: by then the greet round-trip has run
+  // and the server's echoed memory is back in localStorage (same signal the
+  // chats-bump check above relies on)
+  await page.waitForFunction(() => {
+    const b = document.querySelector(".bubble.lissa");
+    return b && !b.querySelector(".typing-dots") && b.textContent.length > 5;
+  }, null, { timeout: 30000 });
+  await menuClick("#memBtn");
+  const jokeShown = await page.$$eval("#facts li.joke", (els) =>
+    els.map((e) => e.textContent).join(" "));
+  check(jokeShown.includes("airport"),
+    "memory: panel lists running jokes (got: " + jokeShown.slice(0, 60) + ")");
+  // the greet round-trip must not strip them — the server echoes the whole
+  // cleaned record back, so a missing key here means FactsIn dropped it
+  const echoed = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("lissa_facts") || "{}"));
+  check(Array.isArray(echoed.jokes) && echoed.jokes.length === 1,
+    "memory: jokes survive the server round-trip");
   await page.click("#closeBtn");
 
   /* ---- transcript export ---- */
