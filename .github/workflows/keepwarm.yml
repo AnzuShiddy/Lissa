@@ -1,0 +1,48 @@
+name: keep-warm
+
+# Render's free tier spins the instance down after ~15 min idle, and the page
+# itself is served by that sleeping server — so a cold visitor stares at a
+# blank tab for ~30s before Lissa loads, and most leave first. This pings the
+# live site on a schedule so it stays awake during the hours people might show
+# up, protecting first-impression conversion (and the visit analytics that
+# would otherwise miss the bounce).
+#
+# Caveat: GitHub's scheduled workflows are best-effort and often fire late
+# under load, so the effective gap can stretch past the 15-min spin-down
+# window — treat this as "usually warm," not a guarantee. For a hard uptime
+# guarantee during a launch, an external monitor (UptimeRobot, cron-job.org)
+# pinging every 5 min is more reliable. GitHub also disables scheduled
+# workflows after 60 days with no repo activity; a push re-arms them.
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"  # every 10 minutes
+  workflow_dispatch:        # lets you wake it by hand from the Actions tab
+
+# If a run is still going when the next fires, skip the newcomer rather than
+# stacking pings.
+concurrency:
+  group: keep-warm
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping the live site
+        run: |
+          URL="https://lissa-02zl.onrender.com/api/stats"
+          # A cold instance takes ~30s to wake, so allow a generous timeout
+          # and one retry before calling it a failure.
+          for attempt in 1 2; do
+            code=$(curl -s -m 60 -o /dev/null -w "%{http_code}" "$URL") || code="000"
+            echo "attempt $attempt -> HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "awake"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "site did not return 200 after retries"
+          exit 1
