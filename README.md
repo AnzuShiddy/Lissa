@@ -227,3 +227,17 @@ NODE_PATH=$(npm root -g) node tests/ui_test.js
 The Gemini free tier is rate-limited (around 15 requests per minute and a
 daily cap) — plenty for personal chatting. If you ever hit the limit, Lissa
 tells you to wait a few seconds; the conversation is not lost.
+
+## Launch & demo tooling
+
+- **`LAUNCH.md`** — copy-paste launch-post drafts for the first users, one
+  per platform (Reddit, Show HN, X, Discord, Facebook).
+- **`togif.sh`** — turn a screen recording into a small, sharp GIF for those
+  posts, using ffmpeg's two-pass palette method so on-screen text stays
+  legible. Needs `ffmpeg` (`sudo apt-get install -y ffmpeg`).
+
+  ```bash
+  ./togif.sh recording.mp4                       # -> recording.gif
+  START=2 DURATION=10 ./togif.sh recording.mp4   # trim to 10s from 0:02
+  FPS=10 WIDTH=480 ./togif.sh recording.mp4      # smaller file
+  ```
