@@ -9,3 +9,6 @@ build/
 *.ipa
 *.apk
 .DS_Store
+
+# Terminal app's long-term memory — runtime state, holds personal facts
+lissa_memory.json

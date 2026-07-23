@@ -10,11 +10,13 @@ API key private and reuses lissa.py for the persona, transcription and TTS.
 """
 
 import base64
+import logging
 import os
 import queue
 import secrets
 import threading
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import edge_tts
@@ -26,6 +28,16 @@ from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
 import lissa
+
+# basicConfig is a no-op when a handler already exists (e.g. under uvicorn),
+# so the "lissa" logger's records propagate to whatever is already configured;
+# run standalone, this gives them somewhere to go. Render surfaces stdout/err
+# in its Logs tab, which is where these are meant to land.
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+logger = logging.getLogger("lissa")
 
 STATIC_DIR = Path(__file__).parent / "static"
 
@@ -39,6 +51,16 @@ GEMINI_TTS_COOLDOWN = 30 * 60
 # quota-burning calls: a per-visitor token bucket plus a global daily cap.
 RATE_PER_MIN = float(os.environ.get("LISSA_RATE_PER_MIN", "8"))
 DAILY_CALLS = int(os.environ.get("LISSA_DAILY_CALLS", "600"))
+
+# Hard ceiling on live in-memory sessions. The 4h idle sweep usually keeps the
+# store small, but a burst of visitors can outpace it; past this we evict the
+# least-recently-used so memory can't grow without bound on the 512MB free tier.
+MAX_SESSIONS = int(os.environ.get("LISSA_MAX_SESSIONS", "2000"))
+
+# Longest message we'll relay to Gemini. A giant paste burns tokens and quota
+# and isn't really a conversation — generous enough for a long late-night
+# ramble, but not an essay dump.
+MAX_MESSAGE_CHARS = int(os.environ.get("LISSA_MAX_MESSAGE_CHARS", "4000"))
 
 _daily_lock = threading.Lock()
 _daily = {"day": "", "count": 0}
@@ -57,8 +79,23 @@ DAILY_CAP_MSG = {
     "fr": "(J'ai discuté toute la journée et j'ai besoin de reposer ma voix — tu reviens demain ? 💋)",
     "pt": "(Eu conversei o dia todo e preciso descansar minha voz — pode voltar amanhã? 💋)",
 }
+TOO_LONG_MSG = {
+    "en": "(whoa, that's a lot to take in at once 😅 — can you give me the short version?)",
+    "sw": "(lo, hayo ni mengi kwa mara moja 😅 — waweza kunipa toleo fupi?)",
+    "fr": "(waouh, ça fait beaucoup d'un coup 😅 — tu peux me faire la version courte ?)",
+    "pt": "(uau, isso é muita coisa de uma vez 😅 — pode me dar a versão curta?)",
+}
 
-app = FastAPI(title="Lissa")
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    logger.info(
+        "Lissa server starting (rate=%s/min, daily cap=%s)", RATE_PER_MIN, DAILY_CALLS
+    )
+    yield
+    logger.info("Lissa server shutting down")
+
+
+app = FastAPI(title="Lissa", lifespan=lifespan)
 
 
 def take_quota(sess: "UserSession", lang: str = "en", per_minute: bool = True) -> tuple[str, int] | None:
@@ -139,6 +176,13 @@ def get_or_create_session(session_id: str | None) -> tuple[str, UserSession]:
         for old_sid, old_sess in list(_sessions.items()):
             if now - old_sess.last_used > 4 * 3600:
                 del _sessions[old_sid]
+        # Hard cap: if a visitor burst outpaced the idle sweep, drop the
+        # least-recently-used sessions (never the one we just created).
+        if len(_sessions) > MAX_SESSIONS:
+            oldest = sorted(_sessions.items(), key=lambda kv: kv[1].last_used)
+            for old_sid, _old in oldest[: len(_sessions) - MAX_SESSIONS]:
+                if old_sid != sid:
+                    del _sessions[old_sid]
         return sid, sess
 
 
@@ -290,6 +334,13 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
         if img:
             parts.append(types.Part.from_bytes(data=img[0], mime_type=img[1]))
     text = body.message.strip()
+    if len(text) > MAX_MESSAGE_CHARS:
+        # Turn it away before spending any quota on it.
+        lang = body.lang if body.lang in lissa.SUPPORTED_LANGS else "en"
+        return StreamingResponse(
+            iter([TOO_LONG_MSG[lang]]),
+            media_type="text/plain; charset=utf-8",
+        )
     if text:
         parts.append(text)
     if not parts:
@@ -333,6 +384,10 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
                     # optional thinking setting and rebuild rather than serving
                     # an error to every visitor until someone notices.
                     if e.code == 400 and not sent and lissa.drop_thinking():
+                        logger.warning(
+                            "Gemini rejected the request with 400; dropping the "
+                            "thinking setting and retrying: %s", e.message
+                        )
                         try:
                             sess.rebuild(sess.mem)
                             cfg = lissa.turn_config(sess.client, sess.mem, text)
@@ -343,10 +398,13 @@ def chat(body: ChatIn, sid: str | None = Cookie(None)) -> StreamingResponse:
                         except errors.APIError as retry_err:
                             e = retry_err
                     if getattr(e, "code", None) == 429:
+                        logger.warning("Gemini free-tier rate limit hit (429) on chat")
                         q.put("\n\n(Free-tier rate limit hit — wait a few seconds and try again.)")
                     else:
+                        logger.error("Gemini chat client error %s: %s", e.code, e.message)
                         q.put(f"\n\n(API error {e.code}: {e.message})")
                 except errors.APIError as e:
+                    logger.error("Gemini chat API error %s: %s", e.code, e.message)
                     q.put(f"\n\n(Gemini had a hiccup ({e.code}) — try again in a moment.)")
         finally:
             q.put(None)  # end of stream
@@ -389,6 +447,10 @@ async def say(body: TTSIn, sid: str | None = Cookie(None)) -> Response:
             if wav:
                 return Response(wav, media_type="audio/wav")
         except lissa.VoiceQuotaError:
+            logger.info(
+                "Gemini TTS quota exhausted; falling back to the Edge voice for %ds",
+                GEMINI_TTS_COOLDOWN,
+            )
             sess.tts_retry_at = time.time() + GEMINI_TTS_COOLDOWN
     try:
         edge_stream = edge_tts.Communicate(text, voice=EDGE_VOICE).stream()
@@ -407,10 +469,11 @@ async def say(body: TTSIn, sid: str | None = Cookie(None)) -> Response:
                     if msg["type"] == "audio" and msg["data"]:
                         yield msg["data"]
             except Exception:
-                pass
+                logger.warning("Edge TTS stream interrupted mid-reply", exc_info=True)
 
         return StreamingResponse(mp3_stream(), media_type="audio/mpeg")
     except Exception:
+        logger.warning("Edge TTS synthesis failed; no audio returned", exc_info=True)
         return Response(status_code=503)
 
 

@@ -35,8 +35,9 @@ saved by the previous version still loads.
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
-from typing import Any, Iterable
+from collections.abc import Iterable
+from datetime import UTC, datetime
+from typing import Any
 
 # Tuned so a fact mentioned once survives roughly ten cycles and a
 # well-established one (weight at the cap) roughly sixteen after the person
@@ -92,7 +93,7 @@ with you your
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _tokens(text: str) -> set[str]:
@@ -190,7 +191,7 @@ def cosine(a: list[float], b: list[float]) -> float:
     if not a or not b or len(a) != len(b):
         return 0.0
     dot = na = nb = 0.0
-    for x, y in zip(a, b):
+    for x, y in zip(a, b, strict=True):
         dot += x * y
         na += x * x
         nb += y * y
@@ -222,12 +223,12 @@ def select(
     """
     if query_vec is None or len(vectors) != len(records):
         return records
-    if any(v is None for r, v in zip(records, vectors) if not r["core"]):
+    if any(v is None for r, v in zip(records, vectors, strict=True) if not r["core"]):
         return records
 
     scored = [
         (i, cosine(query_vec, vec))
-        for i, (rec, vec) in enumerate(zip(records, vectors))
+        for i, (rec, vec) in enumerate(zip(records, vectors, strict=True))
         if not rec["core"]
     ]
     if not scored:

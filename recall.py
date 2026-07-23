@@ -75,7 +75,7 @@ def embed(client, texts: list[str], *, query: bool = False) -> list[list[float]]
                     output_dimensionality=EMBED_DIM,
                 ),
             )
-            fresh = {t: list(e.values) for t, e in zip(missing, response.embeddings)}
+            fresh = {t: list(e.values) for t, e in zip(missing, response.embeddings, strict=True)}
         except Exception:
             return None
         if len(fresh) != len(missing):
