@@ -35,6 +35,10 @@ STATS_TOKEN = os.environ.get("LISSA_STATS_TOKEN", "")
 
 # Free neural voice for greetings and for when Gemini's TTS quota is spent.
 EDGE_VOICE = "en-US-AvaMultilingualNeural"
+# Ava's default pace is quick and expressive — lovely, but it runs sentences
+# together. A gentle slowdown makes her noticeably easier to follow without
+# sounding sluggish. Override with LISSA_EDGE_RATE (e.g. "-15%" or "+0%").
+EDGE_RATE = os.environ.get("LISSA_EDGE_RATE", "-8%")
 
 # After a Gemini TTS quota 429, don't retry it for this long.
 GEMINI_TTS_COOLDOWN = 30 * 60
@@ -406,7 +410,7 @@ async def say(body: TTSIn, sid: str | None = Cookie(None)) -> Response:
         except lissa.VoiceQuotaError:
             sess.tts_retry_at = time.time() + GEMINI_TTS_COOLDOWN
     try:
-        edge_stream = edge_tts.Communicate(text, voice=EDGE_VOICE).stream()
+        edge_stream = edge_tts.Communicate(text, voice=EDGE_VOICE, rate=EDGE_RATE).stream()
         first = None
         async for msg in edge_stream:
             if msg["type"] == "audio" and msg["data"]:

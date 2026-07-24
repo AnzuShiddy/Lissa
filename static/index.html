@@ -1737,6 +1737,8 @@ function cleanForSpeech(text) {
     .trim();
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 function newPipeline(bubble) {
   const p = {
     items: [],        // {raw, clean, blobP} in speaking order
@@ -1782,9 +1784,16 @@ function pipeAdd(p, raw) {
 async function pipePlay(p) {
   if (p.playing || p.dead) return;
   p.playing = true;
+  let first = true;
   while (p.items.length) {
     const { raw, clean, blobP } = p.items.shift();
     const blob = await blobP;
+    if (p.dead) break;
+    // A short breath between sentences so they land as separate thoughts
+    // instead of one run-on stream — skipped before the very first clip so
+    // she still starts speaking promptly.
+    if (!first && (blob || clean)) await sleep(140);
+    first = false;
     if (p.dead) break;
     if (blob) {
       await playClip(p, raw, blob);

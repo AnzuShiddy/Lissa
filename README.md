@@ -193,7 +193,10 @@ sudo apt install -y pulseaudio-utils
   reply streams in, it's synthesized immediately with Edge's free neural
   voice (`en-US-AvaMultilingualNeural`, via `edge-tts`) and the clips play
   in order, so her first sentence is audible while the rest is still being
-  written, with the text typing out in sync. If the voice server is
+  written, with the text typing out in sync. She's tuned for clarity, not
+  just warmth: the neural voice is slowed a touch (`LISSA_EDGE_RATE`, default
+  `-8%`) and there's a short breath between sentences so a long reply lands as
+  separate thoughts instead of one run-on stream. If the voice server is
   unreachable, the browser's built-in speech is the last resort. Voice
   capture runs on an `AudioWorklet` (with a `ScriptProcessorNode` fallback
   for older browsers).
