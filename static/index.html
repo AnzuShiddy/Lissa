@@ -1636,8 +1636,9 @@ async function send(text, isRetry, retryImage) {
   let connErr = false;
   const ac = new AbortController();
   chatAbort = ac;
-  // With voice on, the pipeline types the reply into the bubble in sync
-  // with her speech; with voice off, text streams in at full speed.
+  // With voice on, the bubble stays on typing dots until the reply is
+  // written and synthesized, then types out in sync with her one clip;
+  // with voice off, text streams into the bubble at full speed.
   const pipe = voiceOn ? newPipeline(bubble) : null;
   try {
     const res = await fetch("/api/chat", {
@@ -1655,7 +1656,7 @@ async function send(text, isRetry, retryImage) {
       if (done) break;
       full += dec.decode(value, { stream: true });
       if (pipe && !pipe.dead) {
-        feedSpeech(pipe, full, false); // she speaks + types finished sentences
+        feedSpeech(pipe, full, false); // recorded only — nothing speaks yet
       } else {
         bubble.textContent = full;
         scrollChat();
@@ -1698,11 +1699,15 @@ async function send(text, isRetry, retryImage) {
 }
 
 /* ---------- spoken replies ----------
-   As the reply streams in, each completed sentence is dispatched for
-   synthesis immediately (Edge's free neural voice — no quota to manage),
-   so she starts talking while the rest is still being written. Clips are
-   synthesized in parallel but play strictly in order, and the text types
-   out in sync with each clip. */
+   Once the reply is fully written it's synthesized as a single clip (Edge's
+   free neural voice — no quota to manage), and the text types out in sync
+   with it.
+
+   One clip per reply, not one per sentence: synthesizing sentence by
+   sentence restarts the voice's intonation contour on every sentence and
+   pads each MP3's head and tail, which together are what made her sound
+   choppy and robotic. The cost is that she starts speaking a beat later —
+   after the whole reply is written rather than after its first sentence. */
 
 let pipeline = null;   // active speech pipeline
 let nudgeAudio = null; // greeting clip replayed after an autoplay block
@@ -1737,12 +1742,9 @@ function cleanForSpeech(text) {
     .trim();
 }
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
 function newPipeline(bubble) {
   const p = {
-    items: [],        // {raw, clean, blobP} in speaking order
-    spoken: 0,        // chars of the reply already dispatched
+    items: [],        // the reply's clip as {raw, clean, blobP}
     fullText: "",     // everything received so far (for flushing)
     bubble: bubble || null,   // where the reply is typed out
     bubbleStarted: false,     // typing dots cleared yet?
@@ -1764,10 +1766,13 @@ function pipeAdd(p, raw) {
   if (clean) {
     const ac = new AbortController();
     p.aborts.add(ac);
-    // synthesis starts NOW, in parallel with whatever is already playing.
-    // Always the Edge voice: sentence-level clips would burn through the
-    // tiny Gemini TTS quota in a couple of replies, and a mid-reply voice
-    // switch when it runs out sounds broken.
+    // Always the Edge voice. /api/say can serve Gemini's "Leda" instead
+    // (edge: false) and one clip per reply makes that affordable quota-wise,
+    // but it was measured at 7-18s per call — 9s even for a four-word reply,
+    // and streaming it doesn't help because Gemini buffers ~10s before the
+    // first chunk. That's a conversation-killing wait for the only thing it
+    // buys: both voices are 24 kHz, so Leda removes Edge's MP3 artifacts
+    // but not the muffled ceiling. Fixing that needs a 48 kHz source.
     blobP = fetch("/api/say", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1784,16 +1789,9 @@ function pipeAdd(p, raw) {
 async function pipePlay(p) {
   if (p.playing || p.dead) return;
   p.playing = true;
-  let first = true;
   while (p.items.length) {
     const { raw, clean, blobP } = p.items.shift();
     const blob = await blobP;
-    if (p.dead) break;
-    // A short breath between sentences so they land as separate thoughts
-    // instead of one run-on stream — skipped before the very first clip so
-    // she still starts speaking promptly.
-    if (!first && (blob || clean)) await sleep(140);
-    first = false;
     if (p.dead) break;
     if (blob) {
       await playClip(p, raw, blob);
@@ -1901,32 +1899,14 @@ function revealText(p, text, ms) {
   });
 }
 
-/* index just past the last complete sentence in `text`, or 0 if none */
-function lastSentenceEnd(text) {
-  const m = text.match(/^[\s\S]*[.!?…]["')\]]*\s/);
-  return m ? m[0].length : 0;
-}
-
-/* Feed streamed text to the pipeline. Completed sentences are dispatched
-   for synthesis as they arrive: the first the moment it's done (fastest
-   start), later ones batched a little so long replies don't turn into a
-   flood of tiny clips. */
+/* Feed streamed text to the pipeline. Partial replies are only recorded (so
+   a stop mid-stream can still flush them into the bubble); synthesis waits
+   for the complete reply and dispatches it as one clip. */
 function feedSpeech(p, full, done) {
   if (p.dead) return;
   p.fullText = full;
-  if (!done) {
-    const pending = full.slice(p.spoken);
-    const cut = lastSentenceEnd(pending);
-    const min = p.spoken === 0 ? 1 : 60;
-    if (cut >= min) {
-      p.spoken += cut;
-      pipeAdd(p, pending.slice(0, cut));
-    }
-    return;
-  }
-  const rest = full.slice(p.spoken);
-  p.spoken = full.length;
-  if (rest.trim()) pipeAdd(p, rest);
+  if (!done) return;
+  if (full.trim()) pipeAdd(p, full);
   p.finished = true;
   if (!p.playing && p.items.length === 0) {
     if (p.bubble) {

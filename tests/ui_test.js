@@ -161,9 +161,9 @@ const check = (cond, name) => {
   await langPage.goto("http://localhost:8765/");
   await langPage.waitForSelector(".bubble.lissa", { timeout: 30000 });
   // voice off: with it on, a reply renders through the speech pipeline,
-  // which reveals text only as sentences are synthesized/paced rather
-  // than immediately — reading the bubble right after the network stream
-  // finishes can catch it before the pipeline has written anything in
+  // which reveals text only once the clip is synthesized and then paces it
+  // against playback — reading the bubble right after the network stream
+  // finishes would catch it before the pipeline has written anything in
   await langPage.evaluate(() => stopSpeaking());
   await langPage.click("#menuBtn");
   await langPage.click("#voiceBtn");
@@ -454,7 +454,7 @@ const check = (cond, name) => {
     "fix10: cancel closes the recorder"
   );
 
-  /* ---- sentence-by-sentence speech ---- */
+  /* ---- one clip per reply ---- */
   await menuClick("#voiceBtn"); // voice back on
   const sayTimes = [];
   const onReq = (r) => { if (r.url().includes("/api/say")) sayTimes.push(Date.now()); };
@@ -465,13 +465,15 @@ const check = (cond, name) => {
     () => !document.getElementById("send").classList.contains("stop"),
     null, { timeout: 60000 }
   );
-  const streamDoneAt = Date.now();
-  await page.waitForTimeout(2500); // let any trailing segments dispatch
+  await page.waitForTimeout(2500); // a stray per-sentence clip would land here
   page.off("request", onReq);
-  check(sayTimes.length >= 2,
-    "speech: reply split into multiple clips (" + sayTimes.length + " requests)");
-  check(sayTimes.length > 0 && sayTimes[0] < streamDoneAt,
-    "speech: first clip requested before the text stream finished");
+  // A reply this long is many sentences and must still be a single synthesis
+  // request: that's what keeps intonation running across sentences instead of
+  // resetting on each one. (Not asserting it fires only after the stream ends
+  // — setBusy(false) and the dispatch are in the same synchronous block, so
+  // no external observer can order them reliably.)
+  check(sayTimes.length === 1,
+    "speech: whole reply synthesized as one clip (" + sayTimes.length + " requests)");
   await page.click("#avatarWrap"); // stop any ongoing speech
   await menuClick("#voiceBtn");   // voice off again for the memory tests
 

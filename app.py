@@ -40,8 +40,15 @@ EDGE_VOICE = "en-US-AvaMultilingualNeural"
 # sounding sluggish. Override with LISSA_EDGE_RATE (e.g. "-15%" or "+0%").
 EDGE_RATE = os.environ.get("LISSA_EDGE_RATE", "-8%")
 
-# After a Gemini TTS quota 429, don't retry it for this long.
+# After a Gemini TTS quota 429, don't retry it for this long. The quota
+# belongs to the one shared API key, not to a visitor, so the cooldown is
+# global: a 429 from anyone means everyone falls back to Edge for a while.
+# Per-session it would be useless — every other visitor would keep hammering
+# a quota that's already spent, paying a failed round-trip before each
+# fallback.
 GEMINI_TTS_COOLDOWN = 30 * 60
+_tts_lock = threading.Lock()
+_tts_retry_at = 0.0
 
 # The public deployment serves everyone from one shared API key, so throttle
 # quota-burning calls: a per-visitor token bucket plus a global daily cap.
@@ -103,7 +110,6 @@ class UserSession:
     def __init__(self) -> None:
         self.client = lissa.make_client()
         self.lock = threading.Lock()
-        self.tts_retry_at = 0.0
         self.last_used = time.time()
         self.tokens = RATE_PER_MIN  # rate-limit token bucket
         self.tokens_at = time.time()
@@ -402,13 +408,17 @@ async def say(body: TTSIn, sid: str | None = Cookie(None)) -> Response:
     if not text:
         return Response(status_code=204)
     analytics.record("say", sid, edge=body.edge)
-    if not body.edge and time.time() >= sess.tts_retry_at:
+    global _tts_retry_at
+    with _tts_lock:
+        try_gemini = not body.edge and time.time() >= _tts_retry_at
+    if try_gemini:
         try:
             wav = await run_in_threadpool(lissa.synthesize, sess.client, text)
             if wav:
                 return Response(wav, media_type="audio/wav")
         except lissa.VoiceQuotaError:
-            sess.tts_retry_at = time.time() + GEMINI_TTS_COOLDOWN
+            with _tts_lock:
+                _tts_retry_at = time.time() + GEMINI_TTS_COOLDOWN
     try:
         edge_stream = edge_tts.Communicate(text, voice=EDGE_VOICE, rate=EDGE_RATE).stream()
         first = None
