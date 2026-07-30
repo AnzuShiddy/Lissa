@@ -20,9 +20,7 @@ from __future__ import annotations
 
 import threading
 
-from google.genai import types
-
-import memory_store
+from core import memory_store
 
 EMBED_MODEL = "gemini-embedding-001"
 
@@ -67,6 +65,13 @@ def embed(client, texts: list[str], *, query: bool = False) -> list[list[float]]
     missing, have = _cached(texts)
     if missing:
         try:
+            # Imported here, not at module scope, so core.persona (and every
+            # bot definition through it) stays importable without the SDK
+            # installed — that's what keeps the unit suite dependency-free.
+            # A missing SDK lands in the except below like any other failure:
+            # None, meaning "fall back to sending everything".
+            from google.genai import types
+
             response = client.models.embed_content(
                 model=EMBED_MODEL,
                 contents=missing,

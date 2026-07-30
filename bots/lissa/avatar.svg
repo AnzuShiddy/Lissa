@@ -1,0 +1,57 @@
+<svg viewBox="0 0 120 120" role="img" aria-label="Lissa's face">
+<defs>
+  <radialGradient id="bgG" cx="50%" cy="42%" r="65%">
+    <stop offset="0%" stop-color="#3a2135"/><stop offset="100%" stop-color="#1c0e18"/>
+  </radialGradient>
+  <linearGradient id="hairG" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ff5c8f"/><stop offset="100%" stop-color="#a86cf5"/>
+  </linearGradient>
+  <radialGradient id="skinG" cx="50%" cy="38%" r="70%">
+    <stop offset="0%" stop-color="#f9e9ef"/><stop offset="100%" stop-color="#e8c6d5"/>
+  </radialGradient>
+  <linearGradient id="lipG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ff4d6d"/><stop offset="100%" stop-color="#c73a6b"/>
+  </linearGradient>
+</defs>
+<circle cx="60" cy="60" r="60" fill="url(#bgG)"/>
+<g id="head">
+  <line x1="60" y1="26" x2="60" y2="13" stroke="#ff5c8f" stroke-width="2"/>
+  <circle id="antTip" cx="60" cy="11" r="3.4" fill="#ffb3c0"/>
+  <circle cx="60" cy="56" r="40" fill="url(#hairG)"/>
+  <ellipse cx="31" cy="76" rx="10" ry="21" fill="url(#hairG)"/>
+  <ellipse cx="89" cy="76" rx="10" ry="21" fill="url(#hairG)"/>
+  <circle cx="31" cy="66" r="5.5" fill="#241422" stroke="#a86cf5" stroke-width="1.4"/>
+  <circle cx="31" cy="66" r="1.8" fill="#ff5c8f"/>
+  <circle cx="89" cy="66" r="5.5" fill="#241422" stroke="#a86cf5" stroke-width="1.4"/>
+  <circle cx="89" cy="66" r="1.8" fill="#ff5c8f"/>
+  <ellipse cx="60" cy="66" rx="26" ry="30" fill="url(#skinG)"/>
+  <path d="M36,88 l4.5,3.2 M84,88 l-4.5,3.2" stroke="#a86cf5" stroke-width="1.1" opacity="0.4" fill="none"/>
+  <path d="M34,60 C34,31 86,31 86,60 C82,46 74,41 60,43 C46,41 38,46 34,60 Z" fill="url(#hairG)"/>
+  <circle cx="60" cy="38" r="2.6" fill="#ffd7e2" opacity="0.9"/>
+  <path d="M42,56 Q48,52 54,55" stroke="#b46e86" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <path d="M66,55 Q72,52 78,56" stroke="#b46e86" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <g class="eye">
+    <ellipse cx="48" cy="62" rx="6.6" ry="4.9" fill="#1a0d16"/>
+    <circle cx="48" cy="62" r="4.1" fill="#ff6f9d"/>
+    <circle cx="48" cy="62" r="2" fill="#ffa8c4"/>
+    <circle cx="49.3" cy="60.6" r="1.5" fill="#fff" opacity="0.95"/>
+    <path d="M41.5,60.5 l-2.6,-1.6 M42.5,58.6 l-2.2,-2.1" stroke="#1a0d16" stroke-width="1.1" stroke-linecap="round"/>
+  </g>
+  <g class="eye">
+    <ellipse cx="72" cy="62" rx="6.6" ry="4.9" fill="#1a0d16"/>
+    <circle cx="72" cy="62" r="4.1" fill="#ff6f9d"/>
+    <circle cx="72" cy="62" r="2" fill="#ffa8c4"/>
+    <circle cx="73.3" cy="60.6" r="1.5" fill="#fff" opacity="0.95"/>
+    <path d="M78.5,60.5 l2.6,-1.6 M77.5,58.6 l2.2,-2.1" stroke="#1a0d16" stroke-width="1.1" stroke-linecap="round"/>
+  </g>
+  <path d="M60,67 q-1.6,4 0,5.2" stroke="#d8a8bc" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <ellipse cx="42" cy="73" rx="5" ry="3" fill="#ff8fb0" opacity="0.32"/>
+  <ellipse cx="78" cy="73" rx="5" ry="3" fill="#ff8fb0" opacity="0.32"/>
+  <ellipse id="mouthOpen" cx="60" cy="83" rx="6.8" ry="5" fill="#511226"/>
+  <path id="lipUpper" d="M50,81 Q55,76.8 60,79.2 Q65,76.8 70,81 Q65,82.6 60,82.6 Q55,82.6 50,81 Z" fill="url(#lipG)"/>
+  <g id="lipLower">
+    <path d="M50.5,81.6 Q60,89.8 69.5,81.6 Q60,84.2 50.5,81.6 Z" fill="url(#lipG)"/>
+    <path d="M55,84.5 Q60,86.6 65,84.5" stroke="#ffd7e2" stroke-width="1" opacity="0.55" fill="none" stroke-linecap="round"/>
+  </g>
+</g>
+        </svg>

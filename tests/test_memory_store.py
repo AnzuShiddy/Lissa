@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import memory_store as ms
+from core import memory_store as ms
 
 
 def cycles(records, mentioned, n, outdated=()):

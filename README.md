@@ -1,13 +1,24 @@
-# Lissa 💋
+# LucidDive
 
-A charming, warm companion chatbot for social conversation, powered by the
-**Google Gemini API free tier** — streaming responses and multi-turn memory,
-at no cost.
+A few chatbots, each with its own job, sharing one engine and one server.
+Powered by the **Google Gemini API free tier** — streaming replies, voice
+both ways, and memory between visits, at no cost.
 
-**Try her live:** <https://lissa-02zl.onrender.com> (free tier — the first
-visit after a quiet spell takes ~30s to wake).
+**Live:** <https://lissa-02zl.onrender.com> (free tier — the first visit
+after a quiet spell takes ~30s to wake).
 
-**Now available as a native mobile app!** Build for Android or iOS with Capacitor. See [MOBILE.md](MOBILE.md) for setup and build instructions.
+| bot | at | what it's for |
+| --- | --- | --- |
+| **Lissa** 💋 | `/lissa` | A warm, playful companion for late-night conversation. |
+| **Athar** 🌙 | `/athar` | Questions about Islam, answered from the Qur'an and the authentic Sunnah. |
+
+The landing page at `/` lists whatever bots are registered. Everything
+below the persona — streaming, memory, recall, voice, analytics, rate
+limits, the web UI — is shared; a bot is a configuration, not a fork.
+
+> **Athar is an AI, not a scholar.** It can be wrong, and it is told to say
+> so. Nothing there replaces a qualified teacher, and the app says as much
+> at the top of every conversation.
 
 ## Setup
 
@@ -28,47 +39,42 @@ export GEMINI_API_KEY=your-key-here
 
 ## Run
 
-**Web app** (recommended — chat bubbles, mic button, spoken replies in the
-browser):
+**Web** (recommended — chat bubbles, mic button, spoken replies):
 
 ```bash
 .venv/bin/uvicorn app:app --port 8000    # or ./run_web.sh
 ```
 
-Then open <http://localhost:8000>. The browser handles the microphone and
-speakers itself, so nothing extra needs to be installed. Tap 🎤 to record a
-voice message (or **press and hold** to talk walkie-talkie style — release
-to send), 🔊 to toggle spoken replies, and 🔄 to start a fresh conversation
-(it asks for a second tap so a stray click can't wipe the chat).
+Open <http://localhost:8000> for the landing page, or go straight to
+<http://localhost:8000/lissa> or <http://localhost:8000/athar>. The browser
+handles the microphone and speakers, so nothing extra is needed. Tap 🎤 to
+record (or **press and hold** to talk walkie-talkie style — release to
+send), 🔊 to toggle spoken replies, 🔄 to start fresh (it asks for a second
+tap so a stray click can't wipe the chat).
 
-The web chat also gives you:
+**Terminal** — one bot per run. Name it by slug, or omit it for a picker:
 
-- **Stop button** — the send button turns into a stop square while she's
-  replying; stopping cuts her voice mid-sentence and keeps the text that
-  already arrived.
-- **Multiline input** — the box grows as you type; Enter sends,
-  Shift+Enter makes a newline.
-- **Smart scrolling** — scroll up to re-read and the view stays put while
-  she keeps typing; a "new message" pill jumps you back down.
-- **Survives a refresh** — reload the page and the conversation is
-  restored (the server keeps your session for a few hours).
-- **Copy button** on her messages (hover or tap a bubble).
-- **Retry on connection errors** — a "try again" button resends your last
-  message instead of dead-ending.
-- **Time labels** appear between messages when more than 5 minutes pass.
-- **Screen-reader and keyboard friendly** — replies are announced, every
-  control is labelled and focusable, Escape closes dialogs.
-- **Light/dark theme** — the sun/moon toggle in the header switches
-  instantly, remembers your choice, and matches your system preference on
-  first visit. No flash of the wrong theme on reload.
-- **Localized interface** — English, Kiswahili, Français, or Português for
-  the app's own buttons, labels, and messages (a switcher lives in the 🧠
-  panel, defaulting to your browser's language). Her actual replies
-  already follow whatever language you type in — this only covers the
-  chrome around them, plus the scripted greeting and rate-limit messages,
-  which are canned text rather than Gemini output.
-- **Privacy notice** at `/privacy` (linked from the 🧠 panel) — plain
-  language about what's stored where, in English only.
+```bash
+.venv/bin/python cli.py lissa
+.venv/bin/python cli.py athar     # or ./run.sh <slug>
+.venv/bin/python cli.py           # pick from the list
+```
+
+| Command   | Effect                                                 |
+|-----------|--------------------------------------------------------|
+| `/talk`   | Speak your message instead of typing (`/t` for short)  |
+| `/voice`  | Toggle spoken replies on/off                           |
+| `/memory` | Show what this bot remembers about you                 |
+| `/forget` | Wipe its long-term memory                              |
+| `/reset`  | Clear the current conversation (long-term memory kept) |
+| `/quit`   | Exit (Ctrl-D also works)                               |
+
+For spoken replies and voice input in the terminal, install the PulseAudio
+tools (WSL2/Ubuntu — playback and mic in one):
+
+```bash
+sudo apt install -y pulseaudio-utils
+```
 
 **Mobile apps** (Android & iOS via Capacitor):
 
@@ -79,165 +85,194 @@ npm run cap:open:android  # Android Studio
 npm run cap:open:ios      # Xcode (macOS only)
 ```
 
-See [MOBILE.md](MOBILE.md) for detailed setup, build, and app store submission instructions.
+See [docs/MOBILE.md](docs/MOBILE.md) for build and store-submission steps.
 
-**Terminal version**:
+## Adding a bot
 
-```bash
-.venv/bin/python lissa.py
-```
+Create `bots/<slug>/`, build a `Bot` (see `core/persona.py` for the full
+field list), and register it in `bots/__init__.py`. Nothing else needs to
+change — routes, the landing page, the manifest, the UI theme and the
+memory namespace all key off the slug.
 
-For spoken replies and voice input in the terminal, also install the
-PulseAudio tools (WSL2/Ubuntu — provides both playback and mic recording):
-
-```bash
-sudo apt install -y pulseaudio-utils
-```
-
-## Terminal commands
-
-| Command   | Effect                                                |
-|-----------|-------------------------------------------------------|
-| `/talk`   | Speak your message instead of typing (`/t` for short) |
-| `/voice`  | Toggle spoken replies on/off                          |
-| `/memory` | Show what Lissa remembers about you                   |
-| `/forget` | Wipe her long-term memory                             |
-| `/reset`  | Clear the current conversation (long-term memory kept)|
-| `/quit`   | Exit (Ctrl-D also works)                              |
+The fields worth knowing: `system_prompt` and `sections` carry the voice;
+`memory_prompt` and `extras_name` control what gets distilled and what the
+third memory list is called (Lissa keeps running jokes, Athar keeps
+resolutions); `flavours` is the per-day mood pool; `langs` and `rtl_langs`
+set the UI languages; `greetings` / `returning` / `awhile` are the scripted
+first lines; `edge_voice` and `edge_rate` pick the speaking voice;
+`palette` and `avatar_svg` set the look; and `features` gates optional
+machinery — a bot without `"prayer"` simply has no `/api/<slug>/prayer`
+endpoint.
 
 ## How it works
 
-- **Two front ends, one brain**: `lissa.py` holds the persona, memory,
-  transcription and TTS logic and is also the terminal app; `app.py` is a
-  small FastAPI server that exposes the same logic to the web page in
-  `static/index.html`. The terminal app persists memory to
-  `lissa_memory.json`; the web app is multi-user and stateless — each
-  visitor gets an isolated in-memory session (kept ~4 hours) and nothing
-  persists between sessions.
-- **Persona** lives in the system prompt in `lissa.py` — edit it to tune
-  Lissa's personality, style, and boundaries. Her tastes are deliberately
-  *specific* (Afrobeats and old soul, mangoes over the sink, a night owl
-  who burns everything she cooks except eggs, competitive about trivia,
-  hopeless with directions) rather than "she has opinions" — without fixed
-  details she invents different favourites every conversation, which is
-  what makes a companion feel like a vibe instead of a person. Swap them
-  for your own; keep them concrete, and keep a flaw or two.
-- **Social calibration**: the prompt teaches her to read the room, not just
-  to be warm — match the other person's energy and message length, don't
-  end every message with a question (the classic chatbot tell), validate
-  before problem-solving when someone vents, and notice wind-down cues so a
-  conversation gets to land instead of being relaunched. She also has a
-  spine: she holds her opinions playfully instead of agreeing with
-  everything, and concedes only when actually convinced.
-- **If you're in real distress** she stops performing: she drops the
-  flirtiness, takes it seriously the first time, and points you at people
-  who can actually help — emergency services, a crisis line, or someone you
-  trust ([findahelpline.com](https://findahelpline.com) lists free lines by
-  country). She's told plainly that she isn't a therapist and shouldn't try
-  to talk anyone through a crisis alone. An ordinary bad day just gets a
-  friend, not a hotline.
-- **Long-term memory** (weighted and decaying): when a chat ends (`/quit`,
-  Ctrl-D, or `/reset`), Lissa distills the conversation into short facts
-  about you — name, preferences, ongoing topics — saved to
-  `lissa_memory.json`. Rather than a flat list she rewrites wholesale, each
-  fact is a **weighted record that fades unless you bring it up again**: a
-  one-off remark decays over a few conversations while something you mention
-  often hardens and sticks. Identity facts (your name, where you live, your
-  work) are marked **core** and never decay. On the next start those facts
-  are woven into her persona, so she greets you like someone she knows.
-  Delete the file (or use `/forget`) to start over. The weighting, decay and
-  matching live in `memory_store.py` (with a dependency-free unit suite in
-  `tests/test_memory_store.py`).
-- **Relevant recall**: rather than dumping every fact into every prompt, each
-  message is embedded and only the facts close to it (plus core facts, which
-  are context for everything) ride along — ask about music and she isn't also
-  holding your job and your sister's name. It degrades to sending everything
-  on any hiccup, and skips the embedding call entirely when there are only a
-  handful of facts. Lives in `recall.py`.
-- **She has her own day**: a mood is drawn once per calendar day and kept,
-  so she's recognisably herself through a conversation rather than lurching
-  about — restless, mellow, wistful, mischievous. It colours her tone and
-  what she brings up unprompted, but it's *her* mood, not yours: she's
-  never cold or short with you because of it, and it stops mattering
-  entirely the moment you need her. The mood list lives in `lissa.py`.
-- **Relationship continuity**: memory holds more than facts. She tracks
-  **open threads** — things you left unresolved — and asks about one of
-  them in her first reply next time ("wait, first — did you ever hear back
-  about that interview?"). She also knows how long she's known you and how
-  many times you've talked, which colours how she talks to you, and greets
-  you differently after a long gap than after a day. She also collects
-  **running jokes** — funny moments and callbacks distilled alongside the
-  facts — and is told to call one back only when the moment genuinely
-  invites it, never to explain the joke, and never to reach for one in a
-  serious moment. Older `lissa_memory.json`
-  files in the previous plain-list format upgrade automatically — each string
-  becomes a seeded record.
-- **In-session memory**: the SDK's chat session keeps the conversation
-  history, so Lissa remembers everything said in the session.
-- **Anonymous usage analytics (web)**: the server records one JSON event per
-  visit, message, and voice use — timestamps, message *lengths*, feature
-  flags, and (from the visit counter the browser itself sends) whether the
-  visitor is new or returning. Never message content, and sessions appear
-  only as a one-way hash of the session cookie. Events append to
-  `analytics.jsonl` and mirror to stdout (so a host's log store keeps a
-  durable copy across restarts); `GET /api/stats` aggregates the last two
-  weeks into per-day visitors / returning / messages / engaged sessions /
-  minutes. Set `LISSA_STATS_TOKEN` to put the endpoint behind
-  `?token=`. Logic in `analytics.py`, suite in `tests/test_analytics.py`.
-- **Voice input**: your speech is recorded (in the web app by the browser;
-  in the terminal via `/talk`, with WSLg routing your Windows mic through
-  PulseAudio), sent to Gemini for transcription, and the transcript is
-  chatted to Lissa exactly as if you had typed it. Works in any language
-  you speak.
-- **Voice (web)**: she speaks *while she types* — as each sentence of the
-  reply streams in, it's synthesized immediately with Edge's free neural
-  voice (`en-US-AvaMultilingualNeural`, via `edge-tts`) and the clips play
-  in order, so her first sentence is audible while the rest is still being
-  written, with the text typing out in sync. She's tuned for clarity, not
-  just warmth: the neural voice is slowed a touch (`LISSA_EDGE_RATE`, default
-  `-8%`) and there's a short breath between sentences so a long reply lands as
-  separate thoughts instead of one run-on stream. If the voice server is
-  unreachable, the browser's built-in speech is the last resort. Voice
-  capture runs on an `AudioWorklet` (with a `ScriptProcessorNode` fallback
-  for older browsers).
-- **Voice (terminal)**: replies are spoken with Gemini's free TTS
-  (`gemini-3.1-flash-tts-preview`, "Leda" voice) through PulseAudio. Note
-  the Gemini TTS free tier is only ~10 requests/day; the terminal falls
-  back to text-only when it runs out. The web app sticks to the Edge voice
-  so sentence-level clips never touch that quota.
-- **Streaming**: replies print chunk-by-chunk for a natural chat feel.
+### Shared engine (`core/`)
+
+- **Streaming**: replies arrive chunk-by-chunk for a natural chat feel.
 - **Model**: `gemini-flash-lite-latest` — an alias that always points at
-  Google's newest Flash-Lite model, so Lissa keeps working when older models
-  are retired. Lite is used because its free-tier daily quota is much higher
-  than the full Flash model's. Thinking is disabled for quick, snappy
-  conversational replies.
+  Google's newest Flash-Lite model, so nothing breaks when older models are
+  retired. Lite is used because its free-tier daily quota is much higher
+  than full Flash. Thinking is disabled for quick, snappy replies.
+- **Sessions**: the web app is multi-user and stateless — each visitor gets
+  an isolated in-memory session kept ~4 hours, then dropped. No database,
+  no accounts.
+- **Long-term memory** (weighted and decaying): when a chat ends, the
+  conversation is distilled into short facts about you. Rather than a flat
+  list rewritten wholesale, each fact is a **weighted record that fades
+  unless you bring it up again** — a one-off remark decays over a few
+  conversations while something you mention often hardens and sticks.
+  Identity facts (name, where you live, your work) are marked **core** and
+  never decay. In the browser these live in *your* local storage; the
+  terminal keeps a file per bot under `.memory/<slug>.json`. Logic in
+  `core/memory_store.py`, suite in `tests/test_memory_store.py`.
+- **Relevant recall**: rather than dumping every fact into every prompt,
+  each message is embedded and only the facts close to it (plus core facts,
+  which are context for everything) ride along. It degrades to sending
+  everything on any hiccup, and skips the embedding call entirely when
+  there are only a handful of facts. Lives in `core/recall.py`.
+- **Relationship continuity**: memory holds more than facts. Each bot
+  tracks **open threads** — things you left unresolved — and asks about one
+  in its first reply next time. It knows how long it's known you and how
+  many times you've talked, and greets you differently after a long gap
+  than after a day.
+- **Voice in**: your speech is recorded (by the browser, or via `/talk` in
+  the terminal), sent to Gemini for transcription, and chatted exactly as
+  if you had typed it. Works in any language you speak.
+- **Voice out (web)**: each bot speaks *while it types* — as each sentence
+  streams in it's synthesized with Edge's free neural voices (via
+  `edge-tts`) and the clips play in order, so the first sentence is audible
+  while the rest is still being written. Voices are slowed a touch and
+  given a breath between sentences so a long reply lands as separate
+  thoughts. If the voice server is unreachable, the browser's built-in
+  speech is the last resort. Capture runs on an `AudioWorklet`, with a
+  `ScriptProcessorNode` fallback for older browsers.
+- **Voice out (terminal)**: Gemini's free TTS
+  (`gemini-3.1-flash-tts-preview`) through PulseAudio. That free tier is
+  only ~10 requests/day, so the terminal falls back to text-only when it
+  runs out; the web app sticks to Edge voices and never touches that quota.
+- **Anonymous analytics**: one JSON event per visit, message and voice use
+  — timestamps, message *lengths*, feature flags, and whether the visitor
+  is new or returning. Never message content; sessions appear only as a
+  one-way hash. Events append to `analytics.jsonl` and mirror to stdout so
+  a host's log store keeps a durable copy. `GET /api/stats` aggregates the
+  last two weeks. Logic in `core/analytics.py`, suite in
+  `tests/test_analytics.py`.
+- **Rate limits**: a token bucket per session (`PLATFORM_RATE_PER_MIN`,
+  default 8) and a daily ceiling (`PLATFORM_DAILY_CALLS`, default 600)
+  protect the shared key. Hitting one gets an in-character "give me a sec"
+  rather than an error, and the conversation is not lost.
+
+### The web UI (`static/app.html`)
+
+One page serves every bot, themed from its palette at load. It gives you a
+stop button that keeps the text already streamed, multiline input (Enter
+sends, Shift+Enter newlines), smart scrolling that stays put while you
+re-read, restoration after a refresh, copy buttons, retry on connection
+errors, time labels between messages, a light/dark toggle with no flash of
+the wrong theme, and a localized interface. Replies are announced to screen
+readers, every control is labelled and focusable, Escape closes dialogs.
+
+### Lissa
+
+Her tastes are deliberately *specific* (Afrobeats and old soul, mangoes
+over the sink, a night owl who burns everything she cooks except eggs)
+rather than "she has opinions" — without fixed details a persona invents
+different favourites every conversation, which is what makes a companion
+feel like a vibe instead of a person. The prompt teaches her to read the
+room: match energy and message length, don't end every message with a
+question (the classic chatbot tell), validate before problem-solving, and
+notice wind-down cues so a conversation gets to land. She has a spine, and
+concedes only when actually convinced. She collects **running jokes** and
+is told to call one back only when the moment invites it — never to explain
+it, never in a serious moment.
+
+**If you're in real distress** she stops performing: she drops the
+flirtiness, takes it seriously the first time, and points you at people who
+can actually help ([findahelpline.com](https://findahelpline.com) lists
+free lines by country). She's told plainly that she isn't a therapist. An
+ordinary bad day just gets a friend, not a hotline.
+
+### Athar
+
+Athar answers from the Qur'an, the authentic Sunnah and the understanding
+of the salaf, in the voice of a warm friend rather than a lecture. It is
+under strict instructions never to invent a verse, hadith, chain, number or
+grading; to name the collection and grading when it cites one; and to say
+plainly when it's recalling a meaning rather than a wording. It refers
+anything that turns on the details of a real life — divorce, oaths,
+inheritance, custody, contracts — to a qualified scholar or a local imam,
+and represents genuine scholarly disagreement fairly. Hard limits: no
+takfir of individuals, no insulting other Muslims or sects, nothing that
+assists violence or helps anyone use religion to control another person.
+
+**Prayer times, qibla and the Hijri date** are computed locally in
+`core/prayer.py` from your coordinates — no key, no API call, works
+offline. Solar declination and the equation of time come from the standard
+low-precision almanac formulae, then the hour angle at which the sun
+reaches each prayer's defining altitude. Seven conventions (MWL, ISNA,
+Egypt, Umm al-Qura, Karachi, Gulf, Singapore) with majority or Hanafi Asr.
+Spot-checked against published timetables in `tests/test_prayer.py`.
+
+Two honest caveats, carried in the UI and in the prompt: calculated times
+differ from a masjid's by a few minutes for real reasons (convention,
+elevation, rounding) — **the local masjid takes precedence**; and the
+Hijri date is the arithmetic calendar, which can sit a day off a moon
+sighting, and around the two Eids that is the entire question. At high
+latitudes, where the sun never reaches the Fajr or Isha angle, those times
+come back empty rather than invented.
+
+## Layout
+
+| path | what it is |
+| --- | --- |
+| `app.py` | FastAPI server — slug-routed chat, voice, prayer, stats |
+| `cli.py` | terminal app for any bot: `python cli.py <slug>` |
+| `core/engine.py` | sessions, streaming, rate limits, model calls |
+| `core/persona.py` | the `Bot` type and the registry |
+| `core/memory_store.py` | weighted, decaying long-term memory |
+| `core/recall.py` | semantic recall — only the relevant facts per message |
+| `core/speech.py` | transcription and TTS |
+| `core/prayer.py` | prayer times, qibla, Hijri date (standard library only) |
+| `core/analytics.py` | anonymous usage counters |
+| `bots/<slug>/` | one directory per bot: prompts, config, avatar |
+| `static/landing.html` | the bot picker at `/` |
+| `static/app.html` | the chat UI, themed per bot |
+| `tools/` | icon generation and other one-off scripts |
 
 ## Tests
 
+```bash
+.venv/bin/python -m unittest discover -s tests -t . -v
+```
+
+Pure logic — no API calls, no key needed.
+
 `tests/ui_test.js` drives the web app end-to-end in headless Chromium
-(Playwright) — 116 checks covering streaming, stop/retry, scrolling, voice
-recording through a fake mic, photos, the header menu, memory and
-relationship continuity, crisis handling, localization, themes and
-accessibility. They run against the real Gemini API, so a full pass costs
-roughly 20 calls of free-tier quota. With the server running on port 8765:
+(Playwright), covering streaming, stop/retry, scrolling, voice recording
+through a fake mic, photos, the header menu, memory and relationship
+continuity, crisis handling, localization, themes and accessibility. It
+runs against the real Gemini API, so a full pass costs roughly 20 calls of
+free-tier quota. With the server running on port 8765:
 
 ```bash
 NODE_PATH=$(npm root -g) node tests/ui_test.js
 ```
 
-## Free-tier limits
+## Deploy
 
-The Gemini free tier is rate-limited (around 15 requests per minute and a
-daily cap) — plenty for personal chatting. If you ever hit the limit, Lissa
-tells you to wait a few seconds; the conversation is not lost.
+`render.yaml` is set up for Render's free tier; set `GEMINI_API_KEY` in the
+dashboard. Useful environment variables: `PLATFORM_RATE_PER_MIN`,
+`PLATFORM_DAILY_CALLS`, `PLATFORM_STATS_TOKEN` (puts `/api/stats` behind
+`?token=`), `PLATFORM_ANALYTICS_FILE`. Details in
+[docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Launch & demo tooling
 
-- **`LAUNCH.md`** — copy-paste launch-post drafts for the first users, one
+- **[docs/LAUNCH.md](docs/LAUNCH.md)** — copy-paste launch-post drafts, one
   per platform (Reddit, Show HN, X, Discord, Facebook).
-- **`togif.sh`** — turn a screen recording into a small, sharp GIF for those
-  posts, using ffmpeg's two-pass palette method so on-screen text stays
-  legible. Needs `ffmpeg` (`sudo apt-get install -y ffmpeg`).
+- **`togif.sh`** — turn a screen recording into a small, sharp GIF for
+  those posts, using ffmpeg's two-pass palette method so on-screen text
+  stays legible. Needs `ffmpeg`.
 
   ```bash
   ./togif.sh recording.mp4                       # -> recording.gif

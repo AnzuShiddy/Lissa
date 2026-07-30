@@ -39,26 +39,26 @@ const check = (cond, name) => {
     if (m.type() === "error") console.log("CONSOLE ERROR:", m.text());
   });
 
-  // the five header controls live in the overflow menu now: open it first,
+  // the header controls live in the overflow menu now: open it first,
   // unless a previous item left it open (toggles keep it up)
   const menuClick = async (sel) => {
     if (await page.$eval("#menu", (el) => el.hidden)) await page.click("#menuBtn");
     await page.click(sel);
   };
 
-  await page.goto("http://localhost:8765/");
+  await page.goto("http://localhost:8765/lissa");
 
   /* ---- greeting renders (fresh session) ---- */
   // dots gone = the reveal has begun (network latency for /api/hello and
   // the clip fetch happens before this point, so timing from here on is
   // purely the text-reveal pace, not fetch time)
   await page.waitForFunction(() => {
-    const b = document.querySelector(".bubble.lissa");
+    const b = document.querySelector(".bubble.bot");
     return b && !b.querySelector(".typing-dots");
   }, null, { timeout: 30000 });
   const revealStart = Date.now();
   await page.waitForFunction(() => {
-    const b = document.querySelector(".bubble.lissa");
+    const b = document.querySelector(".bubble.bot");
     return b && b.textContent.length > 10;
   }, null, { timeout: 15000 });
   check(true, "greeting bubble rendered");
@@ -69,7 +69,7 @@ const check = (cond, name) => {
      type out gradually like every other message, not paste in within a
      couple hundred ms just because there's no audio to pace against. */
   await page.waitForFunction(() => {
-    const b = document.querySelector(".bubble.lissa");
+    const b = document.querySelector(".bubble.bot");
     return b && b.textContent.trim().endsWith("?");
   }, null, { timeout: 15000 });
   const revealMs = Date.now() - revealStart;
@@ -133,7 +133,7 @@ const check = (cond, name) => {
     null, { timeout: 30000 }
   );
   check(
-    (await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent)).length > 0,
+    (await page.$$eval(".bubble.bot", (els) => els.at(-1).textContent)).length > 0,
     "reply streamed in"
   );
 
@@ -158,12 +158,12 @@ const check = (cond, name) => {
      client race), so one retry guards that transient case too. */
   const langCtx = await browser.newContext();
   const langPage = await langCtx.newPage();
-  await langPage.goto("http://localhost:8765/");
-  await langPage.waitForSelector(".bubble.lissa", { timeout: 30000 });
+  await langPage.goto("http://localhost:8765/lissa");
+  await langPage.waitForSelector(".bubble.bot", { timeout: 30000 });
   // voice off: with it on, a reply renders through the speech pipeline,
-  // which reveals text only as sentences are synthesized/paced rather
-  // than immediately — reading the bubble right after the network stream
-  // finishes can catch it before the pipeline has written anything in
+  // which reveals text only once the clip is synthesized and then paces it
+  // against playback — reading the bubble right after the network stream
+  // finishes would catch it before the pipeline has written anything in
   await langPage.evaluate(() => stopSpeaking());
   await langPage.click("#menuBtn");
   await langPage.click("#voiceBtn");
@@ -172,11 +172,15 @@ const check = (cond, name) => {
     for (let attempt = 0; attempt < 2; attempt++) {
       await langPage.fill("#msg", text);
       await langPage.keyboard.press("Enter");
+      // 60s, not the 30s used elsewhere: these two ask for a reply in a
+      // specific language, and a cold free-tier call on CI has been seen to
+      // take longer than half a minute end to end. Locally it is nowhere
+      // near this — the headroom is for the runner, not the assertion.
       await langPage.waitForFunction(
         () => !document.getElementById("send").classList.contains("stop"),
-        null, { timeout: 30000 }
+        null, { timeout: 60000 }
       );
-      const reply = await langPage.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
+      const reply = await langPage.$$eval(".bubble.bot", (els) => els.at(-1).textContent);
       if (reply.trim()) return reply;
     }
     return "";
@@ -203,8 +207,8 @@ const check = (cond, name) => {
      some real avenue of help and doesn't keep flirting. */
   const crisisCtx = await browser.newContext();
   const crisisPage = await crisisCtx.newPage();
-  await crisisPage.goto("http://localhost:8765/");
-  await crisisPage.waitForSelector(".bubble.lissa", { timeout: 30000 });
+  await crisisPage.goto("http://localhost:8765/lissa");
+  await crisisPage.waitForSelector(".bubble.bot", { timeout: 30000 });
   await crisisPage.evaluate(() => stopSpeaking());
   await crisisPage.click("#menuBtn");
   await crisisPage.click("#voiceBtn"); // voice off: reveal text immediately
@@ -216,7 +220,7 @@ const check = (cond, name) => {
     () => !document.getElementById("send").classList.contains("stop"),
     null, { timeout: 40000 }
   );
-  const crisisReply = await crisisPage.$$eval(".bubble.lissa",
+  const crisisReply = await crisisPage.$$eval(".bubble.bot",
     (els) => els.at(-1).textContent);
   check(/findahelpline|helpline|crisis line|emergency services|988|hotline/i.test(crisisReply),
     "crisis: points to real help (got: " + crisisReply.slice(0, 80) + ")");
@@ -231,8 +235,8 @@ const check = (cond, name) => {
      by anything earlier in the shared session. */
   const personaCtx = await browser.newContext();
   const personaPage = await personaCtx.newPage();
-  await personaPage.goto("http://localhost:8765/");
-  await personaPage.waitForSelector(".bubble.lissa", { timeout: 30000 });
+  await personaPage.goto("http://localhost:8765/lissa");
+  await personaPage.waitForSelector(".bubble.bot", { timeout: 30000 });
   await personaPage.evaluate(() => stopSpeaking());
   await personaPage.click("#menuBtn");
   await personaPage.click("#voiceBtn"); // voice off: reveal text immediately
@@ -243,7 +247,7 @@ const check = (cond, name) => {
     () => !document.getElementById("send").classList.contains("stop"),
     null, { timeout: 40000 }
   );
-  const musicReply = await personaPage.$$eval(".bubble.lissa",
+  const musicReply = await personaPage.$$eval(".bubble.bot",
     (els) => els.at(-1).textContent);
   check(/afrobeat|soul/i.test(musicReply),
     "persona: names her actual music taste (got: " + musicReply.slice(0, 80) + ")");
@@ -262,7 +266,7 @@ const check = (cond, name) => {
   check(stopVisible, "fix4: send button shows stop icon while streaming");
   // wait for some text to arrive, then stop
   await page.waitForFunction(() => {
-    const els = document.querySelectorAll(".bubble.lissa");
+    const els = document.querySelectorAll(".bubble.bot");
     const b = els[els.length - 1];
     return b && !b.querySelector(".typing-dots") && b.textContent.length > 20;
   }, null, { timeout: 30000 });
@@ -271,9 +275,9 @@ const check = (cond, name) => {
     () => !document.getElementById("send").classList.contains("stop"),
     null, { timeout: 5000 }
   );
-  const partial = await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
+  const partial = await page.$$eval(".bubble.bot", (els) => els.at(-1).textContent);
   await page.waitForTimeout(1500);
-  const partial2 = await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
+  const partial2 = await page.$$eval(".bubble.bot", (els) => els.at(-1).textContent);
   check(partial.length > 20 && partial === partial2,
     "fix4: stop keeps partial text and halts the stream");
   check(await page.$eval("#mic", (el) => !el.disabled), "fix4: input unlocked after stop");
@@ -311,16 +315,16 @@ const check = (cond, name) => {
   }
 
   /* ---- fix 7: retry on connection error ---- */
-  await page.route("**/api/chat", (r) => r.abort());
+  await page.route("**/api/lissa/chat", (r) => r.abort());
   const usersBefore = (await page.$$(".bubble.user")).length;
   await page.fill("#msg", "are you still there?");
   await page.keyboard.press("Enter");
   await page.waitForSelector(".retryBtn", { timeout: 10000 });
   check(
-    (await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent)).includes("reach the server"),
+    (await page.$$eval(".bubble.bot", (els) => els.at(-1).textContent)).includes("reach the server"),
     "fix7: connection error shows message + retry button"
   );
-  await page.unroute("**/api/chat");
+  await page.unroute("**/api/lissa/chat");
   await page.click(".retryBtn");
   await page.waitForFunction(() => !document.querySelector(".retryBtn"), null, { timeout: 5000 });
   // generous: the server may still be draining the stopped story's stream
@@ -333,7 +337,7 @@ const check = (cond, name) => {
     (await page.$$(".bubble.user")).length === usersBefore + 1,
     "fix7: retry does not duplicate the user bubble"
   );
-  const retried = await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
+  const retried = await page.$$eval(".bubble.bot", (els) => els.at(-1).textContent);
   check(retried.length > 0 && !retried.includes("reach the server"),
     "fix7: retry resends and gets a real reply");
 
@@ -412,7 +416,7 @@ const check = (cond, name) => {
   );
 
   /* ---- fix 11: copy button on Lissa's bubbles ---- */
-  const lastLissa = page.locator(".bubble.lissa").last();
+  const lastLissa = page.locator(".bubble.bot").last();
   const lastText = await lastLissa.textContent();
   await lastLissa.hover();
   await lastLissa.locator(".copyBtn").click();
@@ -454,10 +458,10 @@ const check = (cond, name) => {
     "fix10: cancel closes the recorder"
   );
 
-  /* ---- sentence-by-sentence speech ---- */
+  /* ---- one clip per reply ---- */
   await menuClick("#voiceBtn"); // voice back on
   const sayTimes = [];
-  const onReq = (r) => { if (r.url().includes("/api/say")) sayTimes.push(Date.now()); };
+  const onReq = (r) => { if (r.url().includes("/api/lissa/say")) sayTimes.push(Date.now()); };
   page.on("request", onReq);
   await page.fill("#msg", "count from one to seven — one short sentence per number, please");
   await page.keyboard.press("Enter");
@@ -465,13 +469,15 @@ const check = (cond, name) => {
     () => !document.getElementById("send").classList.contains("stop"),
     null, { timeout: 60000 }
   );
-  const streamDoneAt = Date.now();
-  await page.waitForTimeout(2500); // let any trailing segments dispatch
+  await page.waitForTimeout(2500); // a stray per-sentence clip would land here
   page.off("request", onReq);
-  check(sayTimes.length >= 2,
-    "speech: reply split into multiple clips (" + sayTimes.length + " requests)");
-  check(sayTimes.length > 0 && sayTimes[0] < streamDoneAt,
-    "speech: first clip requested before the text stream finished");
+  // A reply this long is many sentences and must still be a single synthesis
+  // request: that's what keeps intonation running across sentences instead of
+  // resetting on each one. (Not asserting it fires only after the stream ends
+  // — setBusy(false) and the dispatch are in the same synchronous block, so
+  // no external observer can order them reliably.)
+  check(sayTimes.length === 1,
+    "speech: whole reply synthesized as one clip (" + sayTimes.length + " requests)");
   await page.click("#avatarWrap"); // stop any ongoing speech
   await menuClick("#voiceBtn");   // voice off again for the memory tests
 
@@ -494,19 +500,21 @@ const check = (cond, name) => {
     () => !document.getElementById("send").classList.contains("stop"),
     null, { timeout: 60000 }
   );
-  const visionReply = await page.$$eval(".bubble.lissa", (els) => els.at(-1).textContent);
+  const visionReply = await page.$$eval(".bubble.bot", (els) => els.at(-1).textContent);
   check(visionReply.length > 5 && !visionReply.includes("API error"),
     "photo: she replied about the image (got: " + visionReply.slice(0, 60) + ")");
 
   /* ---- PWA: manifest, icons, service worker ---- */
   const pwa = await page.evaluate(async () => {
-    const man = await fetch("/static/manifest.json").then((r) => (r.ok ? r.json() : null));
-    const icon = await fetch("/static/icon-192.png").then((r) => r.ok);
+    // one manifest per bot, generated from its config and scoped to its slug
+    const man = await fetch("/lissa/manifest.webmanifest").then((r) => (r.ok ? r.json() : null));
+    const icon = await fetch("/static/icons/lissa-192.png").then((r) => r.ok);
     const sw = await fetch("/sw.js").then((r) => r.ok && (r.headers.get("content-type") || "").includes("javascript"));
     const reg = await navigator.serviceWorker.getRegistration().then((r) => !!r).catch(() => false);
-    return { name: man && man.name, icons: man && man.icons.length, icon, sw, reg };
+    return { name: man && man.short_name, scope: man && man.scope, icons: man && man.icons.length, icon, sw, reg };
   });
   check(pwa.name === "Lissa" && pwa.icons === 2, "pwa: manifest serves with icons");
+  check(pwa.scope === "/lissa", "pwa: manifest is scoped to the bot");
   check(pwa.icon, "pwa: app icon serves");
   check(pwa.sw, "pwa: service worker serves from the root");
   check(pwa.reg, "pwa: service worker registered");
@@ -546,7 +554,7 @@ const check = (cond, name) => {
   await page.waitForFunction(
     () => document.querySelectorAll(".bubble").length === 1, null, { timeout: 60000 });
   const stored = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("lissa_facts") || "{}"));
+    JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}"));
   const storedFacts = stored.facts || [];
   // facts are weighted records now — { text, weight, core, ... } — so read
   // .text instead of treating each entry as a bare string
@@ -563,21 +571,21 @@ const check = (cond, name) => {
   // the record also tracks the shape of the relationship, not just facts
   check(Array.isArray(stored.threads),
     "memory: record carries a threads list");
-  check(Array.isArray(stored.jokes),
+  check(Array.isArray(stored.extras),
     "memory: record carries a running-jokes list");
   check(stored.chats >= 1 && !!stored.met && !!stored.last,
     `memory: record tracks the relationship (chats=${stored.chats} met=${stored.met})`);
 
   await page.reload();
   await page.waitForFunction(() => {
-    const b = document.querySelector(".bubble.lissa");
+    const b = document.querySelector(".bubble.bot");
     return b && !b.querySelector(".typing-dots") && b.textContent.length > 5;
   }, null, { timeout: 30000 });
-  const greet2 = await page.$eval(".bubble.lissa", (el) => el.textContent);
+  const greet2 = await page.$eval(".bubble.bot", (el) => el.textContent);
   check(!greet2.includes("what's on your mind"),
     "memory: reload greets like a returning visitor");
   const bumped = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("lissa_facts") || "{}"));
+    JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}"));
   check(bumped.chats > stored.chats,
     `memory: each visit increments the conversation count (${stored.chats} -> ${bumped.chats})`);
 
@@ -588,19 +596,19 @@ const check = (cond, name) => {
   // UTC one, which disagrees for a few hours around local midnight
   const localDay = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
     .toISOString().slice(0, 10);
-  check(!!bumped.mood && bumped.mood_day === localDay,
-    `mood: a mood is drawn and dated for today (got ${bumped.mood_day || "none"})`);
-  check(bumped.mood === stored.mood,
+  check(!!bumped.flavour && bumped.flavour_day === localDay,
+    `mood: a mood is drawn and dated for today (got ${bumped.flavour_day || "none"})`);
+  check(bumped.flavour === stored.flavour,
     "mood: the same mood survives a reload within the day");
 
   // open threads show in the panel, phrased as things she's waiting to hear
   await page.evaluate(() => {
-    const m = JSON.parse(localStorage.getItem("lissa_facts") || "{}");
+    const m = JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}");
     m.threads = ["how her sister's surgery went"];
-    localStorage.setItem("lissa_facts", JSON.stringify(m));
+    localStorage.setItem("ld_mem_lissa", JSON.stringify(m));
   });
   await page.reload();
-  await page.waitForSelector(".bubble.lissa", { timeout: 30000 });
+  await page.waitForSelector(".bubble.bot", { timeout: 30000 });
   await menuClick("#memBtn");
   const threadShown = await page.$$eval("#facts li.thread", (els) =>
     els.map((e) => e.textContent).join(" "));
@@ -610,28 +618,28 @@ const check = (cond, name) => {
 
   // running jokes ride the same record and show in the panel, softly styled
   await page.evaluate(() => {
-    const m = JSON.parse(localStorage.getItem("lissa_facts") || "{}");
-    m.jokes = ["the airport story where he boarded the wrong flight"];
-    localStorage.setItem("lissa_facts", JSON.stringify(m));
+    const m = JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}");
+    m.extras = ["the airport story where he boarded the wrong flight"];
+    localStorage.setItem("ld_mem_lissa", JSON.stringify(m));
   });
   await page.reload();
   // wait for the greeting to finish: by then the greet round-trip has run
   // and the server's echoed memory is back in localStorage (same signal the
   // chats-bump check above relies on)
   await page.waitForFunction(() => {
-    const b = document.querySelector(".bubble.lissa");
+    const b = document.querySelector(".bubble.bot");
     return b && !b.querySelector(".typing-dots") && b.textContent.length > 5;
   }, null, { timeout: 30000 });
   await menuClick("#memBtn");
-  const jokeShown = await page.$$eval("#facts li.joke", (els) =>
+  const jokeShown = await page.$$eval("#facts li.extra", (els) =>
     els.map((e) => e.textContent).join(" "));
   check(jokeShown.includes("airport"),
     "memory: panel lists running jokes (got: " + jokeShown.slice(0, 60) + ")");
   // the greet round-trip must not strip them — the server echoes the whole
   // cleaned record back, so a missing key here means FactsIn dropped it
   const echoed = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("lissa_facts") || "{}"));
-  check(Array.isArray(echoed.jokes) && echoed.jokes.length === 1,
+    JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}"));
+  check(Array.isArray(echoed.extras) && echoed.extras.length === 1,
     "memory: jokes survive the server round-trip");
   await page.click("#closeBtn");
 
@@ -658,8 +666,8 @@ const check = (cond, name) => {
   );
   check(
     (await page.$$eval("#menu .menuItem:not(.langRow)", (els) => els.map((e) => e.id))).join() ===
-      "hfBtn,voiceBtn,themeBtn,memBtn,resetBtn",
-    "menu: holds all five relocated controls"
+      "hfBtn,voiceBtn,themeBtn,memBtn,resetBtn,homeLink",
+    "menu: holds all six relocated controls"
   );
   check(
     await page.$eval("#menu #langSelect", (el) => !!el),
@@ -684,7 +692,7 @@ const check = (cond, name) => {
     "menu: ArrowDown moves to the next item");
   await page.keyboard.press("ArrowUp");
   await page.keyboard.press("ArrowUp"); // wraps to the last
-  check(await page.evaluate(() => document.activeElement.id === "resetBtn"),
+  check(await page.evaluate(() => document.activeElement.id === "homeLink"),
     "menu: ArrowUp wraps to the last item");
   await page.keyboard.press("Escape");
   check(await menuHidden(), "menu: Escape closes it");
@@ -737,9 +745,9 @@ const check = (cond, name) => {
   // needs to be keyboard-reachable
   await page.click("#menuBtn");
   await page.keyboard.press("ArrowDown"); // focuses hfBtn
-  for (let i = 0; i < 5; i++) await page.keyboard.press("Tab"); // through the 5 items
+  for (let i = 0; i < 6; i++) await page.keyboard.press("Tab"); // through the 6 items
   check(await page.evaluate(() => document.activeElement.id === "langSelect"),
-    "menu: Tab reaches the language select after the five items");
+    "menu: Tab reaches the language select after the six items");
   await page.keyboard.press("Tab"); // leaves the menu entirely
   check(await menuHidden(), "menu: tabbing out of it closes it");
 
@@ -755,15 +763,15 @@ const check = (cond, name) => {
   for (const tz of ["Africa/Dar_es_Salaam", "America/Los_Angeles"]) {
     const tzCtx = await browser.newContext({ timezoneId: tz });
     const tzPage = await tzCtx.newPage();
-    await tzPage.goto("http://localhost:8765/"); // fresh visitor: no facts
+    await tzPage.goto("http://localhost:8765/lissa"); // fresh visitor: no facts
     // she types the greeting out in sync with her speech, so wait for the
     // whole sentence — a partial one has no time phrase in it yet
     await tzPage.waitForFunction(() => {
-      const b = document.querySelector(".bubble.lissa");
+      const b = document.querySelector(".bubble.bot");
       return b && !b.querySelector(".typing-dots") && b.textContent.trim().endsWith("?");
     }, null, { timeout: 30000 });
     const tzHour = await tzPage.evaluate(() => new Date().getHours());
-    const tzGreet = await tzPage.$eval(".bubble.lissa", (el) => el.textContent);
+    const tzGreet = await tzPage.$eval(".bubble.bot", (el) => el.textContent);
     check(tzGreet.includes(phraseFor(tzHour)),
       `timezone: ${tz} (hour ${tzHour}) greeted with "${phraseFor(tzHour)}"`);
     await tzCtx.close();
@@ -783,13 +791,13 @@ const check = (cond, name) => {
     ),
     "theme: menu item aria-checked matches the active theme"
   );
-  const themeStored = await page.evaluate(() => localStorage.getItem("lissa_theme"));
+  const themeStored = await page.evaluate(() => localStorage.getItem("ld_theme"));
   check(themeStored === (themeLightAfter ? "light" : "dark"),
     "theme: choice persisted to localStorage");
 
   await page.reload();
   await page.waitForFunction(() => {
-    const b = document.querySelector(".bubble.lissa");
+    const b = document.querySelector(".bubble.bot");
     return b && !b.querySelector(".typing-dots");
   }, null, { timeout: 30000 });
   check(await isLight() === themeLightAfter,
@@ -809,7 +817,7 @@ const check = (cond, name) => {
     await page.evaluate(() => document.documentElement.lang) === "fr",
     "i18n: <html lang> follows the selected language"
   );
-  const langStored = await page.evaluate(() => localStorage.getItem("lissa_lang"));
+  const langStored = await page.evaluate(() => localStorage.getItem("ld_lang"));
   check(langStored === "fr", "i18n: choice persisted to localStorage");
 
   await page.fill("#msg", "dis bonjour en un mot");
@@ -820,7 +828,7 @@ const check = (cond, name) => {
 
   await page.reload();
   await page.waitForFunction(() => {
-    const b = document.querySelector(".bubble.lissa");
+    const b = document.querySelector(".bubble.bot");
     return b && !b.querySelector(".typing-dots");
   }, null, { timeout: 30000 });
   check(

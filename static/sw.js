@@ -1,6 +1,6 @@
-/* Lissa service worker — network-first with an offline fallback for the
+/* LucidDive service worker — network-first with an offline fallback for the
    app shell. The API is never intercepted: chat must always be live. */
-const CACHE = "lissa-v1";
+const CACHE = "luciddive-v1";
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.add("/")));
