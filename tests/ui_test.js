@@ -172,9 +172,13 @@ const check = (cond, name) => {
     for (let attempt = 0; attempt < 2; attempt++) {
       await langPage.fill("#msg", text);
       await langPage.keyboard.press("Enter");
+      // 60s, not the 30s used elsewhere: these two ask for a reply in a
+      // specific language, and a cold free-tier call on CI has been seen to
+      // take longer than half a minute end to end. Locally it is nowhere
+      // near this — the headroom is for the runner, not the assertion.
       await langPage.waitForFunction(
         () => !document.getElementById("send").classList.contains("stop"),
-        null, { timeout: 30000 }
+        null, { timeout: 60000 }
       );
       const reply = await langPage.$$eval(".bubble.bot", (els) => els.at(-1).textContent);
       if (reply.trim()) return reply;
