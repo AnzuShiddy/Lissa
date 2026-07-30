@@ -3,74 +3,69 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#160b13">
-<link rel="manifest" href="/static/manifest.json">
-<link rel="icon" type="image/png" href="/static/icon-192.png">
-<link rel="apple-touch-icon" href="/static/icon-192.png">
-<title>Lissa 💋</title>
+<meta name="theme-color" content="{{theme_color}}">
+<link rel="manifest" id="pwaManifest" href="">
+<link rel="icon" type="image/png" id="favicon" href="">
+<link rel="apple-touch-icon" id="appleIcon" href="">
+<title>{{title}}</title>
 <script>
-  // Set the theme before CSS paints, so a light-theme visitor never sees a
-  // flash of the dark theme first.
+  // Which bot this page is. Injected by the server rather than fetched, so
+  // the palette is on the element before the first paint.
+  window.BOT = {{manifest}};
+  window.SITE = "{{site}}";
+
+  // Theme and palette before CSS paints, or a light-theme visitor sees a
+  // flash of dark, and every visitor sees a flash of the wrong bot's colour.
   (function () {
+    var theme = "dark";
     try {
-      var t = localStorage.getItem("lissa_theme");
-      if (t !== "light" && t !== "dark") {
-        t = (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches)
-          ? "light" : "dark";
-      }
-      if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+      var t = localStorage.getItem("ld_theme") || localStorage.getItem("athar_theme")
+              || localStorage.getItem("lissa_theme");
+      theme = (t === "light" || t === "dark") ? t
+        : ((window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches)
+           ? "light" : "dark");
     } catch (e) {}
+    if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
+    window.applyPalette = function (which) {
+      var p = (window.BOT.palette || {})[which] || {};
+      var root = document.documentElement.style;
+      var map = {
+        bg0: "--bg0", bg1: "--bg1", accent: "--accent", accentSoft: "--accent-soft",
+        accent2: "--accent2", accentRgb: "--accent-rgb", accent2Rgb: "--accent2-rgb",
+        text: "--text", muted: "--muted", userEnd: "--user-end",
+        headerBg: "--header-bg", panelGrad: "--panel-grad", toastBg: "--toast-bg",
+        overlayBg: "--overlay-bg", glass: "--glass", glassStrong: "--glass-strong",
+        border: "--border", shadow: "--shadow", glow: "--glow-op"
+      };
+      for (var k in map) if (p[k]) root.setProperty(map[k], p[k]);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta && p.bg1) meta.setAttribute("content", p.bg1);
+    };
+    window.applyPalette(theme);
   })();
 </script>
 <style>
+  /* Colours come from the bot's palette, set on :root by applyPalette()
+     before first paint (see the head script). Only what every bot shares
+     lives here: a warning red that must never read as an accent, and the
+     online dot. */
   :root {
-    --bg0: #120810;
-    --bg1: #1e0f1a;
-    --rose: #ff5c8f;
-    --rose-soft: #ff8fb0;
-    --violet: #a86cf5;
-    --text: #f7ecf2;
-    --muted: #ab8ca0;
-    --glass: rgba(255, 255, 255, 0.05);
-    --glass-strong: rgba(255, 255, 255, 0.08);
-    --border: rgba(255, 255, 255, 0.09);
-    --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+    --danger: var(--danger);
+    --danger-soft: var(--danger-soft);
+    --danger-pale: var(--danger-pale);
+    --danger-deep: #b0392c;
+    --online: var(--online);
   }
-  :root[data-theme="light"] {
-    --bg0: #fdf3f7;
-    --bg1: #ffffff;
-    --rose: #ff5c8f;
-    --rose-soft: #d6316f;
-    --violet: #8b5cf0;
-    --text: #2b1626;
-    --muted: #7d6672;
-    --glass: rgba(43, 22, 38, 0.045);
-    --glass-strong: rgba(43, 22, 38, 0.075);
-    --border: rgba(43, 22, 38, 0.12);
-    --shadow: 0 18px 40px rgba(43, 22, 38, 0.14);
-  }
-  :root[data-theme="light"] header,
-  :root[data-theme="light"] #bar {
-    background: rgba(255, 255, 255, 0.8);
-  }
-  :root[data-theme="light"] #panel {
-    background: linear-gradient(170deg, #ffffff, #fdf0f5);
-  }
-  :root[data-theme="light"] #toast,
-  :root[data-theme="light"] #jump {
-    background: rgba(255, 255, 255, 0.94);
-  }
-  :root[data-theme="light"] .glow { opacity: 0.28; }
   :root[data-theme="light"] .retryBtn,
-  :root[data-theme="light"] #panel .row .danger,
+  :root[data-theme="light"] .panel .row .danger,
   :root[data-theme="light"] .iconBtn.confirm {
-    color: #c2185b;
-    border-color: rgba(194, 24, 91, 0.35);
+    color: var(--danger-deep);
+    border-color: rgb(176 57 44 / 0.35);
   }
-  :root[data-theme="light"] #panel .row .danger.confirm {
-    background: rgba(194, 24, 91, 0.14);
-    border-color: #c2185b;
-    color: #a3134e;
+  :root[data-theme="light"] .panel .row .danger.confirm {
+    background: rgb(176 57 44 / 0.14);
+    border-color: var(--danger-deep);
+    color: #8f2a20;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
@@ -88,14 +83,14 @@
     position: fixed;
     border-radius: 50%;
     filter: blur(90px);
-    opacity: 0.5;
+    opacity: var(--glow-op, 0.5);
     pointer-events: none;
     animation: drift 26s ease-in-out infinite alternate;
   }
   .glow.g1 { width: 480px; height: 480px; left: -160px; top: -140px;
-             background: radial-gradient(circle, rgba(255, 92, 143, 0.32), transparent 70%); }
+             background: radial-gradient(circle, rgb(var(--accent-rgb) / 0.32), transparent 70%); }
   .glow.g2 { width: 520px; height: 520px; right: -200px; bottom: -180px;
-             background: radial-gradient(circle, rgba(168, 108, 245, 0.26), transparent 70%);
+             background: radial-gradient(circle, rgb(var(--accent2-rgb) / 0.26), transparent 70%);
              animation-delay: -13s; }
   @keyframes drift {
     from { transform: translate(0, 0) scale(1); }
@@ -130,25 +125,60 @@
     gap: 14px;
     padding: 14px 20px;
     border-bottom: 1px solid var(--border);
-    background: rgba(20, 10, 17, 0.6);
+    background: var(--header-bg);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     /* backdrop-filter makes this a stacking context, which traps the
        menu's z-index inside it — without a layer of its own the header
        paints under #chat and wide bubbles cover the open menu */
     position: relative;
-    z-index: 8; /* over #chat and the jump pill (5), under #overlay (10) */
+    z-index: 8; /* over #chat and the jump pill (5), under the overlays (10) */
   }
   #avatarWrap { position: relative; flex-shrink: 0; cursor: pointer; }
   #avatar {
     width: 60px; height: 60px;
     border-radius: 50%;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--rose), var(--violet));
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 18px rgba(255, 92, 143, 0.35);
+    box-shadow: 0 4px 18px rgb(var(--accent-rgb) / 0.35);
   }
   #avatar svg { width: 100%; height: 100%; display: block; }
+  /* The mark is a mihrab arch with a lamp hanging in it — architecture, not
+     a face. A talking cartoon head would be the wrong register here, and for
+     a good share of the people this is built for a depicted human figure is
+     not a neutral choice either. The lamp carries what the face used to: it
+     breathes while idle and burns brighter while speaking. */
+  #flame {
+    transform-box: fill-box; transform-origin: center bottom;
+    animation: breathe 4.4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scaleY(1); opacity: 0.85; }
+    50% { transform: scaleY(1.14); opacity: 1; }
+  }
+  #glowPool { opacity: 0.45; transition: opacity 0.35s; }
+  #avatarWrap.speaking #glowPool { opacity: 0.95; }
+  #avatarWrap.speaking #flame { animation: flicker 0.5s ease-in-out infinite alternate; }
+  @keyframes flicker {
+    from { transform: scaleY(1) translateY(0); fill: #ffd88a; }
+    to   { transform: scaleY(1.28) translateY(-0.7px); fill: #fff4d2; }
+  }
+  #avatarWrap.speaking #head {
+    transform-box: fill-box; transform-origin: 50% 90%;
+    animation: sway 3.4s ease-in-out infinite;
+  }
+  @keyframes sway {
+    0%, 100% { transform: rotate(0deg); }
+    30% { transform: rotate(1.1deg); }
+    70% { transform: rotate(-1.1deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #flame, #head { animation: none !important; }
+  }
+  /* Lissa's mark is a face and animates differently. Rules for elements
+     the current bot's SVG doesn't have are simply inert, so both sets
+     live here and each bot lights up its own. */
   /* she blinks every few seconds, eyes slightly out of phase */
   #avatar .eye {
     transform-box: fill-box; transform-origin: center;
@@ -197,7 +227,7 @@
     border: 2px solid transparent;
   }
   #avatarWrap.speaking::before {
-    border-color: rgba(255, 92, 143, 0.65);
+    border-color: rgb(var(--accent-rgb) / 0.65);
     animation: ring 1.4s ease-out infinite;
   }
   @keyframes ring {
@@ -209,7 +239,7 @@
     right: 0; bottom: 1px;
     width: 11px; height: 11px;
     border-radius: 50%;
-    background: #43d17c;
+    background: var(--online);
     border: 2px solid var(--bg1);
   }
   #title { flex: 1; min-width: 0; }
@@ -217,13 +247,13 @@
     font-size: 18px;
     font-weight: 650;
     letter-spacing: 0.2px;
-    background: linear-gradient(90deg, var(--text), var(--rose-soft));
+    background: linear-gradient(90deg, var(--text), var(--accent-soft));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
   #status { font-size: 12.5px; color: var(--muted); transition: color 0.3s; }
-  #status.active { color: var(--rose-soft); }
+  #status.active { color: var(--accent-soft); }
 
   .iconBtn {
     width: 40px; height: 40px;
@@ -240,20 +270,20 @@
   .iconBtn:active { transform: scale(0.93); }
   .iconBtn:focus-visible, .roundBtn:focus-visible, #jump:focus-visible,
   #avatarWrap:focus-visible, .bubble .retryBtn:focus-visible,
-  #panel .row button:focus-visible {
-    outline: 2px solid var(--rose-soft);
+  .panel .row button:focus-visible {
+    outline: 2px solid var(--accent-soft);
     outline-offset: 2px;
   }
   .iconBtn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
   .iconBtn.confirm {
-    background: rgba(255, 77, 109, 0.18);
-    border-color: #ff4d6d;
-    color: #ffb3c0;
+    background: rgb(226 87 79 / 0.18);
+    border-color: var(--danger);
+    color: var(--danger-pale);
   }
   .iconBtn.on {
-    background: rgba(255, 92, 143, 0.14);
-    border-color: rgba(255, 92, 143, 0.55);
-    color: var(--rose-soft);
+    background: rgb(var(--accent-rgb) / 0.14);
+    border-color: rgb(var(--accent-rgb) / 0.55);
+    color: var(--accent-soft);
   }
   #voiceBtn.off { opacity: 0.4; }
   /* header overflow menu */
@@ -267,14 +297,14 @@
     padding: 6px;
     border-radius: 16px;
     border: 1px solid var(--border);
-    background: linear-gradient(170deg, #2b1826, #1f1019);
+    background: var(--panel-grad);
     box-shadow: var(--shadow);
     animation: menuIn 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.1);
   }
   #menu[hidden] { display: none; }
   @keyframes menuIn { from { opacity: 0; transform: translateY(-8px); } }
   :root[data-theme="light"] #menu {
-    background: linear-gradient(170deg, #ffffff, #fdf0f5);
+    background: linear-gradient(170deg, #ffffff, #eef7f1);
   }
   .menuItem {
     width: 100%;
@@ -291,7 +321,7 @@
     transition: background 0.13s;
   }
   .menuItem:hover, .menuItem:focus-visible { background: var(--glass-strong); }
-  .menuItem:focus-visible { outline: 2px solid var(--rose); outline-offset: -2px; }
+  .menuItem:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   .menuItem svg.mIcon {
     width: 18px; height: 18px;
     flex-shrink: 0;
@@ -302,18 +332,18 @@
   .menuItem svg.mCheck {
     width: 16px; height: 16px;
     flex-shrink: 0;
-    fill: none; stroke: var(--rose); stroke-width: 2.6;
+    fill: none; stroke: var(--accent); stroke-width: 2.6;
     stroke-linecap: round; stroke-linejoin: round;
     opacity: 0;
     transition: opacity 0.13s;
   }
   .menuItem[aria-checked="true"] svg.mCheck { opacity: 1; }
-  .menuItem[aria-checked="true"] svg.mIcon { color: var(--rose-soft); }
+  .menuItem[aria-checked="true"] svg.mIcon { color: var(--accent-soft); }
   .menuItem.confirm {
-    background: rgba(255, 77, 109, 0.18);
-    color: #ffb3c0;
+    background: rgb(226 87 79 / 0.18);
+    color: var(--danger-pale);
   }
-  :root[data-theme="light"] .menuItem.confirm { color: #c2185b; }
+  :root[data-theme="light"] .menuItem.confirm { color: #b0392c; }
   .menuSep {
     height: 1px;
     margin: 6px 8px;
@@ -382,12 +412,12 @@
   /* consecutive messages from the same speaker are one turn: tight spacing,
      and only the final bubble of the run keeps the tail pointing at them */
   .bubble.grouped { margin-top: 0; }
-  .lissa.midRun { border-bottom-left-radius: 20px; }
+  .bot.midRun { border-bottom-left-radius: 20px; }
   .user.midRun { border-bottom-right-radius: 20px; }
   @keyframes pop {
     from { opacity: 0; transform: translateY(10px) scale(0.96); }
   }
-  .lissa {
+  .bot {
     align-self: flex-start;
     background: var(--glass-strong);
     border: 1px solid var(--border);
@@ -411,15 +441,15 @@
     opacity: 0;
     transition: opacity 0.15s, background 0.15s;
   }
-  .bubble.lissa:hover .copyBtn, .copyBtn:focus-visible { opacity: 1; }
+  .bubble.bot:hover .copyBtn, .copyBtn:focus-visible { opacity: 1; }
   .copyBtn:hover { background: var(--glass-strong); color: var(--text); }
   .copyBtn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .user {
     align-self: flex-end;
-    background: linear-gradient(135deg, var(--rose), #d84176);
+    background: linear-gradient(135deg, var(--accent), var(--user-end));
     color: #fff;
     border-bottom-right-radius: 7px;
-    box-shadow: 0 6px 20px rgba(255, 92, 143, 0.25);
+    box-shadow: 0 6px 20px rgb(var(--accent-rgb) / 0.25);
   }
 
   .bubble .retryBtn {
@@ -427,21 +457,21 @@
     margin-top: 10px;
     padding: 7px 14px;
     border-radius: 11px;
-    border: 1px solid rgba(255, 146, 165, 0.35);
+    border: 1px solid rgb(236 141 128 / 0.35);
     background: none;
-    color: #ff92a5;
+    color: var(--danger-soft);
     font-family: inherit;
     font-size: 13px;
     cursor: pointer;
     transition: background 0.15s;
   }
-  .bubble .retryBtn:hover { background: rgba(255, 77, 109, 0.12); }
+  .bubble .retryBtn:hover { background: rgb(226 87 79 / 0.12); }
 
   .typing-dots { display: inline-flex; gap: 5px; padding: 4px 2px; }
   .typing-dots i {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: var(--rose-soft);
+    background: var(--accent-soft);
     animation: bob 1.2s infinite;
   }
   .typing-dots i:nth-child(2) { animation-delay: 0.15s; }
@@ -455,7 +485,7 @@
   #bar {
     padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--border);
-    background: rgba(20, 10, 17, 0.6);
+    background: var(--header-bg);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
   }
@@ -480,7 +510,7 @@
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   /* The box is one line tall, but a textarea placeholder wraps — at phone
-     widths "Say something to Lissa…" spilled onto a second line and was cut
+     widths "Say something to Athar…" spilled onto a second line and was cut
      off mid-word. Keep it to one line and ellipsize instead. Typed text is
      unaffected and still wraps, since this only targets the placeholder. */
   #msg::placeholder {
@@ -490,8 +520,8 @@
     text-overflow: ellipsis;
   }
   #msg:focus {
-    border-color: rgba(255, 92, 143, 0.55);
-    box-shadow: 0 0 0 3px rgba(255, 92, 143, 0.12);
+    border-color: rgb(var(--accent-rgb) / 0.55);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / 0.12);
   }
 
   .roundBtn {
@@ -510,12 +540,12 @@
   .roundBtn:disabled { opacity: 0.4; cursor: default; }
   .roundBtn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
   #send {
-    background: linear-gradient(135deg, var(--rose), #d84176);
+    background: linear-gradient(135deg, var(--accent), var(--user-end));
     border: none;
     color: #fff;
-    box-shadow: 0 6px 18px rgba(255, 92, 143, 0.35);
+    box-shadow: 0 6px 18px rgb(var(--accent-rgb) / 0.35);
   }
-  #send:hover { filter: brightness(1.08); background: linear-gradient(135deg, var(--rose), #d84176); }
+  #send:hover { filter: brightness(1.08); background: linear-gradient(135deg, var(--accent), var(--user-end)); }
   #send .stop-icon { display: none; }
   #send.stop .send-icon { display: none; }
   #send.stop .stop-icon { display: block; }
@@ -554,14 +584,14 @@
   /* recording mode */
   #recorder {
     background: var(--glass);
-    border: 1px solid rgba(255, 92, 143, 0.35);
+    border: 1px solid rgb(var(--accent-rgb) / 0.35);
     border-radius: 24px;
     padding: 6px 8px;
   }
   #recDot {
     width: 10px; height: 10px;
     border-radius: 50%;
-    background: #ff4d6d;
+    background: var(--danger);
     margin-left: 10px;
     animation: fade 1.1s infinite;
     flex-shrink: 0;
@@ -580,7 +610,7 @@
     height: 12%;
     min-height: 4px;
     border-radius: 3px;
-    background: linear-gradient(180deg, var(--rose-soft), var(--rose));
+    background: linear-gradient(180deg, var(--accent-soft), var(--accent));
     transition: height 0.09s ease;
   }
   #recTime {
@@ -591,7 +621,7 @@
   }
   #recCancel { color: var(--muted); }
   #recDone {
-    background: linear-gradient(135deg, var(--rose), #d84176);
+    background: linear-gradient(135deg, var(--accent), var(--user-end));
     border: none;
     color: #fff;
   }
@@ -608,10 +638,10 @@
     padding: 8px 14px;
     border-radius: 20px;
     border: 1px solid var(--border);
-    background: rgba(46, 24, 38, 0.92);
+    background: var(--toast-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    color: var(--rose-soft);
+    color: var(--accent-soft);
     font-size: 13px;
     font-family: inherit;
     cursor: pointer;
@@ -630,7 +660,7 @@
     bottom: 96px;
     left: 50%;
     transform: translateX(-50%) translateY(6px);
-    background: rgba(46, 24, 38, 0.92);
+    background: var(--toast-bg);
     border: 1px solid var(--border);
     backdrop-filter: blur(12px);
     color: var(--text);
@@ -648,20 +678,20 @@
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ---------- memory panel ---------- */
-  #overlay {
+  .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(8, 3, 7, 0.6);
+    background: var(--overlay-bg);
     backdrop-filter: blur(6px);
     display: none;
     align-items: flex-end;
     justify-content: center;
     z-index: 10;
   }
-  #overlay.show { display: flex; }
-  @media (min-width: 800px) { #overlay { align-items: center; } }
-  #panel {
-    background: linear-gradient(170deg, #2b1826, #1f1019);
+  .overlay.show { display: flex; }
+  @media (min-width: 800px) { .overlay { align-items: center; } }
+  .panel {
+    background: var(--panel-grad);
     border: 1px solid var(--border);
     border-radius: 22px 22px 0 0;
     padding: 24px 22px calc(24px + env(safe-area-inset-bottom));
@@ -672,15 +702,15 @@
     animation: rise 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.1);
     box-shadow: var(--shadow);
   }
-  @media (min-width: 800px) { #panel { border-radius: 22px; } }
+  @media (min-width: 800px) { .panel { border-radius: 22px; } }
   @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
-  #panel h2 {
+  .panel h2 {
     font-size: 16px;
     font-weight: 650;
     margin-bottom: 4px;
     display: flex; align-items: center; gap: 8px;
   }
-  #panel .sub { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .panel .sub { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
   .privacyLink {
     display: inline-block;
     font-size: 12.5px;
@@ -688,7 +718,7 @@
     text-decoration: underline;
     margin-bottom: 16px;
   }
-  .privacyLink:hover { color: var(--rose-soft); }
+  .privacyLink:hover { color: var(--accent-soft); }
   #facts { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
   #facts li {
     background: var(--glass);
@@ -700,16 +730,16 @@
     animation: pop 0.25s ease both;
   }
   #facts li.empty { color: var(--muted); background: none; border: 1px dashed var(--border); text-align: center; }
-  /* open threads and running jokes read as shared history and intentions,
+  /* open threads and resolutions read as shared history and intentions,
      not as stored facts about you — same soft dashed treatment */
   #facts li.thread,
-  #facts li.joke {
+  #facts li.commitment {
     background: none;
     border: 1px dashed var(--border);
     color: var(--muted);
     font-style: italic;
   }
-  #panel .row { display: flex; gap: 10px; justify-content: flex-end; }
+  .panel .row { display: flex; gap: 10px; justify-content: flex-end; }
   .menuItem.langRow { cursor: default; }
   .menuItem.langRow:hover { background: none; }
   .menuItem.langRow .mLabel { cursor: default; }
@@ -723,7 +753,7 @@
     font-family: inherit;
     cursor: pointer;
   }
-  #panel .row button {
+  .panel .row button {
     border: 1px solid var(--border);
     background: var(--glass);
     color: var(--text);
@@ -734,9 +764,107 @@
     cursor: pointer;
     transition: background 0.15s;
   }
-  #panel .row button:hover { background: var(--glass-strong); }
-  #panel .row .danger { color: #ff92a5; border-color: rgba(255, 146, 165, 0.35); }
-  #panel .row .danger.confirm { background: rgba(255, 77, 109, 0.18); border-color: #ff4d6d; color: #ffb3c0; }
+  .panel .row button:hover { background: var(--glass-strong); }
+  .panel .row .danger { color: var(--danger-soft); border-color: rgb(236 141 128 / 0.35); }
+  .panel .row .danger.confirm { background: rgb(226 87 79 / 0.18); border-color: var(--danger); color: var(--danger-pale); }
+
+  /* ---------- the standing disclaimer ----------
+     First thing in the log, above the greeting, and it scrolls away with the
+     conversation rather than eating a strip of a phone screen forever. It is
+     not a bubble: this is the app talking, not Athar. */
+  .notice {
+    align-self: center;
+    max-width: 92%;
+    margin: 4px 0 6px;
+    padding: 9px 14px;
+    border: 1px dashed var(--border);
+    border-radius: 13px;
+    background: var(--glass);
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.45;
+    text-align: center;
+  }
+
+  /* ---------- prayer times panel ---------- */
+  .panel .fieldRow {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .panel .fieldRow label { flex: 1; }
+  .panel select {
+    border: 1px solid var(--border);
+    background: var(--glass);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 13.5px;
+    font-family: inherit;
+    cursor: pointer;
+    max-width: 62%;
+  }
+  #hijriLine {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  #nextLine { font-size: 13.5px; color: var(--accent-soft); margin-bottom: 14px; }
+  #times { list-style: none; margin-bottom: 18px; }
+  #times li {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 11px;
+    font-size: 14.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  #times li:nth-child(odd) { background: var(--glass); }
+  /* the prayer whose window you are in now */
+  #times li.current {
+    background: rgb(var(--accent-rgb) / 0.14);
+    border: 1px solid rgb(var(--accent-rgb) / 0.4);
+    color: var(--text);
+  }
+  #times li .pname { color: var(--muted); }
+  #times li.current .pname { color: var(--accent-soft); font-weight: 600; }
+  #qiblaBox {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 18px;
+  }
+  #qiblaDial { width: 74px; height: 74px; flex-shrink: 0; }
+  #qiblaDial .ring { fill: none; stroke: var(--border); stroke-width: 2; }
+  #qiblaDial .tick { stroke: var(--muted); stroke-width: 1.4; }
+  #qiblaDial .nLabel { fill: var(--muted); font-size: 11px; text-anchor: middle; }
+  #qiblaNeedle { transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.1); }
+  #qiblaText { font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+  #qiblaText b { color: var(--text); display: block; font-size: 15px; }
+  #locNone { font-size: 13.5px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; }
+  .panel .row .primary {
+    border-color: rgb(var(--accent-rgb) / 0.5);
+    color: var(--accent-soft);
+  }
+
+  /* ---------- right-to-left ----------
+     A column flexbox already mirrors the bubbles for free (the cross axis
+     follows the inline direction), so only the things pinned to a physical
+     side need saying twice. */
+  :root[dir="rtl"] .bot { border-bottom-left-radius: 20px; border-bottom-right-radius: 7px; }
+  :root[dir="rtl"] .user { border-bottom-right-radius: 20px; border-bottom-left-radius: 7px; }
+  :root[dir="rtl"] .bot.midRun { border-bottom-right-radius: 20px; }
+  :root[dir="rtl"] .user.midRun { border-bottom-left-radius: 20px; }
+  :root[dir="rtl"] .copyBtn { right: auto; left: -36px; }
+  :root[dir="rtl"] #menu { right: auto; left: 0; }
+  :root[dir="rtl"] .menuItem { text-align: right; }
+  :root[dir="rtl"] #recDot { margin-left: 0; margin-right: 10px; }
+  /* the needle points at a real compass bearing — mirroring it would aim it
+     at the wrong half of the world */
+  :root[dir="rtl"] #qiblaDial { transform: none; }
 </style>
 </head>
 <body>
@@ -747,68 +875,12 @@
   <header>
     <div id="avatarWrap" role="button" tabindex="0" data-i18n-title="avatarTitle" data-i18n-aria="avatarTitle" title="Click to stop her voice" aria-label="Stop her voice">
       <div id="avatar">
-        <svg viewBox="0 0 120 120" role="img" aria-label="Lissa's face">
-          <defs>
-            <radialGradient id="bgG" cx="50%" cy="42%" r="65%">
-              <stop offset="0%" stop-color="#3a2135"/><stop offset="100%" stop-color="#1c0e18"/>
-            </radialGradient>
-            <linearGradient id="hairG" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#ff5c8f"/><stop offset="100%" stop-color="#a86cf5"/>
-            </linearGradient>
-            <radialGradient id="skinG" cx="50%" cy="38%" r="70%">
-              <stop offset="0%" stop-color="#f9e9ef"/><stop offset="100%" stop-color="#e8c6d5"/>
-            </radialGradient>
-            <linearGradient id="lipG" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#ff4d6d"/><stop offset="100%" stop-color="#c73a6b"/>
-            </linearGradient>
-          </defs>
-          <circle cx="60" cy="60" r="60" fill="url(#bgG)"/>
-          <g id="head">
-            <line x1="60" y1="26" x2="60" y2="13" stroke="#ff5c8f" stroke-width="2"/>
-            <circle id="antTip" cx="60" cy="11" r="3.4" fill="#ffb3c0"/>
-            <circle cx="60" cy="56" r="40" fill="url(#hairG)"/>
-            <ellipse cx="31" cy="76" rx="10" ry="21" fill="url(#hairG)"/>
-            <ellipse cx="89" cy="76" rx="10" ry="21" fill="url(#hairG)"/>
-            <circle cx="31" cy="66" r="5.5" fill="#241422" stroke="#a86cf5" stroke-width="1.4"/>
-            <circle cx="31" cy="66" r="1.8" fill="#ff5c8f"/>
-            <circle cx="89" cy="66" r="5.5" fill="#241422" stroke="#a86cf5" stroke-width="1.4"/>
-            <circle cx="89" cy="66" r="1.8" fill="#ff5c8f"/>
-            <ellipse cx="60" cy="66" rx="26" ry="30" fill="url(#skinG)"/>
-            <path d="M36,88 l4.5,3.2 M84,88 l-4.5,3.2" stroke="#a86cf5" stroke-width="1.1" opacity="0.4" fill="none"/>
-            <path d="M34,60 C34,31 86,31 86,60 C82,46 74,41 60,43 C46,41 38,46 34,60 Z" fill="url(#hairG)"/>
-            <circle cx="60" cy="38" r="2.6" fill="#ffd7e2" opacity="0.9"/>
-            <path d="M42,56 Q48,52 54,55" stroke="#b46e86" stroke-width="1.7" fill="none" stroke-linecap="round"/>
-            <path d="M66,55 Q72,52 78,56" stroke="#b46e86" stroke-width="1.7" fill="none" stroke-linecap="round"/>
-            <g class="eye">
-              <ellipse cx="48" cy="62" rx="6.6" ry="4.9" fill="#1a0d16"/>
-              <circle cx="48" cy="62" r="4.1" fill="#ff6f9d"/>
-              <circle cx="48" cy="62" r="2" fill="#ffa8c4"/>
-              <circle cx="49.3" cy="60.6" r="1.5" fill="#fff" opacity="0.95"/>
-              <path d="M41.5,60.5 l-2.6,-1.6 M42.5,58.6 l-2.2,-2.1" stroke="#1a0d16" stroke-width="1.1" stroke-linecap="round"/>
-            </g>
-            <g class="eye">
-              <ellipse cx="72" cy="62" rx="6.6" ry="4.9" fill="#1a0d16"/>
-              <circle cx="72" cy="62" r="4.1" fill="#ff6f9d"/>
-              <circle cx="72" cy="62" r="2" fill="#ffa8c4"/>
-              <circle cx="73.3" cy="60.6" r="1.5" fill="#fff" opacity="0.95"/>
-              <path d="M78.5,60.5 l2.6,-1.6 M77.5,58.6 l2.2,-2.1" stroke="#1a0d16" stroke-width="1.1" stroke-linecap="round"/>
-            </g>
-            <path d="M60,67 q-1.6,4 0,5.2" stroke="#d8a8bc" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-            <ellipse cx="42" cy="73" rx="5" ry="3" fill="#ff8fb0" opacity="0.32"/>
-            <ellipse cx="78" cy="73" rx="5" ry="3" fill="#ff8fb0" opacity="0.32"/>
-            <ellipse id="mouthOpen" cx="60" cy="83" rx="6.8" ry="5" fill="#511226"/>
-            <path id="lipUpper" d="M50,81 Q55,76.8 60,79.2 Q65,76.8 70,81 Q65,82.6 60,82.6 Q55,82.6 50,81 Z" fill="url(#lipG)"/>
-            <g id="lipLower">
-              <path d="M50.5,81.6 Q60,89.8 69.5,81.6 Q60,84.2 50.5,81.6 Z" fill="url(#lipG)"/>
-              <path d="M55,84.5 Q60,86.6 65,84.5" stroke="#ffd7e2" stroke-width="1" opacity="0.55" fill="none" stroke-linecap="round"/>
-            </g>
-          </g>
-        </svg>
+        <!-- the bot's mark is injected here from BOT.avatar -->
       </div>
       <div id="dot"></div>
     </div>
     <div id="title">
-      <h1>Lissa</h1>
+      <h1 id="botName">…</h1>
       <div id="status">online</div>
     </div>
     <div id="menuWrap">
@@ -833,6 +905,10 @@
           <svg class="mCheck" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
         </button>
         <div class="menuSep" role="separator"></div>
+        <button id="prayerBtn" class="menuItem" role="menuitem" data-i18n-title="prayerTitle" title="Prayer times and qibla">
+          <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-9a8 8 0 0 1 16 0v9"/><path d="M2 21h20"/><path d="M12 4V2"/><path d="M9 21v-5a3 3 0 0 1 6 0v5"/></svg>
+          <span class="mLabel" data-i18n="prayerLabel">Prayer times</span>
+        </button>
         <button id="memBtn" class="menuItem" role="menuitem" data-i18n-title="memTitle" title="About this conversation">
           <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
           <span class="mLabel" data-i18n="memLabel">What she remembers</span>
@@ -841,22 +917,21 @@
           <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
           <span class="mLabel" data-i18n="resetLabel">New conversation</span>
         </button>
+        <a id="homeLink" class="menuItem" role="menuitem" href="/">
+          <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span class="mLabel" data-i18n="allBots">All bots</span>
+        </a>
         <div class="menuSep" role="separator"></div>
         <div class="menuItem langRow">
           <svg class="mIcon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
           <label for="langSelect" class="mLabel" data-i18n="langLabel">Language</label>
-          <select id="langSelect">
-            <option value="en">English</option>
-            <option value="sw">Kiswahili</option>
-            <option value="fr">Français</option>
-            <option value="pt">Português</option>
-          </select>
+          <select id="langSelect"></select>
         </div>
       </div>
     </div>
   </header>
 
-  <main id="chat" role="log" aria-label="Conversation with Lissa"></main>
+  <main id="chat" role="log" data-i18n-aria="chatLog" aria-label="Conversation"></main>
   <div id="sr" class="visually-hidden" aria-live="polite"></div>
 
   <button id="jump" data-i18n-title="jumpTitle" title="Scroll to the latest message">
@@ -877,7 +952,7 @@
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
       </button>
       <input id="file" type="file" accept="image/*" hidden>
-      <textarea id="msg" rows="1" data-i18n-placeholder="msgPlaceholder" placeholder="Say something to Lissa…" autocomplete="off" data-i18n-aria="msgAria" aria-label="Message to Lissa"></textarea>
+      <textarea id="msg" rows="1" data-i18n-placeholder="msgPlaceholder" placeholder="Say something to Athar…" autocomplete="off" data-i18n-aria="msgAria" aria-label="Message to Athar"></textarea>
       <button id="mic" class="roundBtn" data-i18n-title="micTitle" data-i18n-aria="micTitle" title="Tap to record, hold to talk" aria-label="Tap to record, hold to talk">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
@@ -902,9 +977,9 @@
 
 <div id="toast" role="status"></div>
 
-<div id="overlay">
-  <div id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
-    <h2 id="panelTitle" data-i18n="panelTitle">What Lissa remembers</h2>
+<div id="overlay" class="overlay">
+  <div id="panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+    <h2 id="panelTitle" data-i18n="panelTitle">Memory</h2>
     <div class="sub" data-i18n="panelSub">Stored in this browser only — memories update as you chat and when you start a new conversation.</div>
     <a class="privacyLink" href="/privacy" target="_blank" rel="noopener" data-i18n="privacyLink">Privacy</a>
     <ul id="facts"></ul>
@@ -912,6 +987,54 @@
       <button id="exportBtn" data-i18n="exportBtn">Save chat</button>
       <button id="forgetBtn" class="danger" data-i18n="forgetBtn">Forget me</button>
       <button id="closeBtn" data-i18n="closeBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="prayerOverlay" class="overlay">
+  <div id="prayerPanel" class="panel" role="dialog" aria-modal="true" aria-labelledby="prayerPanelTitle">
+    <h2 id="prayerPanelTitle" data-i18n="prayerTitle">Prayer times and qibla</h2>
+    <div class="sub" data-i18n="prayerSub">Calculated from your location, in this browser only.</div>
+    <a class="privacyLink" href="/privacy" target="_blank" rel="noopener" data-i18n="privacyLink">Privacy</a>
+
+    <p id="locNone" data-i18n="locNone">Share your location to see today's times and the qibla.</p>
+
+    <div id="prayerData" hidden>
+      <div id="hijriLine"></div>
+      <div id="nextLine"></div>
+      <ul id="times"></ul>
+      <div id="qiblaBox">
+        <svg id="qiblaDial" viewBox="0 0 80 80" role="img" data-i18n-aria="qiblaLabel" aria-label="Qibla">
+          <circle class="ring" cx="40" cy="40" r="34"/>
+          <line class="tick" x1="40" y1="6" x2="40" y2="13"/>
+          <line class="tick" x1="74" y1="40" x2="67" y2="40"/>
+          <line class="tick" x1="40" y1="74" x2="40" y2="67"/>
+          <line class="tick" x1="6" y1="40" x2="13" y2="40"/>
+          <text class="nLabel" x="40" y="24">N</text>
+          <g id="qiblaNeedle" transform="rotate(0 40 40)">
+            <path d="M40,16 L46,46 L40,41 L34,46 Z" fill="var(--accent2)"/>
+            <circle cx="40" cy="40" r="3.4" fill="var(--accent)"/>
+          </g>
+        </svg>
+        <div id="qiblaText"></div>
+      </div>
+      <div class="fieldRow">
+        <label for="methodSelect" data-i18n="methodLabel">Calculation</label>
+        <select id="methodSelect"></select>
+      </div>
+      <div class="fieldRow">
+        <label for="asrSelect" data-i18n="asrLabel">Asr</label>
+        <select id="asrSelect">
+          <option value="standard" data-i18n="asrStandard">Majority</option>
+          <option value="hanafi" data-i18n="asrHanafi">Hanafi</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="locBtn" class="primary" data-i18n="locBtn">Use my location</button>
+      <button id="locClearBtn" class="danger" data-i18n="locClear" hidden>Forget location</button>
+      <button id="prayerCloseBtn" data-i18n="closeBtn">Close</button>
     </div>
   </div>
 </div>
@@ -931,6 +1054,16 @@ const composer = document.getElementById("composer");
 const recorder = document.getElementById("recorder");
 const recTime = document.getElementById("recTime");
 const meter = document.getElementById("meter");
+
+/* ---------- becoming this bot ----------
+   The shell is identical for every bot; everything that makes it Lissa or
+   Athar arrives in window.BOT — the mark, the name, the palette (already
+   applied in the head), which languages exist and which features do. */
+document.getElementById("avatar").innerHTML = BOT.avatar;
+document.getElementById("botName").textContent = BOT.name;
+document.getElementById("pwaManifest").href = "/" + BOT.slug + "/manifest.webmanifest";
+document.getElementById("favicon").href = "/static/icons/" + BOT.slug + "-192.png";
+document.getElementById("appleIcon").href = "/static/icons/" + BOT.slug + "-512.png";
 
 /* ---------- header overflow menu ----------
    The five controls used to sit in the header and crowded the title on
@@ -1018,16 +1151,23 @@ let chatAbort = null;      // AbortController for the in-flight reply
    `lang` param for those (see /api/hello, /api/reset, /api/chat,
    /api/transcribe). */
 
-const SUPPORTED_LANGS = ["en", "sw", "fr", "pt"];
-const LANG_KEY = "lissa_lang";
+const SUPPORTED_LANGS = BOT.langs;
+/* Arabic runs right-to-left. Only the app's own chrome is flipped by this —
+   a reply written in Arabic is rendered by the browser's own bidi handling
+   whatever the interface language happens to be. */
+const RTL_LANGS = BOT.rtl || [];
+const LANG_KEY = "ld_lang";
+const LANG_NAMES = { en: "English", ar: "العربية", sw: "Kiswahili",
+                     fr: "Français", pt: "Português" };
 
 const I18N = {
   en: {
     statusOnline: "online", statusTyping: "typing…", statusSpeaking: "speaking…",
     statusListening: "listening…", statusUnderstanding: "understanding…",
     statusSaving: "saving memories…",
-    cooldown: "catching her breath… {secs}s",
-    avatarTitle: "Click to stop her voice",
+    cooldown: "catching up… {secs}s",
+    avatarTitle: "Click to stop the voice",
+    avatarAlt: "A lamp hanging in a mihrab arch",
     hfTitle: "Hands-free conversation",
     voiceTitle: "Toggle spoken replies", voiceAria: "Spoken replies",
     memTitle: "About this conversation",
@@ -1035,17 +1175,18 @@ const I18N = {
     themeTitle: "Toggle light/dark theme",
     menuTitle: "Settings and actions",
     hfLabel: "Hands-free", voiceLabel: "Spoken replies", themeLabel: "Light theme",
-    memLabel: "What she remembers", resetLabel: "New conversation",
+    memLabel: "What {name} remembers", resetLabel: "New conversation",
     jumpTitle: "Scroll to the latest message", jumpLabel: "new message",
-    attachHint: "she'll see this with your next message",
+    attachHint: "{name} will see this with your next message",
     attachRemove: "Remove photo", attachTitle: "Send a photo",
-    msgPlaceholder: "Say something to Lissa…", msgAria: "Message to Lissa",
+    msgPlaceholder: "Ask {name} something…", msgAria: "Message to {name}",
     micTitle: "Tap to record, hold to talk",
     sendTitle: "Send", stopTitle: "Stop the reply",
     recCancelTitle: "Cancel", recCancelAria: "Cancel recording",
     recDoneTitle: "Send it", recDoneAria: "Send recording",
-    panelTitle: "What Lissa remembers",
-    panelSub: "Stored in this browser only — memories update as you chat and when you start a new conversation.",
+    panelTitle: "What {name} remembers",
+    panelSub: "Stored in this browser only — memories update as you talk and when you start a new conversation.",
+    allBots: "All bots", chatLog: "Conversation",
     langLabel: "Language", privacyLink: "Privacy",
     exportBtn: "Save chat", forgetBtn: "Forget me", closeBtn: "Close",
     confirmAgain: "Sure? Click again",
@@ -1055,7 +1196,7 @@ const I18N = {
     notAnImage: "that's not an image",
     connLostMidReply: "\n\n(connection lost mid-reply)",
     connLostInitial: "(couldn't reach the server — is it still running?)",
-    autoplayBlocked: "your browser muted her 🔇 — tap anywhere to hear her voice",
+    autoplayBlocked: "your browser muted the reply 🔇 — tap anywhere to hear it",
     voiceOn: "voice on", voiceOff: "voice off",
     themeLight: "light theme", themeDark: "dark theme",
     hfOn: "hands-free on — just start talking, pause to send",
@@ -1070,25 +1211,121 @@ const I18N = {
     noWordsHeard: "couldn't make out any words — try again",
     transcriptionFailed: "transcription failed — try again",
     recordingDiscarded: "recording discarded",
-    noFactsYet: "Nothing yet — she starts remembering after you've chatted a little.",
+    noFactsYet: "Nothing yet — {name} starts remembering once you've talked a little.",
     waitingToHear: "Waiting to hear:",
-    runningJoke: "Running joke:",
-    memoryWiped: "memory wiped — she's meeting you for the first time again",
+    extrasLabel: "Resolved:",
+    memoryWiped: "memory wiped — {name} is meeting you for the first time again",
     chatSaved: "chat saved",
     resetConfirm: "tap again to start a new conversation",
-    resetDone: "new conversation — she'll remember you",
+    resetDone: "new conversation — {name} still remembers you",
     bootConnError: "(couldn't reach the server — is it running?)",
     pickedUpWhereLeftOff: "picked up where you left off",
     photoAlt: "photo you sent",
-    exportYou: "You: ", exportLissa: "Lissa: ",
+    exportYou: "You: ", exportBot: "{name}: ",
     langChanged: "language updated",
+    prayerLabel: "Prayer times", prayerTitle: "Prayer times and qibla",
+    prayerSub: "Calculated from your location, in this browser only. Your local masjid's timetable takes precedence, and the Hijri date is the arithmetic one — a sighting can differ by a day.",
+    locBtn: "Use my location", locBusy: "finding you…",
+    locDenied: "location blocked — allow it in the address bar to see prayer times",
+    locUnsupported: "this browser can't share a location",
+    locFailed: "couldn't get a location — try again",
+    locNone: "Share your location to see today's times and the qibla.",
+    locClear: "Forget location", locCleared: "location forgotten",
+    methodLabel: "Calculation", asrLabel: "Asr",
+    asrStandard: "Majority", asrHanafi: "Hanafi",
+    qiblaLabel: "Qibla", qiblaHint: "{deg}° from true north ({point})",
+    hijriLabel: "Hijri date",
+    nextIs: "Next: {name}, {rel}",
+    relMinutes: "in {n} min", relHour: "in {h}h{m}",
+    fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr",
+    maghrib: "Maghrib", isha: "Isha",
+  },
+  ar: {
+    statusOnline: "متصل", statusTyping: "يكتب…", statusSpeaking: "يتحدث…",
+    statusListening: "يستمع…", statusUnderstanding: "يفهم…",
+    statusSaving: "يحفظ الذكريات…",
+    cooldown: "لحظة… {secs} ثانية",
+    avatarTitle: "اضغط لإيقاف الصوت",
+    avatarAlt: "مصباح معلّق في محراب",
+    hfTitle: "محادثة بدون استخدام اليدين",
+    voiceTitle: "تشغيل/إيقاف الردود المنطوقة", voiceAria: "الردود المنطوقة",
+    memTitle: "عن هذه المحادثة",
+    resetTitle: "بدء محادثة جديدة",
+    themeTitle: "تبديل المظهر الفاتح/الداكن",
+    menuTitle: "الإعدادات والإجراءات",
+    hfLabel: "بدون اليدين", voiceLabel: "الردود المنطوقة", themeLabel: "المظهر الفاتح",
+    memLabel: "ما يتذكره {name}", resetLabel: "محادثة جديدة",
+    jumpTitle: "الانتقال إلى آخر رسالة", jumpLabel: "رسالة جديدة",
+    attachHint: "سيرى {name} هذه الصورة مع رسالتك التالية",
+    attachRemove: "إزالة الصورة", attachTitle: "إرسال صورة",
+    msgPlaceholder: "اسأل {name}…", msgAria: "رسالة إلى {name}",
+    micTitle: "اضغط للتسجيل، واستمر بالضغط للتحدث",
+    sendTitle: "إرسال", stopTitle: "إيقاف الرد",
+    recCancelTitle: "إلغاء", recCancelAria: "إلغاء التسجيل",
+    recDoneTitle: "إرسال", recDoneAria: "إرسال التسجيل",
+    panelTitle: "ما يتذكره {name}",
+    panelSub: "محفوظ في هذا المتصفح فقط — تتحدّث الذكريات أثناء الحديث وعند بدء محادثة جديدة.",
+    allBots: "كل المحادثين", chatLog: "المحادثة",
+    langLabel: "اللغة", privacyLink: "الخصوصية",
+    exportBtn: "حفظ المحادثة", forgetBtn: "انسَني", closeBtn: "إغلاق",
+    confirmAgain: "متأكد؟ اضغط مرة أخرى",
+    copyTitle: "نسخ الرسالة", copied: "تم النسخ",
+    copyFailed: "تعذّر النسخ — حدّد النص بنفسك",
+    tryAgain: "↻ حاول مرة أخرى",
+    notAnImage: "هذه ليست صورة",
+    connLostMidReply: "\n\n(انقطع الاتصال أثناء الرد)",
+    connLostInitial: "(تعذّر الوصول إلى الخادم — هل ما زال يعمل؟)",
+    autoplayBlocked: "كتم متصفحك الصوت 🔇 — المس الشاشة لسماع الرد",
+    voiceOn: "الصوت مفعّل", voiceOff: "الصوت متوقف",
+    themeLight: "المظهر الفاتح", themeDark: "المظهر الداكن",
+    hfOn: "وضع بدون اليدين مفعّل — تكلّم، ثم اسكت ليُرسل",
+    hfOff: "وضع بدون اليدين متوقف", hfOffNoHear: "وضع بدون اليدين متوقف — لم أسمعك",
+    hfOffSilence: "لم أسمع شيئًا — أُوقف وضع بدون اليدين",
+    micSecureOrigin: "الميكروفون يحتاج اتصالًا آمنًا — افتح التطبيق عبر http://localhost:8000",
+    micNotFound: "لم يُعثر على ميكروفون — هل هو موصول ومفعّل؟",
+    micBlocked: "الميكروفون محظور — اضغط أيقونة 🔒 في شريط العنوان للسماح به",
+    micError: "خطأ في الميكروفون: {msg}", micStartFailed: "تعذّر بدء التسجيل: {msg}",
+    noAudioCaught: "لم يُلتقط شيء — حاول مرة أخرى",
+    onlySilence: "لم يصل سوى صمت — تأكد أن الميكروفون غير مكتوم",
+    noWordsHeard: "تعذّر تمييز أي كلمات — حاول مرة أخرى",
+    transcriptionFailed: "فشل تحويل الصوت إلى نص — حاول مرة أخرى",
+    recordingDiscarded: "تم إلغاء التسجيل",
+    noFactsYet: "لا شيء بعد — يبدأ {name} بالتذكّر بعد قليل من الحديث.",
+    waitingToHear: "ينتظر أن يسمع:",
+    extrasLabel: "عزم على:",
+    memoryWiped: "مُحيت الذاكرة — يلقاك {name} لأول مرة من جديد",
+    chatSaved: "حُفظت المحادثة",
+    resetConfirm: "اضغط مرة أخرى لبدء محادثة جديدة",
+    resetDone: "محادثة جديدة — وما زال {name} يذكرك",
+    bootConnError: "(تعذّر الوصول إلى الخادم — هل يعمل؟)",
+    pickedUpWhereLeftOff: "أكملنا من حيث توقفنا",
+    photoAlt: "الصورة التي أرسلتها",
+    exportYou: "أنت: ", exportBot: "{name}: ",
+    langChanged: "تم تغيير اللغة",
+    prayerLabel: "مواقيت الصلاة", prayerTitle: "مواقيت الصلاة والقبلة",
+    prayerSub: "محسوبة من موقعك، وتبقى في هذا المتصفح وحده. جدول مسجدك مقدَّم على هذا الحساب، والتاريخ الهجري حسابي — وقد يخالف الرؤية بيوم.",
+    locBtn: "استخدام موقعي", locBusy: "جارٍ تحديد موقعك…",
+    locDenied: "الموقع محظور — اسمح به من شريط العنوان لرؤية المواقيت",
+    locUnsupported: "هذا المتصفح لا يدعم مشاركة الموقع",
+    locFailed: "تعذّر تحديد الموقع — حاول مرة أخرى",
+    locNone: "شارك موقعك لرؤية مواقيت اليوم واتجاه القبلة.",
+    locClear: "نسيان الموقع", locCleared: "نُسي الموقع",
+    methodLabel: "طريقة الحساب", asrLabel: "العصر",
+    asrStandard: "الجمهور", asrHanafi: "الحنفي",
+    qiblaLabel: "القبلة", qiblaHint: "{deg}° عن الشمال الحقيقي ({point})",
+    hijriLabel: "التاريخ الهجري",
+    nextIs: "التالية: {name} {rel}",
+    relMinutes: "بعد {n} دقيقة", relHour: "بعد {h} س {m} د",
+    fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر",
+    maghrib: "المغرب", isha: "العشاء",
   },
   sw: {
     statusOnline: "mtandaoni", statusTyping: "anaandika…", statusSpeaking: "anazungumza…",
     statusListening: "anasikiliza…", statusUnderstanding: "anaelewa…",
     statusSaving: "anahifadhi kumbukumbu…",
-    cooldown: "anapumzika kidogo… sekunde {secs}",
-    avatarTitle: "Bofya kusimamisha sauti yake",
+    cooldown: "subiri kidogo… sekunde {secs}",
+    avatarTitle: "Bofya kusimamisha sauti",
+    avatarAlt: "Taa iliyoning'inia katika mihrabu",
     hfTitle: "Mazungumzo ya mikono huru",
     voiceTitle: "Washa/zima majibu ya sauti", voiceAria: "Majibu ya sauti",
     memTitle: "Kuhusu mazungumzo haya",
@@ -1096,17 +1333,18 @@ const I18N = {
     themeTitle: "Badilisha mandhari nyepesi/giza",
     menuTitle: "Mipangilio na vitendo",
     hfLabel: "Mikono huru", voiceLabel: "Majibu ya sauti", themeLabel: "Mandhari nyepesi",
-    memLabel: "Anayokumbuka", resetLabel: "Mazungumzo mapya",
+    memLabel: "Anayokumbuka {name}", resetLabel: "Mazungumzo mapya",
     jumpTitle: "Nenda kwenye ujumbe wa mwisho", jumpLabel: "ujumbe mpya",
-    attachHint: "ataona hii pamoja na ujumbe wako unaofuata",
+    attachHint: "{name} ataona hii pamoja na ujumbe wako unaofuata",
     attachRemove: "Ondoa picha", attachTitle: "Tuma picha",
-    msgPlaceholder: "Sema kitu kwa Lissa…", msgAria: "Ujumbe kwa Lissa",
+    msgPlaceholder: "Muulize {name} kitu…", msgAria: "Ujumbe kwa {name}",
     micTitle: "Gusa kurekodi, shikilia kuongea",
     sendTitle: "Tuma", stopTitle: "Simamisha jibu",
     recCancelTitle: "Ghairi", recCancelAria: "Ghairi kurekodi",
     recDoneTitle: "Tuma", recDoneAria: "Tuma rekodi",
-    panelTitle: "Anachokumbuka Lissa",
-    panelSub: "Imehifadhiwa kwenye kivinjari hiki tu — kumbukumbu zinasasishwa unapozungumza na unapoanza mazungumzo mapya.",
+    panelTitle: "Anachokumbuka {name}",
+    panelSub: "Imehifadhiwa kwenye kivinjari hiki tu — kumbukumbu zinasasishwa mnapozungumza na unapoanza mazungumzo mapya.",
+    allBots: "Roboti zote", chatLog: "Mazungumzo",
     langLabel: "Lugha", privacyLink: "Faragha",
     exportBtn: "Hifadhi mazungumzo", forgetBtn: "Nisahau", closeBtn: "Funga",
     confirmAgain: "Una uhakika? Bofya tena",
@@ -1116,7 +1354,7 @@ const I18N = {
     notAnImage: "hii si picha",
     connLostMidReply: "\n\n(muunganisho umepotea katikati ya jibu)",
     connLostInitial: "(imeshindwa kufikia seva — je, inaendesha bado?)",
-    autoplayBlocked: "kivinjari chako kimemnyamazisha 🔇 — gusa popote kusikia sauti yake",
+    autoplayBlocked: "kivinjari chako kimezima sauti 🔇 — gusa popote kusikia jibu",
     voiceOn: "sauti imewashwa", voiceOff: "sauti imezimwa",
     themeLight: "mandhari nyepesi", themeDark: "mandhari ya giza",
     hfOn: "mikono huru imewashwa — anza kuongea, kisha nyamaza kutuma",
@@ -1127,29 +1365,46 @@ const I18N = {
     micBlocked: "kipaza sauti kimezuiwa — bofya ikoni ya 🔒/kamera kwenye upau wa anwani ili kuruhusu",
     micError: "hitilafu ya kipaza sauti: {msg}", micStartFailed: "imeshindwa kuanza kurekodi: {msg}",
     noAudioCaught: "hakuna kilichonaswa — jaribu tena",
-    onlySilence: "kimya tu kilichofika — hakikisha kipaza sauti hakijanyamazishwa (Windows: Mipangilio → Faragha → Kipaza sauti)",
+    onlySilence: "kimya tu kilichofika — hakikisha kipaza sauti hakijanyamazishwa",
     noWordsHeard: "imeshindwa kuelewa maneno — jaribu tena",
     transcriptionFailed: "imeshindwa kuandika maneno — jaribu tena",
     recordingDiscarded: "rekodi imetupwa",
-    noFactsYet: "Bado hakuna — ataanza kukumbuka baada ya kuzungumza kidogo.",
+    noFactsYet: "Bado hakuna — {name} ataanza kukumbuka baada ya kuzungumza kidogo.",
     waitingToHear: "Anasubiri kusikia:",
-    runningJoke: "Utani wenu:",
-    memoryWiped: "kumbukumbu imefutwa — anakukutana nawe kwa mara ya kwanza tena",
+    extrasLabel: "Aliazimia:",
+    memoryWiped: "kumbukumbu imefutwa — {name} anakukutana kwa mara ya kwanza tena",
     chatSaved: "mazungumzo yamehifadhiwa",
     resetConfirm: "gusa tena kuanza mazungumzo mapya",
-    resetDone: "mazungumzo mapya — atakukumbuka",
+    resetDone: "mazungumzo mapya — {name} bado anakukumbuka",
     bootConnError: "(imeshindwa kufikia seva — je, inaendesha?)",
     pickedUpWhereLeftOff: "tunaendelea pale tulipoishia",
     photoAlt: "picha uliyotuma",
-    exportYou: "Wewe: ", exportLissa: "Lissa: ",
+    exportYou: "Wewe: ", exportBot: "{name}: ",
     langChanged: "lugha imesasishwa",
+    prayerLabel: "Nyakati za swala", prayerTitle: "Nyakati za swala na kibla",
+    prayerSub: "Zimehesabiwa kutoka mahali ulipo, na zinabaki kwenye kivinjari hiki tu. Ratiba ya msikiti wako inatangulia, na tarehe ya Kiislamu ni ya kihesabu — kuandama kwa mwezi kunaweza kutofautiana kwa siku moja.",
+    locBtn: "Tumia mahali nilipo", locBusy: "inakutafuta…",
+    locDenied: "mahali pamezuiwa — ruhusu kwenye upau wa anwani ili kuona nyakati",
+    locUnsupported: "kivinjari hiki hakiwezi kushiriki mahali",
+    locFailed: "imeshindwa kupata mahali — jaribu tena",
+    locNone: "Shiriki mahali ulipo ili kuona nyakati za leo na kibla.",
+    locClear: "Sahau mahali", locCleared: "mahali pamesahauliwa",
+    methodLabel: "Hesabu", asrLabel: "Alasiri",
+    asrStandard: "Jumhuri", asrHanafi: "Hanafi",
+    qiblaLabel: "Kibla", qiblaHint: "{deg}° kutoka kaskazini halisi ({point})",
+    hijriLabel: "Tarehe ya Kiislamu",
+    nextIs: "Inayofuata: {name}, {rel}",
+    relMinutes: "baada ya dakika {n}", relHour: "baada ya saa {h}:{m}",
+    fajr: "Alfajiri", sunrise: "Macheo", dhuhr: "Adhuhuri", asr: "Alasiri",
+    maghrib: "Magharibi", isha: "Isha",
   },
   fr: {
-    statusOnline: "en ligne", statusTyping: "elle écrit…", statusSpeaking: "elle parle…",
-    statusListening: "elle écoute…", statusUnderstanding: "elle comprend…",
-    statusSaving: "elle enregistre ses souvenirs…",
-    cooldown: "elle reprend son souffle… {secs}s",
-    avatarTitle: "Clique pour arrêter sa voix",
+    statusOnline: "en ligne", statusTyping: "écrit…", statusSpeaking: "parle…",
+    statusListening: "écoute…", statusUnderstanding: "comprend…",
+    statusSaving: "enregistre les souvenirs…",
+    cooldown: "un instant… {secs}s",
+    avatarTitle: "Clique pour arrêter la voix",
+    avatarAlt: "Une lampe suspendue dans un mihrab",
     hfTitle: "Conversation mains libres",
     voiceTitle: "Activer/désactiver les réponses vocales", voiceAria: "Réponses vocales",
     memTitle: "À propos de cette conversation",
@@ -1157,17 +1412,18 @@ const I18N = {
     themeTitle: "Basculer entre thème clair et sombre",
     menuTitle: "Réglages et actions",
     hfLabel: "Mains libres", voiceLabel: "Réponses vocales", themeLabel: "Thème clair",
-    memLabel: "Ce dont elle se souvient", resetLabel: "Nouvelle conversation",
+    memLabel: "Ce dont {name} se souvient", resetLabel: "Nouvelle conversation",
     jumpTitle: "Aller au dernier message", jumpLabel: "nouveau message",
-    attachHint: "elle verra ceci avec ton prochain message",
+    attachHint: "{name} verra ceci avec ton prochain message",
     attachRemove: "Retirer la photo", attachTitle: "Envoyer une photo",
-    msgPlaceholder: "Dis quelque chose à Lissa…", msgAria: "Message à Lissa",
+    msgPlaceholder: "Pose une question à {name}…", msgAria: "Message à {name}",
     micTitle: "Appuie pour enregistrer, maintiens pour parler",
     sendTitle: "Envoyer", stopTitle: "Arrêter la réponse",
     recCancelTitle: "Annuler", recCancelAria: "Annuler l'enregistrement",
     recDoneTitle: "Envoyer", recDoneAria: "Envoyer l'enregistrement",
-    panelTitle: "Ce dont Lissa se souvient",
-    panelSub: "Conservé uniquement dans ce navigateur — les souvenirs se mettent à jour au fil de la conversation et quand tu recommences une conversation.",
+    panelTitle: "Ce dont {name} se souvient",
+    panelSub: "Conservé uniquement dans ce navigateur — les souvenirs se mettent à jour au fil de la conversation et quand tu en recommences une.",
+    allBots: "Tous les bots", chatLog: "Conversation",
     langLabel: "Langue", privacyLink: "Confidentialité",
     exportBtn: "Enregistrer la conversation", forgetBtn: "Oublie-moi", closeBtn: "Fermer",
     confirmAgain: "Sûr(e) ? Clique encore",
@@ -1177,7 +1433,7 @@ const I18N = {
     notAnImage: "ce n'est pas une image",
     connLostMidReply: "\n\n(connexion perdue en cours de réponse)",
     connLostInitial: "(impossible de joindre le serveur — tourne-t-il encore ?)",
-    autoplayBlocked: "ton navigateur l'a coupée 🔇 — touche l'écran pour entendre sa voix",
+    autoplayBlocked: "ton navigateur a coupé le son 🔇 — touche l'écran pour l'entendre",
     voiceOn: "voix activée", voiceOff: "voix désactivée",
     themeLight: "thème clair", themeDark: "thème sombre",
     hfOn: "mains libres activé — parle, puis fais une pause pour envoyer",
@@ -1188,29 +1444,46 @@ const I18N = {
     micBlocked: "micro bloqué — clique sur l'icône 🔒/caméra dans la barre d'adresse pour l'autoriser",
     micError: "erreur micro : {msg}", micStartFailed: "impossible de démarrer l'enregistrement : {msg}",
     noAudioCaught: "rien capté — réessaie",
-    onlySilence: "seulement du silence — vérifie que le micro n'est pas coupé (Windows : Paramètres → Confidentialité → Micro)",
+    onlySilence: "seulement du silence — vérifie que le micro n'est pas coupé",
     noWordsHeard: "impossible de comprendre — réessaie",
     transcriptionFailed: "échec de la transcription — réessaie",
     recordingDiscarded: "enregistrement abandonné",
-    noFactsYet: "Rien pour l'instant — elle commence à se souvenir après un peu de conversation.",
+    noFactsYet: "Rien pour l'instant — {name} commence à se souvenir après un peu de conversation.",
     waitingToHear: "En attente de savoir :",
-    runningJoke: "Blague récurrente :",
-    memoryWiped: "mémoire effacée — elle te rencontre à nouveau pour la première fois",
+    extrasLabel: "Décidé :",
+    memoryWiped: "mémoire effacée — {name} te rencontre à nouveau pour la première fois",
     chatSaved: "conversation enregistrée",
     resetConfirm: "touche à nouveau pour démarrer une nouvelle conversation",
-    resetDone: "nouvelle conversation — elle se souviendra de toi",
+    resetDone: "nouvelle conversation — {name} se souvient toujours de toi",
     bootConnError: "(impossible de joindre le serveur — tourne-t-il ?)",
     pickedUpWhereLeftOff: "on reprend là où on en était",
     photoAlt: "photo envoyée",
-    exportYou: "Toi : ", exportLissa: "Lissa : ",
+    exportYou: "Toi : ", exportBot: "{name} : ",
     langChanged: "langue mise à jour",
+    prayerLabel: "Heures de prière", prayerTitle: "Heures de prière et qibla",
+    prayerSub: "Calculées depuis ta position, gardées dans ce navigateur seulement. L'horaire de ta mosquée prime, et la date hégirienne est arithmétique — une observation peut différer d'un jour.",
+    locBtn: "Utiliser ma position", locBusy: "localisation…",
+    locDenied: "position bloquée — autorise-la dans la barre d'adresse pour voir les heures",
+    locUnsupported: "ce navigateur ne peut pas partager de position",
+    locFailed: "impossible d'obtenir la position — réessaie",
+    locNone: "Partage ta position pour voir les heures du jour et la qibla.",
+    locClear: "Oublier la position", locCleared: "position oubliée",
+    methodLabel: "Calcul", asrLabel: "Asr",
+    asrStandard: "Majorité", asrHanafi: "Hanafite",
+    qiblaLabel: "Qibla", qiblaHint: "{deg}° depuis le nord vrai ({point})",
+    hijriLabel: "Date hégirienne",
+    nextIs: "Prochaine : {name}, {rel}",
+    relMinutes: "dans {n} min", relHour: "dans {h}h{m}",
+    fajr: "Fajr", sunrise: "Lever du soleil", dhuhr: "Dhuhr", asr: "Asr",
+    maghrib: "Maghrib", isha: "Isha",
   },
   pt: {
     statusOnline: "online", statusTyping: "digitando…", statusSpeaking: "falando…",
     statusListening: "ouvindo…", statusUnderstanding: "entendendo…",
     statusSaving: "salvando memórias…",
-    cooldown: "recuperando o fôlego… {secs}s",
-    avatarTitle: "Clique para parar a voz dela",
+    cooldown: "um instante… {secs}s",
+    avatarTitle: "Clique para parar a voz",
+    avatarAlt: "Uma lâmpada pendurada num mihrab",
     hfTitle: "Conversa em modo viva-voz",
     voiceTitle: "Ativar/desativar respostas faladas", voiceAria: "Respostas faladas",
     memTitle: "Sobre esta conversa",
@@ -1218,17 +1491,18 @@ const I18N = {
     themeTitle: "Alternar tema claro/escuro",
     menuTitle: "Configurações e ações",
     hfLabel: "Viva-voz", voiceLabel: "Respostas faladas", themeLabel: "Tema claro",
-    memLabel: "O que ela lembra", resetLabel: "Nova conversa",
+    memLabel: "O que {name} lembra", resetLabel: "Nova conversa",
     jumpTitle: "Ir para a última mensagem", jumpLabel: "nova mensagem",
-    attachHint: "ela vai ver isso com sua próxima mensagem",
+    attachHint: "{name} vai ver isso com sua próxima mensagem",
     attachRemove: "Remover foto", attachTitle: "Enviar uma foto",
-    msgPlaceholder: "Diga algo para a Lissa…", msgAria: "Mensagem para a Lissa",
+    msgPlaceholder: "Pergunte algo ao {name}…", msgAria: "Mensagem para o {name}",
     micTitle: "Toque para gravar, segure para falar",
     sendTitle: "Enviar", stopTitle: "Parar a resposta",
     recCancelTitle: "Cancelar", recCancelAria: "Cancelar gravação",
     recDoneTitle: "Enviar", recDoneAria: "Enviar gravação",
-    panelTitle: "O que a Lissa se lembra",
-    panelSub: "Guardado apenas neste navegador — as memórias se atualizam enquanto você conversa e quando inicia uma nova conversa.",
+    panelTitle: "O que {name} se lembra",
+    panelSub: "Guardado apenas neste navegador — as memórias se atualizam enquanto vocês conversam e quando você inicia uma nova conversa.",
+    allBots: "Todos os bots", chatLog: "Conversa",
     langLabel: "Idioma", privacyLink: "Privacidade",
     exportBtn: "Salvar conversa", forgetBtn: "Me esqueça", closeBtn: "Fechar",
     confirmAgain: "Tem certeza? Clique de novo",
@@ -1238,7 +1512,7 @@ const I18N = {
     notAnImage: "isso não é uma imagem",
     connLostMidReply: "\n\n(conexão perdida no meio da resposta)",
     connLostInitial: "(não foi possível conectar ao servidor — ele ainda está rodando?)",
-    autoplayBlocked: "seu navegador silenciou ela 🔇 — toque em qualquer lugar para ouvir a voz dela",
+    autoplayBlocked: "seu navegador silenciou a resposta 🔇 — toque em qualquer lugar para ouvir",
     voiceOn: "voz ativada", voiceOff: "voz desativada",
     themeLight: "tema claro", themeDark: "tema escuro",
     hfOn: "modo viva-voz ativado — comece a falar, faça uma pausa para enviar",
@@ -1249,24 +1523,47 @@ const I18N = {
     micBlocked: "microfone bloqueado — clique no ícone 🔒/câmera na barra de endereço para permitir",
     micError: "erro no microfone: {msg}", micStartFailed: "não foi possível iniciar a gravação: {msg}",
     noAudioCaught: "nada foi captado — tente novamente",
-    onlySilence: "só veio silêncio — verifique se o microfone não está mudo (Windows: Configurações → Privacidade → Microfone)",
+    onlySilence: "só veio silêncio — verifique se o microfone não está mudo",
     noWordsHeard: "não consegui entender nenhuma palavra — tente novamente",
     transcriptionFailed: "falha na transcrição — tente novamente",
     recordingDiscarded: "gravação descartada",
-    noFactsYet: "Nada ainda — ela começa a lembrar depois que vocês conversarem um pouco.",
+    noFactsYet: "Nada ainda — {name} começa a lembrar depois que vocês conversarem um pouco.",
     waitingToHear: "Esperando saber:",
-    runningJoke: "Piada interna:",
-    memoryWiped: "memória apagada — ela está te conhecendo pela primeira vez outra vez",
+    extrasLabel: "Decidiu:",
+    memoryWiped: "memória apagada — {name} está te conhecendo pela primeira vez outra vez",
     chatSaved: "conversa salva",
     resetConfirm: "toque novamente para começar uma nova conversa",
-    resetDone: "nova conversa — ela vai se lembrar de você",
+    resetDone: "nova conversa — {name} ainda se lembra de você",
     bootConnError: "(não foi possível conectar ao servidor — ele está rodando?)",
     pickedUpWhereLeftOff: "continuando de onde paramos",
     photoAlt: "foto enviada",
-    exportYou: "Você: ", exportLissa: "Lissa: ",
+    exportYou: "Você: ", exportBot: "{name}: ",
     langChanged: "idioma atualizado",
+    prayerLabel: "Horários de oração", prayerTitle: "Horários de oração e quibla",
+    prayerSub: "Calculados a partir da sua localização e guardados apenas neste navegador. O horário da sua mesquita tem precedência, e a data hijri é aritmética — uma observação pode diferir em um dia.",
+    locBtn: "Usar minha localização", locBusy: "localizando…",
+    locDenied: "localização bloqueada — permita na barra de endereço para ver os horários",
+    locUnsupported: "este navegador não consegue compartilhar a localização",
+    locFailed: "não foi possível obter a localização — tente novamente",
+    locNone: "Compartilhe sua localização para ver os horários de hoje e a quibla.",
+    locClear: "Esquecer localização", locCleared: "localização esquecida",
+    methodLabel: "Cálculo", asrLabel: "Asr",
+    asrStandard: "Maioria", asrHanafi: "Hanafi",
+    qiblaLabel: "Quibla", qiblaHint: "{deg}° do norte verdadeiro ({point})",
+    hijriLabel: "Data hijri",
+    nextIs: "Próxima: {name}, {rel}",
+    relMinutes: "em {n} min", relHour: "em {h}h{m}",
+    fajr: "Fajr", sunrise: "Nascer do sol", dhuhr: "Dhuhr", asr: "Asr",
+    maghrib: "Maghrib", isha: "Isha",
   },
 };
+
+// A bot's own wording wins over the platform's neutral phrasing — pronouns,
+// its disclaimer, what it calls the third memory list. Anything it doesn't
+// override falls through to the strings above.
+for (const lang in (BOT.ui || {})) {
+  I18N[lang] = { ...(I18N[lang] || I18N.en), ...BOT.ui[lang] };
+}
 
 function detectLang() {
   try {
@@ -1279,14 +1576,26 @@ function detectLang() {
 
 let currentLang = detectLang();
 
+/* The bot may spell its own name differently per language (Athar is أثر in
+   Arabic), so {name} resolves through the string table before BOT.name. */
+function botName() {
+  return (I18N[currentLang] && I18N[currentLang]._name) || BOT.name;
+}
+
 function t(key, vars) {
   let s = (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+  s = s.replaceAll("{name}", botName());
   if (vars) for (const k in vars) s = s.replaceAll("{" + k + "}", vars[k]);
   return s;
 }
 
 function applyI18n() {
   document.documentElement.lang = currentLang;
+  // Arabic flips the whole interface. The attribute goes on <html> so the
+  // CSS overrides below it can key off `:root[dir="rtl"]`, and so a reply in
+  // the other direction still gets the browser's own bidi handling inside
+  // its bubble rather than being forced to match the chrome.
+  document.documentElement.dir = RTL_LANGS.includes(currentLang) ? "rtl" : "ltr";
   document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll("[data-i18n-title]").forEach((el) => { el.title = t(el.dataset.i18nTitle); });
   document.querySelectorAll("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
@@ -1296,36 +1605,94 @@ applyI18n();
 setStatus(t("statusOnline")); // the static markup's "online" is only ever English
 
 const langSelect = document.getElementById("langSelect");
+for (const code of SUPPORTED_LANGS) {
+  const o = document.createElement("option");
+  o.value = code;
+  o.textContent = LANG_NAMES[code] || code;
+  langSelect.appendChild(o);
+}
 langSelect.value = currentLang;
 langSelect.onchange = () => {
   if (!SUPPORTED_LANGS.includes(langSelect.value)) return;
   currentLang = langSelect.value;
   try { localStorage.setItem(LANG_KEY, currentLang); } catch {}
   applyI18n();
-  if (overlay.classList.contains("show")) renderFacts(); // generated content
+  renderNotice(); // generated content — applyI18n's attribute scan can't reach it
+  if (overlay.classList.contains("show")) renderFacts();
+  if (prayerOverlay.classList.contains("show")) renderPrayer();
   // the header status is also generated content — refresh it too, but only
   // when idle, so a switch mid-reply/recording doesn't stomp on that state
   if (!busy && !rec && !pipeline && Date.now() >= cooldownUntil) setStatus(t("statusOnline"));
   toast(t("langChanged"));
 };
 
-/* Her "morning/afternoon/evening/tonight" comes from YOUR clock, not the
+/* The "this morning/tonight" in the greeting comes from YOUR clock, not the
    server's — the server runs in UTC, hours off from most visitors. */
 function localHour() {
   return new Date().getHours();
 }
 
+/* ---------- where you are ----------
+   Coordinates stay in this browser and are sent up with a request only so
+   the server can compute times and tell Athar what time it is where you
+   are. Nothing is stored server-side, and the app works without ever being
+   given a location — the prayer panel is the only part that needs one.
+   getTimezoneOffset() counts minutes *behind* UTC, hence the sign flip. */
+
+const PLACE_KEY = "ld_place";
+const METHODS = {
+  MWL: "Muslim World League",
+  ISNA: "Islamic Society of North America",
+  Egypt: "Egyptian General Authority",
+  Makkah: "Umm al-Qura, Makkah",
+  Karachi: "Karachi",
+  Gulf: "Gulf Region",
+  Singapore: "Singapore (MUIS)",
+};
+
+function loadPlace() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PLACE_KEY)) || {};
+    return {
+      lat: typeof p.lat === "number" ? p.lat : null,
+      lon: typeof p.lon === "number" ? p.lon : null,
+      method: METHODS[p.method] ? p.method : "MWL",
+      asr: p.asr === "hanafi" ? "hanafi" : "standard",
+    };
+  } catch { return { lat: null, lon: null, method: "MWL", asr: "standard" }; }
+}
+
+function savePlace() {
+  try { localStorage.setItem(PLACE_KEY, JSON.stringify(place)); } catch {}
+}
+
+let place = loadPlace();
+
+// What rides along with every request: never the stored object itself, so a
+// half-set location can't be sent as a real one.
+function placePayload() {
+  return {
+    lat: place.lat, lon: place.lon,
+    tz: -new Date().getTimezoneOffset(),
+    method: place.method, asr: place.asr,
+  };
+}
+
 /* ---------- long-term memory ----------
-   What she remembers about the visitor lives in THIS browser
+   What Athar remembers about the visitor lives in THIS browser
    (localStorage) and is sent up only to personalize their own session; the
    server stores nothing. Beyond facts it tracks the shape of the
-   relationship — open threads to follow up on, running jokes to call back
-   to, when they first talked, how many times, and when they last did. */
+   relationship — open threads to follow up on, things they resolved to do,
+   when they first talked, how many times, and when they last did. */
 
-const MEM_KEY = "lissa_facts";
+const MEM_KEY = "ld_mem_" + BOT.slug;
+// Keys written by the single-bot builds this platform grew out of. Read once
+// so a regular doesn't come back to a stranger.
+const LEGACY_MEM_KEYS = [BOT.slug + "_memory", BOT.slug + "_facts"];
 
 function blankMemory() {
-  return { facts: [], threads: [], jokes: [], met: "", last: "", chats: 0, mood: "", mood_day: "" };
+  return { facts: [], threads: [], commitments: [], met: "", last: "", chats: 0,
+           theme: "", theme_day: "" };
 }
 
 // Facts are weighted records — { text, weight, core, ... } — that fade
@@ -1336,9 +1703,18 @@ function factText(f) {
   return typeof f === "string" ? f : (f && f.text) || "";
 }
 
+function storedMemory() {
+  const keys = [MEM_KEY, ...LEGACY_MEM_KEYS];
+  for (const k of keys) {
+    const raw = localStorage.getItem(k);
+    if (raw) return raw;
+  }
+  return null;
+}
+
 function loadMemory() {
   try {
-    const raw = JSON.parse(localStorage.getItem(MEM_KEY));
+    const raw = JSON.parse(storedMemory());
     // a bare array is the pre-threads format from an earlier version
     const src = Array.isArray(raw) ? { facts: raw } : (raw || {});
     const list = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === "string") : []);
@@ -1347,13 +1723,13 @@ function loadMemory() {
     return {
       facts: factList(src.facts),
       threads: list(src.threads),
-      jokes: list(src.jokes),
+      commitments: list(src.commitments),
       met: typeof src.met === "string" ? src.met : "",
       last: typeof src.last === "string" ? src.last : "",
       chats: Number.isInteger(src.chats) ? src.chats : 0,
-      // her mood rides along so it survives a reload; the server owns it
-      mood: typeof src.mood === "string" ? src.mood : "",
-      mood_day: typeof src.mood_day === "string" ? src.mood_day : "",
+      // the day's theme rides along so it survives a reload; the server owns it
+      theme: typeof src.theme === "string" ? src.theme : "",
+      theme_day: typeof src.theme_day === "string" ? src.theme_day : "",
     };
   } catch { return blankMemory(); }
 }
@@ -1367,7 +1743,7 @@ let exchanges = 0; // completed replies since load — memory refreshes every 4t
 
 async function memorize() {
   try {
-    const r = await fetch("/api/memorize", {
+    const r = await fetch(`/api/${BOT.slug}/memorize`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(memory),
@@ -1447,7 +1823,9 @@ function maybeStamp() {
   if (now - lastStamp > 5 * 60 * 1000) {
     const d = document.createElement("div");
     d.className = "timestamp";
-    d.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    // the UI language, not the browser's: an Arabic interface showing
+  // "PM 8:07" (bidi puts the marker first) reads as a glitch
+  d.textContent = new Date().toLocaleTimeString(currentLang, { hour: "numeric", minute: "2-digit" });
     chat.appendChild(d);
   }
   lastStamp = now;
@@ -1478,7 +1856,7 @@ function addBubble(who, text, image) {
   } else {
     div.textContent = text;
   }
-  if (who === "lissa") addCopy(div, text);
+  if (who === "bot") addCopy(div, text);
   groupWithPrevious(div, who);
   chat.appendChild(div);
   scrollChat(who === "user"); // sending your own message always snaps down
@@ -1495,12 +1873,28 @@ function groupWithPrevious(div, who) {
   prev.classList.add("midRun"); // the tail belongs to the last of the run
 }
 
+/* The standing disclaimer. It lives at the top of the log rather than in a
+   permanent strip: it has to be seen, but a religious answer people scroll
+   past all day shouldn't come with a banner nailed over it forever. Rebuilt
+   rather than translated in place, since the log is generated content. */
+function renderNotice() {
+  const existing = chat.querySelector(".notice");
+  if (existing) existing.remove();
+  // Only bots that publish one get one — t() returns the key when missing.
+  const text = t("notice");
+  if (text === "notice") return;
+  const div = document.createElement("div");
+  div.className = "notice";
+  div.textContent = text;
+  chat.prepend(div);
+}
+
 function typingBubble() {
   maybeStamp();
   const div = document.createElement("div");
-  div.className = "bubble lissa";
+  div.className = "bubble bot";
   div.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>';
-  groupWithPrevious(div, "lissa");
+  groupWithPrevious(div, "bot");
   chat.appendChild(div);
   scrollChat();
   return div;
@@ -1522,7 +1916,7 @@ function copyText(text) {
   });
 }
 
-/* hover/tap copy button on a finished Lissa bubble — only add once the
+/* hover/tap copy button on a finished Athar bubble — only add once the
    text is final, streaming rewrites textContent and would wipe it */
 function addCopy(bubble, text) {
   if (!text || bubble.querySelector(".copyBtn")) return;
@@ -1641,10 +2035,10 @@ async function send(text, isRetry, retryImage) {
   // with voice off, text streams into the bubble at full speed.
   const pipe = voiceOn ? newPipeline(bubble) : null;
   try {
-    const res = await fetch("/api/chat", {
+    const res = await fetch(`/api/${BOT.slug}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text, image, lang: currentLang }),
+      body: JSON.stringify({ message: text, image, lang: currentLang, ...placePayload() }),
       signal: ac.signal,
     });
     const limitedFor = parseInt(res.headers.get("x-ratelimited") || "0", 10);
@@ -1694,7 +2088,7 @@ async function send(text, isRetry, retryImage) {
     addCopy(bubble, full);
     setTimeout(maybeListen, 600); // voice off: reply is done once text lands
   }
-  announce(t("exportLissa") + full);
+  announce(t("exportBot") + full);
   if (++exchanges % 4 === 0) memorize(); // fire-and-forget memory refresh
 }
 
@@ -1773,7 +2167,7 @@ function pipeAdd(p, raw) {
     // first chunk. That's a conversation-killing wait for the only thing it
     // buys: both voices are 24 kHz, so Leda removes Edge's MP3 artifacts
     // but not the muffled ceiling. Fixing that needs a 48 kHz source.
-    blobP = fetch("/api/say", {
+    blobP = fetch(`/api/${BOT.slug}/say`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: clean, edge: true }),
@@ -1976,7 +2370,7 @@ voiceBtn.onclick = () => {
    (avoiding a flash); this just keeps the toggle button and the mobile
    chrome color in sync with it, and handles switching. */
 
-const THEME_KEY = "lissa_theme";
+const THEME_KEY = "ld_theme";
 const metaThemeColor = document.querySelector('meta[name="theme-color"]');
 
 function syncThemeUI() {
@@ -2193,7 +2587,7 @@ async function stopRecording() {
   micBtn.classList.add("busy");
   setStatus(t("statusUnderstanding"), true);
   try {
-    const res = await fetch("/api/transcribe?lang=" + encodeURIComponent(currentLang), {
+    const res = await fetch(`/api/${BOT.slug}/transcribe?lang=` + encodeURIComponent(currentLang), {
       method: "POST",
       headers: { "Content-Type": "audio/wav" },
       body: encodeWav(chunks, total, rate),
@@ -2289,7 +2683,7 @@ function closePanel() {
 function renderFacts() {
   const ul = document.getElementById("facts");
   ul.innerHTML = "";
-  if (memory.facts.length || memory.threads.length || memory.jokes.length) {
+  if (memory.facts.length || memory.threads.length || memory.commitments.length) {
     for (const f of memory.facts) {
       const li = document.createElement("li");
       li.textContent = factText(f);
@@ -2301,10 +2695,10 @@ function renderFacts() {
       li.textContent = t("waitingToHear") + " " + th;
       ul.appendChild(li);
     }
-    for (const j of memory.jokes) {
+    for (const c of memory.commitments) {
       const li = document.createElement("li");
-      li.className = "joke";
-      li.textContent = t("runningJoke") + " " + j;
+      li.className = "commitment";
+      li.textContent = t("extrasLabel") + " " + c;
       ul.appendChild(li);
     }
   } else {
@@ -2328,8 +2722,177 @@ document.addEventListener("keydown", (e) => {
   // menu keydown handles its own Escape (and stops it here) when focus is
   // inside it; this catches Escape while focus sits on the trigger
   if (!menuEl.hidden) closeMenu(true);
-  else closePanel();
+  else { closePanel(); closePrayer(); }
 });
+
+/* ---------- prayer times panel ----------
+   Everything here is computed by the server from coordinates this browser
+   holds; the panel is the only place that needs them. Nothing is fetched on
+   load — a location is asked for once, when someone opens this and taps the
+   button, and never again after that. */
+
+const prayerOverlay = document.getElementById("prayerOverlay");
+const prayerData = document.getElementById("prayerData");
+const locNoneEl = document.getElementById("locNone");
+const locBtn = document.getElementById("locBtn");
+const locClearBtn = document.getElementById("locClearBtn");
+const methodSelect = document.getElementById("methodSelect");
+const asrSelect = document.getElementById("asrSelect");
+const timesEl = document.getElementById("times");
+
+for (const [value, label] of Object.entries(METHODS)) {
+  const o = document.createElement("option");
+  o.value = value;
+  o.textContent = label;
+  methodSelect.appendChild(o);
+}
+
+let prayerSnapshot = null; // last successful /api/prayer response
+
+function closePrayer() { prayerOverlay.classList.remove("show"); }
+
+function relativeText(mins) {
+  if (mins < 60) return t("relMinutes", { n: mins });
+  return t("relHour", { h: Math.floor(mins / 60), m: String(mins % 60).padStart(2, "0") });
+}
+
+/* Rendered from the snapshot rather than re-fetched, so switching language
+   or reopening the panel costs nothing. */
+function renderPrayer() {
+  const has = !!prayerSnapshot;
+  prayerData.hidden = !has;
+  // With coordinates stored but no snapshot yet, show neither: flashing
+  // "share your location" at someone who already did reads as a failure.
+  locNoneEl.hidden = has || place.lat !== null;
+  locClearBtn.hidden = !(place.lat !== null && place.lon !== null);
+  methodSelect.value = place.method;
+  asrSelect.value = place.asr;
+  if (!has) return;
+
+  document.getElementById("hijriLine").textContent = prayerSnapshot.hijri;
+  const nextLine = document.getElementById("nextLine");
+  nextLine.textContent = prayerSnapshot.next
+    ? t("nextIs", { name: t(prayerSnapshot.next), rel: relativeText(prayerSnapshot.next_in_minutes) })
+    : "";
+
+  timesEl.innerHTML = "";
+  const order = ["fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"];
+  for (const key of order) {
+    const at = prayerSnapshot.times[key];
+    if (!at) continue; // a latitude where the sun never gets there — say nothing
+    const li = document.createElement("li");
+    // "current" is the prayer whose window you're in: the last one that has
+    // already begun. Sunrise is a boundary, not a window, so it never wins.
+    if (key !== "sunrise" && startedAndLatest(key, order)) li.className = "current";
+    const name = document.createElement("span");
+    name.className = "pname";
+    name.textContent = t(key);
+    const time = document.createElement("span");
+    time.textContent = at;
+    li.append(name, time);
+    timesEl.appendChild(li);
+  }
+
+  document.getElementById("qiblaNeedle").setAttribute(
+    "transform", `rotate(${prayerSnapshot.qibla} 40 40)`);
+  const qt = document.getElementById("qiblaText");
+  qt.innerHTML = "";
+  const b = document.createElement("b");
+  b.textContent = t("qiblaLabel");
+  const line = document.createElement("span");
+  line.textContent = t("qiblaHint", {
+    deg: prayerSnapshot.qibla, point: prayerSnapshot.qibla_compass });
+  qt.append(b, line);
+}
+
+function startedAndLatest(key, order) {
+  const now = new Date();
+  const mins = now.getHours() * 60 + now.getMinutes();
+  const at = (k) => {
+    const v = prayerSnapshot.times[k];
+    if (!v) return null;
+    const [h, m] = v.split(":").map(Number);
+    return h * 60 + m;
+  };
+  const mine = at(key);
+  if (mine === null || mine > mins) return false;
+  return !order.some((k) => k !== "sunrise" && k !== key && at(k) !== null
+                            && at(k) <= mins && at(k) > mine);
+}
+
+async function refreshPrayer(quiet) {
+  if (place.lat === null || place.lon === null) { renderPrayer(); return; }
+  try {
+    const r = await fetch(`/api/${BOT.slug}/prayer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(placePayload()),
+    });
+    if (!r.ok) throw new Error("prayer " + r.status);
+    prayerSnapshot = await r.json();
+  } catch (e) {
+    prayerSnapshot = null;
+    if (!quiet) toast(t("locFailed"));
+  }
+  renderPrayer();
+}
+
+document.getElementById("prayerBtn").onclick = () => {
+  renderPrayer();
+  prayerOverlay.classList.add("show");
+  closeMenu();
+  refreshPrayer(true); // repaint with a fresh "next prayer" while it's open
+};
+
+document.getElementById("prayerCloseBtn").onclick = closePrayer;
+prayerOverlay.onclick = (e) => { if (e.target === prayerOverlay) closePrayer(); };
+
+locBtn.onclick = () => {
+  if (!navigator.geolocation) { toast(t("locUnsupported")); return; }
+  const label = locBtn.textContent;
+  locBtn.disabled = true;
+  locBtn.textContent = t("locBusy");
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      // Two decimals is ~1 km — plenty for prayer times and the qibla, and
+      // it keeps a precise home address out of both localStorage and the
+      // request body.
+      place.lat = Math.round(pos.coords.latitude * 100) / 100;
+      place.lon = Math.round(pos.coords.longitude * 100) / 100;
+      savePlace();
+      locBtn.disabled = false;
+      locBtn.textContent = label;
+      await refreshPrayer(false);
+    },
+    (err) => {
+      locBtn.disabled = false;
+      locBtn.textContent = label;
+      toast(t(err && err.code === 1 ? "locDenied" : "locFailed"));
+    },
+    { enableHighAccuracy: false, timeout: 10000, maximumAge: 10 * 60 * 1000 }
+  );
+};
+
+locClearBtn.onclick = () => {
+  place.lat = place.lon = null;
+  savePlace();
+  prayerSnapshot = null;
+  renderPrayer();
+  toast(t("locCleared"));
+};
+
+methodSelect.onchange = () => {
+  if (!METHODS[methodSelect.value]) return;
+  place.method = methodSelect.value;
+  savePlace();
+  refreshPrayer(false);
+};
+
+asrSelect.onchange = () => {
+  place.asr = asrSelect.value === "hanafi" ? "hanafi" : "standard";
+  savePlace();
+  refreshPrayer(false);
+};
 
 document.getElementById("exportBtn").onclick = () => {
   const lines = [];
@@ -2337,7 +2900,7 @@ document.getElementById("exportBtn").onclick = () => {
     if (el.classList.contains("timestamp")) {
       lines.push("[" + el.textContent + "]");
     } else if (el.classList.contains("bubble")) {
-      const who = el.classList.contains("user") ? t("exportYou") : t("exportLissa");
+      const who = el.classList.contains("user") ? t("exportYou") : t("exportBot");
       const photo = el.querySelector("img") ? "📷 " : "";
       lines.push(who + photo + el.textContent.trim());
     }
@@ -2345,7 +2908,7 @@ document.getElementById("exportBtn").onclick = () => {
   const blob = new Blob([lines.join("\n\n") + "\n"], { type: "text/plain;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "lissa-chat.txt";
+  a.download = BOT.slug + "-chat.txt";
   a.click();
   URL.revokeObjectURL(a.href);
   toast(t("chatSaved"));
@@ -2359,16 +2922,17 @@ forgetBtn.onclick = async () => {
   }
   memory = blankMemory();
   try { localStorage.removeItem(MEM_KEY); } catch {}
-  const { text } = await (await fetch("/api/reset", {
+  const { text } = await (await fetch(`/api/${BOT.slug}/reset`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...blankMemory(), lang: currentLang, hour: localHour() }),
+    body: JSON.stringify({ ...blankMemory(), lang: currentLang, hour: localHour(), ...placePayload() }),
   })).json();
   closePanel();
   chat.innerHTML = "";
   lastStamp = 0;
-  addBubble("lissa", text);
-  announce(t("exportLissa") + text);
+  renderNotice();
+  addBubble("bot", text);
+  announce(t("exportBot") + text);
   toast(t("memoryWiped"));
 };
 
@@ -2391,16 +2955,17 @@ resetBtn.onclick = async () => {
   stopSpeaking();
   setStatus(t("statusSaving"), true);
   await memorize(); // capture this conversation before it's cleared
-  const { text } = await (await fetch("/api/reset", {
+  const { text } = await (await fetch(`/api/${BOT.slug}/reset`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...memory, lang: currentLang, hour: localHour() }),
+    body: JSON.stringify({ ...memory, lang: currentLang, hour: localHour(), ...placePayload() }),
   })).json();
   setStatus(t("statusOnline"));
   chat.innerHTML = "";
   lastStamp = 0;
-  addBubble("lissa", text);
-  announce(t("exportLissa") + text);
+  renderNotice();
+  addBubble("bot", text);
+  announce(t("exportBot") + text);
   toast(t("resetDone"));
 };
 
@@ -2442,10 +3007,11 @@ msg.addEventListener("paste", (e) => {
 // No memory persistence — each conversation is independent.
 
 async function boot() {
+  renderNotice();
   // a refresh shouldn't look like the conversation was lost — the server
   // keeps the session alive for a few hours, so restore it silently
   try {
-    const { messages } = await (await fetch("/api/history")).json();
+    const { messages } = await (await fetch(`/api/${BOT.slug}/history`)).json();
     if (messages && messages.length) {
       for (const m of messages) addBubble(m.who, m.text);
       scrollChat(true);
@@ -2457,10 +3023,10 @@ async function boot() {
 
   const bubble = typingBubble();
   try {
-    const helloData = await (await fetch("/api/hello", {
+    const helloData = await (await fetch(`/api/${BOT.slug}/hello`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...memory, lang: currentLang, hour: localHour() }),
+      body: JSON.stringify({ ...memory, lang: currentLang, hour: localHour(), ...placePayload() }),
     })).json();
     const { text } = helloData;
     // the server bumped chats/met/last for this visit — keep them
@@ -2471,7 +3037,7 @@ async function boot() {
       bubble.textContent = text;
       addCopy(bubble, text);
     }
-    announce(t("exportLissa") + text);
+    announce(t("exportBot") + text);
   } catch (e) {
     bubble.textContent = t("bootConnError");
     addRetry(bubble, boot);
@@ -2479,6 +3045,24 @@ async function boot() {
   }
   msg.focus();
 }
+/* Whatever this bot doesn't have, take out of the page rather than hiding:
+   a control that isn't there can't be tabbed to, read out, or clicked. The
+   handlers above are already bound — they simply never fire on a detached
+   node. */
+function applyFeatures() {
+  const has = (f) => (BOT.features || []).includes(f);
+  const drop = (...ids) => ids.forEach((id) => document.getElementById(id)?.remove());
+  if (!has("prayer")) drop("prayerBtn", "prayerOverlay");
+  if (!has("photos")) drop("attach", "file", "attachPreview");
+  if (!has("handsfree")) drop("hfBtn");
+  if (!has("memory")) drop("memBtn");
+  if (!has("voice")) {
+    drop("voiceBtn", "mic");
+    voiceOn = false;
+  }
+}
+applyFeatures();
+
 boot();
 
 // installable as an app; the worker never touches /api/ so chat stays live

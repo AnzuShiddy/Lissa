@@ -1,4 +1,4 @@
-"""Weighted, decaying long-term memory for Lissa.
+"""Weighted, decaying long-term memory, shared by every bot.
 
 Replaces the old model — a flat list of ≤30 strings that the LLM rewrote
 wholesale every few exchanges — with memory traces that fade unless the

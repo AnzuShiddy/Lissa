@@ -22,7 +22,7 @@ import threading
 
 from google.genai import types
 
-import memory_store
+from core import memory_store
 
 EMBED_MODEL = "gemini-embedding-001"
 

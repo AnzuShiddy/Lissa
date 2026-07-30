@@ -1,0 +1,39 @@
+<svg viewBox="0 0 120 120" role="img" data-i18n-aria="avatarAlt" aria-label="A lamp hanging in a mihrab arch">
+<defs>
+  <radialGradient id="bgG" cx="50%" cy="38%" r="72%">
+    <stop offset="0%" stop-color="#16362a"/><stop offset="100%" stop-color="#07160f"/>
+  </radialGradient>
+  <linearGradient id="archG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2fbf87"/><stop offset="100%" stop-color="#0d5c42"/>
+  </linearGradient>
+  <linearGradient id="goldG" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#f2d494"/><stop offset="100%" stop-color="#b8912f"/>
+  </linearGradient>
+  <radialGradient id="lampG" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffd88a" stop-opacity="0.6"/>
+    <stop offset="100%" stop-color="#ffd88a" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<circle cx="60" cy="60" r="60" fill="url(#bgG)"/>
+<g id="head">
+  <!-- the arch: filled softly, outlined in gold -->
+  <path d="M26,102 L26,60 Q26,28 60,12 Q94,28 94,60 L94,102 Z" fill="url(#archG)" opacity="0.24"/>
+  <path d="M26,102 L26,60 Q26,28 60,12 Q94,28 94,60 L94,102" fill="none"
+        stroke="url(#goldG)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M36,102 L36,61 Q36,34 60,22 Q84,34 84,61 L84,102" fill="none"
+        stroke="#d9b45e" stroke-width="1.1" opacity="0.38"/>
+  <!-- the light the lamp throws into the niche -->
+  <ellipse id="glowPool" cx="60" cy="62" rx="21" ry="26" fill="url(#lampG)"/>
+  <!-- the lamp, on its chain from the apex -->
+  <line x1="60" y1="22" x2="60" y2="45" stroke="url(#goldG)" stroke-width="1.5"/>
+  <path d="M51,52 Q60,43 69,52 Q67,65 60,70 Q53,65 51,52 Z"
+        fill="#0a231a" stroke="url(#goldG)" stroke-width="1.5" stroke-linejoin="round"/>
+  <ellipse id="flame" cx="60" cy="56" rx="3.1" ry="5.2" fill="#ffd88a"/>
+  <!-- khatim: the eight-pointed star, two squares off the same centre -->
+  <g fill="none" stroke="url(#goldG)" stroke-width="1.2" opacity="0.85">
+    <rect x="53" y="80" width="14" height="14"/>
+    <rect x="53" y="80" width="14" height="14" transform="rotate(45 60 87)"/>
+  </g>
+  <rect x="22" y="101" width="76" height="4" rx="2" fill="url(#goldG)" opacity="0.85"/>
+</g>
+        </svg>

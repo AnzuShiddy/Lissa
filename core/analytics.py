@@ -38,7 +38,10 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-FILE = Path(os.environ.get("LISSA_ANALYTICS_FILE", Path(__file__).parent / "analytics.jsonl"))
+# Next to the app rather than next to this module, so the log doesn't end up
+# buried inside core/.
+FILE = Path(os.environ.get("PLATFORM_ANALYTICS_FILE",
+                           Path(__file__).resolve().parent.parent / "analytics.jsonl"))
 
 # A session that sent at least this many messages was a conversation,
 # not a drive-by look at the greeting.

@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import analytics
+from core import analytics
 
 
 NOW = datetime(2026, 7, 23, 12, 0, tzinfo=timezone.utc)
