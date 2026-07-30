@@ -39,7 +39,7 @@ const check = (cond, name) => {
     if (m.type() === "error") console.log("CONSOLE ERROR:", m.text());
   });
 
-  // the five header controls live in the overflow menu now: open it first,
+  // the header controls live in the overflow menu now: open it first,
   // unless a previous item left it open (toggles keep it up)
   const menuClick = async (sel) => {
     if (await page.$eval("#menu", (el) => el.hidden)) await page.click("#menuBtn");
@@ -502,13 +502,15 @@ const check = (cond, name) => {
 
   /* ---- PWA: manifest, icons, service worker ---- */
   const pwa = await page.evaluate(async () => {
-    const man = await fetch("/static/manifest.json").then((r) => (r.ok ? r.json() : null));
-    const icon = await fetch("/static/icon-192.png").then((r) => r.ok);
+    // one manifest per bot, generated from its config and scoped to its slug
+    const man = await fetch("/lissa/manifest.webmanifest").then((r) => (r.ok ? r.json() : null));
+    const icon = await fetch("/static/icons/lissa-192.png").then((r) => r.ok);
     const sw = await fetch("/sw.js").then((r) => r.ok && (r.headers.get("content-type") || "").includes("javascript"));
     const reg = await navigator.serviceWorker.getRegistration().then((r) => !!r).catch(() => false);
-    return { name: man && man.name, icons: man && man.icons.length, icon, sw, reg };
+    return { name: man && man.short_name, scope: man && man.scope, icons: man && man.icons.length, icon, sw, reg };
   });
   check(pwa.name === "Lissa" && pwa.icons === 2, "pwa: manifest serves with icons");
+  check(pwa.scope === "/lissa", "pwa: manifest is scoped to the bot");
   check(pwa.icon, "pwa: app icon serves");
   check(pwa.sw, "pwa: service worker serves from the root");
   check(pwa.reg, "pwa: service worker registered");
@@ -548,7 +550,7 @@ const check = (cond, name) => {
   await page.waitForFunction(
     () => document.querySelectorAll(".bubble").length === 1, null, { timeout: 60000 });
   const stored = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("lissa_facts") || "{}"));
+    JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}"));
   const storedFacts = stored.facts || [];
   // facts are weighted records now — { text, weight, core, ... } — so read
   // .text instead of treating each entry as a bare string
@@ -565,7 +567,7 @@ const check = (cond, name) => {
   // the record also tracks the shape of the relationship, not just facts
   check(Array.isArray(stored.threads),
     "memory: record carries a threads list");
-  check(Array.isArray(stored.jokes),
+  check(Array.isArray(stored.extras),
     "memory: record carries a running-jokes list");
   check(stored.chats >= 1 && !!stored.met && !!stored.last,
     `memory: record tracks the relationship (chats=${stored.chats} met=${stored.met})`);
@@ -579,7 +581,7 @@ const check = (cond, name) => {
   check(!greet2.includes("what's on your mind"),
     "memory: reload greets like a returning visitor");
   const bumped = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("lissa_facts") || "{}"));
+    JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}"));
   check(bumped.chats > stored.chats,
     `memory: each visit increments the conversation count (${stored.chats} -> ${bumped.chats})`);
 
@@ -590,16 +592,16 @@ const check = (cond, name) => {
   // UTC one, which disagrees for a few hours around local midnight
   const localDay = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
     .toISOString().slice(0, 10);
-  check(!!bumped.mood && bumped.mood_day === localDay,
-    `mood: a mood is drawn and dated for today (got ${bumped.mood_day || "none"})`);
-  check(bumped.mood === stored.mood,
+  check(!!bumped.flavour && bumped.flavour_day === localDay,
+    `mood: a mood is drawn and dated for today (got ${bumped.flavour_day || "none"})`);
+  check(bumped.flavour === stored.flavour,
     "mood: the same mood survives a reload within the day");
 
   // open threads show in the panel, phrased as things she's waiting to hear
   await page.evaluate(() => {
-    const m = JSON.parse(localStorage.getItem("lissa_facts") || "{}");
+    const m = JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}");
     m.threads = ["how her sister's surgery went"];
-    localStorage.setItem("lissa_facts", JSON.stringify(m));
+    localStorage.setItem("ld_mem_lissa", JSON.stringify(m));
   });
   await page.reload();
   await page.waitForSelector(".bubble.bot", { timeout: 30000 });
@@ -612,9 +614,9 @@ const check = (cond, name) => {
 
   // running jokes ride the same record and show in the panel, softly styled
   await page.evaluate(() => {
-    const m = JSON.parse(localStorage.getItem("lissa_facts") || "{}");
-    m.jokes = ["the airport story where he boarded the wrong flight"];
-    localStorage.setItem("lissa_facts", JSON.stringify(m));
+    const m = JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}");
+    m.extras = ["the airport story where he boarded the wrong flight"];
+    localStorage.setItem("ld_mem_lissa", JSON.stringify(m));
   });
   await page.reload();
   // wait for the greeting to finish: by then the greet round-trip has run
@@ -625,15 +627,15 @@ const check = (cond, name) => {
     return b && !b.querySelector(".typing-dots") && b.textContent.length > 5;
   }, null, { timeout: 30000 });
   await menuClick("#memBtn");
-  const jokeShown = await page.$$eval("#facts li.joke", (els) =>
+  const jokeShown = await page.$$eval("#facts li.extra", (els) =>
     els.map((e) => e.textContent).join(" "));
   check(jokeShown.includes("airport"),
     "memory: panel lists running jokes (got: " + jokeShown.slice(0, 60) + ")");
   // the greet round-trip must not strip them — the server echoes the whole
   // cleaned record back, so a missing key here means FactsIn dropped it
   const echoed = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("lissa_facts") || "{}"));
-  check(Array.isArray(echoed.jokes) && echoed.jokes.length === 1,
+    JSON.parse(localStorage.getItem("ld_mem_lissa") || "{}"));
+  check(Array.isArray(echoed.extras) && echoed.extras.length === 1,
     "memory: jokes survive the server round-trip");
   await page.click("#closeBtn");
 
@@ -660,8 +662,8 @@ const check = (cond, name) => {
   );
   check(
     (await page.$$eval("#menu .menuItem:not(.langRow)", (els) => els.map((e) => e.id))).join() ===
-      "hfBtn,voiceBtn,themeBtn,memBtn,resetBtn",
-    "menu: holds all five relocated controls"
+      "hfBtn,voiceBtn,themeBtn,memBtn,resetBtn,homeLink",
+    "menu: holds all six relocated controls"
   );
   check(
     await page.$eval("#menu #langSelect", (el) => !!el),
@@ -686,7 +688,7 @@ const check = (cond, name) => {
     "menu: ArrowDown moves to the next item");
   await page.keyboard.press("ArrowUp");
   await page.keyboard.press("ArrowUp"); // wraps to the last
-  check(await page.evaluate(() => document.activeElement.id === "resetBtn"),
+  check(await page.evaluate(() => document.activeElement.id === "homeLink"),
     "menu: ArrowUp wraps to the last item");
   await page.keyboard.press("Escape");
   check(await menuHidden(), "menu: Escape closes it");
@@ -739,9 +741,9 @@ const check = (cond, name) => {
   // needs to be keyboard-reachable
   await page.click("#menuBtn");
   await page.keyboard.press("ArrowDown"); // focuses hfBtn
-  for (let i = 0; i < 5; i++) await page.keyboard.press("Tab"); // through the 5 items
+  for (let i = 0; i < 6; i++) await page.keyboard.press("Tab"); // through the 6 items
   check(await page.evaluate(() => document.activeElement.id === "langSelect"),
-    "menu: Tab reaches the language select after the five items");
+    "menu: Tab reaches the language select after the six items");
   await page.keyboard.press("Tab"); // leaves the menu entirely
   check(await menuHidden(), "menu: tabbing out of it closes it");
 
@@ -785,7 +787,7 @@ const check = (cond, name) => {
     ),
     "theme: menu item aria-checked matches the active theme"
   );
-  const themeStored = await page.evaluate(() => localStorage.getItem("lissa_theme"));
+  const themeStored = await page.evaluate(() => localStorage.getItem("ld_theme"));
   check(themeStored === (themeLightAfter ? "light" : "dark"),
     "theme: choice persisted to localStorage");
 
@@ -811,7 +813,7 @@ const check = (cond, name) => {
     await page.evaluate(() => document.documentElement.lang) === "fr",
     "i18n: <html lang> follows the selected language"
   );
-  const langStored = await page.evaluate(() => localStorage.getItem("lissa_lang"));
+  const langStored = await page.evaluate(() => localStorage.getItem("ld_lang"));
   check(langStored === "fr", "i18n: choice persisted to localStorage");
 
   await page.fill("#msg", "dis bonjour en un mot");

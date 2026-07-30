@@ -733,7 +733,7 @@
   /* open threads and resolutions read as shared history and intentions,
      not as stored facts about you — same soft dashed treatment */
   #facts li.thread,
-  #facts li.commitment {
+  #facts li.extra {
     background: none;
     border: 1px dashed var(--border);
     color: var(--muted);
@@ -1691,8 +1691,8 @@ const MEM_KEY = "ld_mem_" + BOT.slug;
 const LEGACY_MEM_KEYS = [BOT.slug + "_memory", BOT.slug + "_facts"];
 
 function blankMemory() {
-  return { facts: [], threads: [], commitments: [], met: "", last: "", chats: 0,
-           theme: "", theme_day: "" };
+  return { facts: [], threads: [], extras: [], met: "", last: "", chats: 0,
+           flavour: "", flavour_day: "" };
 }
 
 // Facts are weighted records — { text, weight, core, ... } — that fade
@@ -1718,18 +1718,25 @@ function loadMemory() {
     // a bare array is the pre-threads format from an earlier version
     const src = Array.isArray(raw) ? { facts: raw } : (raw || {});
     const list = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === "string") : []);
+    const str = (v) => (typeof v === "string" ? v : "");
     const factList = (v) => (Array.isArray(v)
       ? v.filter((x) => typeof x === "string" || (x && typeof x.text === "string")) : []);
     return {
       facts: factList(src.facts),
       threads: list(src.threads),
-      commitments: list(src.commitments),
+      // `extras` is the server's name for the third list — running jokes for
+      // Lissa, resolutions for Athar. Earlier single-bot builds wrote it as
+      // `jokes` or `commitments`; read those once so a returning visitor
+      // doesn't lose them.
+      extras: list(src.extras ?? src.commitments ?? src.jokes),
       met: typeof src.met === "string" ? src.met : "",
       last: typeof src.last === "string" ? src.last : "",
       chats: Number.isInteger(src.chats) ? src.chats : 0,
-      // the day's theme rides along so it survives a reload; the server owns it
-      theme: typeof src.theme === "string" ? src.theme : "",
-      theme_day: typeof src.theme_day === "string" ? src.theme_day : "",
+      // the day's flavour (her mood) rides along so it survives a reload; the
+      // server owns it. Named `flavour`, not `theme`, so it doesn't read as
+      // the light/dark theme, which is a different thing stored elsewhere.
+      flavour: str(src.flavour ?? src.theme ?? src.mood),
+      flavour_day: str(src.flavour_day ?? src.theme_day ?? src.mood_day),
     };
   } catch { return blankMemory(); }
 }
@@ -2683,7 +2690,7 @@ function closePanel() {
 function renderFacts() {
   const ul = document.getElementById("facts");
   ul.innerHTML = "";
-  if (memory.facts.length || memory.threads.length || memory.commitments.length) {
+  if (memory.facts.length || memory.threads.length || memory.extras.length) {
     for (const f of memory.facts) {
       const li = document.createElement("li");
       li.textContent = factText(f);
@@ -2695,9 +2702,9 @@ function renderFacts() {
       li.textContent = t("waitingToHear") + " " + th;
       ul.appendChild(li);
     }
-    for (const c of memory.commitments) {
+    for (const c of memory.extras) {
       const li = document.createElement("li");
-      li.className = "commitment";
+      li.className = "extra";
       li.textContent = t("extrasLabel") + " " + c;
       ul.appendChild(li);
     }
