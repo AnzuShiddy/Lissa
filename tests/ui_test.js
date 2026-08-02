@@ -934,6 +934,28 @@ const check = (cond, name) => {
     "privacy: page mentions Gemini and the Forget-me control");
   await page.click("#closeBtn");
 
+  /* ---- the heartbeat is open, the usage figures are not ----
+     The workflow runs the server with PLATFORM_STATS_TOKEN set, so both
+     sides of the check are reachable here: the wrong token is refused and
+     the right one is served. /healthz has to stay open regardless — the
+     keep-warm schedule pings it every 10 minutes holding no secret. */
+  const health = await page.request.get("http://localhost:8765/healthz");
+  check(health.ok(), "health: /healthz serves 200 without a token");
+  const healthBody = await health.json();
+  check(JSON.stringify(healthBody) === '{"ok":true}',
+    "health: heartbeat carries no counts");
+
+  const noToken = await page.request.get("http://localhost:8765/api/stats");
+  check(noToken.status() === 403, "stats: refused without a token");
+  const badToken = await page.request.get("http://localhost:8765/api/stats?token=wrong");
+  check(badToken.status() === 403, "stats: refused with the wrong token");
+  const goodToken = await page.request.get(
+    "http://localhost:8765/api/stats?token=" + (process.env.PLATFORM_STATS_TOKEN || ""));
+  check(goodToken.ok(), "stats: served with the right token");
+  const statsBody = await goodToken.json();
+  check(!!statsBody.totals && typeof statsBody.totals.visitors === "number",
+    "stats: returns per-day counts");
+
   await browser.close();
   console.log(failures === 0 ? "\nALL PASSED" : `\n${failures} FAILURE(S)`);
   process.exit(failures === 0 ? 0 : 1);

@@ -47,7 +47,7 @@ Two pingers keep it awake; run either or both.
 
 ### Option A — GitHub Actions (already in the repo, zero setup)
 
-`.github/workflows/keepwarm.yml` pings `/api/stats` every 10 minutes. It's
+`.github/workflows/keepwarm.yml` pings `/healthz` every 10 minutes. It's
 free on the public repo and needs no account. **Caveat:** GitHub's scheduler
 is best-effort and often fires late under load, so the real gap can stretch
 past the 15-min spin-down window — treat it as "usually warm," not a
@@ -65,9 +65,10 @@ free plan covers this completely.
 2. **+ New monitor** and set:
    - **Monitor Type:** `HTTP(s)`
    - **Friendly Name:** `Lissa keep-warm`
-   - **URL:** `https://lissa-02zl.onrender.com/api/stats`
-     (use `/api/stats`, not `/` — it's a tiny JSON response, so each ping
-     costs no Gemini quota and returns fast once the instance is awake)
+   - **URL:** `https://lissa-02zl.onrender.com/healthz`
+     (use `/healthz`, not `/` — it's a tiny JSON response, so each ping
+     costs no Gemini quota and returns fast once the instance is awake. It
+     needs no token, which `/api/stats` does.)
    - **Monitoring Interval:** `5 minutes` (the free-plan minimum, and
      comfortably under the 15-min spin-down window)
 3. Under **Advanced / Timeout**, raise the request timeout if offered
@@ -100,17 +101,42 @@ Check logs under the **Logs** tab on your Render dashboard. Lissa logs:
 
 ### Usage stats
 
-`GET /api/stats` returns the last two weeks of aggregate usage (visitors,
-returning visitors, messages, engaged sessions, minutes). Two caveats on the
-free tier:
+`GET /api/stats?token=<PLATFORM_STATS_TOKEN>` returns the last two weeks of
+aggregate usage (visitors, returning visitors, messages, engaged sessions,
+minutes).
 
-- The instance's `analytics.jsonl` is wiped every spin-down, so `/api/stats`
-  only covers the current instance's lifetime. The durable record is the
-  `analytics` lines in Render's logs — filter for `analytics ` and export
-  from the Logs tab.
-- Set `LISSA_STATS_TOKEN` as an environment variable to require
-  `?token=<value>` on `/api/stats`; without it the endpoint is public
-  (aggregate counts only, nothing sensitive).
+**Set `PLATFORM_STATS_TOKEN` in the dashboard.** Without it the endpoint is
+closed, not public — it answers `404 stats disabled`. That direction is
+deliberate: an unset variable is the normal state of a fresh deploy, and the
+old "unset means public" rule meant one forgotten field quietly published the
+figures, which is exactly what happened. `/healthz` stays open and carries
+nothing but `{"ok": true}`, so keep-warm never needs the secret.
+
+### Recovering history after a deploy
+
+The free tier has no persistent disk, so `analytics.jsonl` is wiped by every
+deploy and every spin-down, and `/api/stats` only covers the current
+instance's lifetime. The durable copy is the `analytics ` lines in Render's
+log store, which the app mirrors every event to for exactly this reason — but
+the running process can't read its own logs back, so recovery is a manual
+pull:
+
+1. **Logs** tab → filter for `analytics ` → **Download**.
+2. Merge the export into the event log:
+
+   ```bash
+   python tools/ingest_analytics.py render-logs.txt --dry-run   # look first
+   python tools/ingest_analytics.py render-logs.txt
+   ```
+
+Events are deduplicated on content, so overlapping exports can be replayed as
+often as you like without inflating a count. Run it against a local checkout
+to build up a history that outlives the instance; point `--into` anywhere you
+want that archive to live.
+
+If you'd rather this happened by itself, it needs somewhere durable to write —
+a free Postgres (Neon, Supabase) or a Render disk on a paid plan — since
+nothing on the free tier survives a restart.
 
 ## Auto-Deploy
 

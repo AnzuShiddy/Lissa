@@ -32,7 +32,9 @@ jobs:
     steps:
       - name: Ping the live site
         run: |
-          URL="https://lissa-02zl.onrender.com/api/stats"
+          # /healthz, not /api/stats: the stats endpoint is behind a token now,
+          # and a heartbeat has no business reading usage figures anyway.
+          URL="https://lissa-02zl.onrender.com/healthz"
           # A cold instance takes ~30s to wake, so allow a generous timeout
           # and one retry before calling it a failure.
           for attempt in 1 2; do

@@ -68,6 +68,10 @@ jobs:
           # throttle then replaces expected replies with an in-character
           # "give me a sec" message, failing unrelated checks downstream.
           PLATFORM_RATE_PER_MIN: "60"
+          # Set so the suite can exercise both sides of the stats lock: an
+          # unset token closes the endpoint, which would leave the served
+          # path untested.
+          PLATFORM_STATS_TOKEN: "ci-stats-token"
         run: |
           uvicorn app:app --port 8765 &
           for i in $(seq 1 30); do
@@ -77,4 +81,7 @@ jobs:
 
       - name: Run the UI suite
         if: env.SKIP != '1'
+        env:
+          # must match the value the server above was started with
+          PLATFORM_STATS_TOKEN: "ci-stats-token"
         run: node tests/ui_test.js
