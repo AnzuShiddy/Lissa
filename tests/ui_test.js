@@ -76,6 +76,31 @@ const check = (cond, name) => {
   check(revealMs > 800,
     "unvoiced greeting: types out gradually, not pasted instantly (took " + revealMs + "ms)");
 
+  /* ---- typing keeps step with the speaking rate ----
+     A clip that plays paces the text by its own duration, which is correct
+     by construction. These three paths have no clip to measure — autoplay
+     blocked, playback error, browser voice — and used to type at a flat
+     50ms/char, so slowing the voice down left the text racing ahead. The
+     pace now derives from the rate the server was configured with, which
+     is arithmetic and cheap to assert directly. */
+  const pacing = await page.evaluate(() => ({
+    rate: BOT.speechRate,
+    factor: speechFactor(),
+    half: guessedRevealMs("x".repeat(400)),
+    normal: (() => { const r = BOT.speechRate; BOT.speechRate = 1;
+                     const ms = guessedRevealMs("x".repeat(400)); BOT.speechRate = r; return ms; })(),
+    slow: (() => { const r = BOT.speechRate; BOT.speechRate = 0.5;
+                   const ms = guessedRevealMs("x".repeat(400)); BOT.speechRate = r; return ms; })(),
+    fast: (() => { const r = BOT.speechRate; BOT.speechRate = 1.5;
+                   const ms = guessedRevealMs("x".repeat(400)); BOT.speechRate = r; return ms; })(),
+  }));
+  check(typeof pacing.rate === "number" && pacing.rate > 0,
+    "pacing: the page is told how fast the bot speaks (" + pacing.rate + ")");
+  check(pacing.slow > pacing.normal && pacing.normal > pacing.fast,
+    "pacing: a slower voice types more slowly, a faster one more quickly");
+  check(Math.abs(pacing.slow - 2 * pacing.normal) < 1,
+    "pacing: halving the speaking rate doubles the reveal");
+
   /* ---- fix 6: autoplay-blocked hint ---- */
   let nudged = true;
   try {

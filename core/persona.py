@@ -13,11 +13,34 @@ belongs here.
 from __future__ import annotations
 
 import json
+import os
 import random
+import re
 from dataclasses import dataclass, field
 from datetime import datetime
 
 from core import memory_store, recall
+
+# edge-tts takes a signed percentage against the voice's normal speed: "-8%"
+# is 8% slower. Everything downstream also needs it as a number — how fast the
+# words actually come out — because the page paces its typing off it, and text
+# that finishes early or late is worse than text that never tried to match.
+_RATE_RE = re.compile(r"^\s*([+-]?\d+(?:\.\d+)?)\s*%\s*$")
+
+
+def rate_factor(rate: str) -> float:
+    """Turn an edge-tts rate string into a speed multiplier.
+
+    ``"-8%"`` -> ``0.92`` (slower, so the clip runs longer); ``"+10%"`` -> ``1.1``.
+    Anything unparseable is 1.0, because a typo in a dashboard field should
+    make the voice ordinary rather than absurd. The result is clamped to a
+    sane band for the same reason: "-100%" would otherwise divide the typing
+    pace by zero.
+    """
+    match = _RATE_RE.match(rate or "")
+    if not match:
+        return 1.0
+    return min(3.0, max(0.25, 1.0 + float(match.group(1)) / 100.0))
 
 # Every bot's long-term memory has the same shape. Two of the lists are named
 # by the bot, because what's worth carrying forward differs: Lissa keeps
@@ -88,6 +111,23 @@ class Bot:
     def has(self, feature: str) -> bool:
         return feature in self.features
 
+    @property
+    def speech_rate(self) -> str:
+        """This bot's speaking rate, overridable without a deploy.
+
+        ``PLATFORM_EDGE_RATE_<SLUG>`` beats ``PLATFORM_EDGE_RATE`` beats the
+        bot's own ``edge_rate``, so one dashboard field can slow everything
+        down while a single bot can still be tuned on its own — the two ship
+        at different speeds on purpose.
+
+        Read at call time rather than import time: changing it on the host
+        should take effect on the next request, not require remembering that
+        a restart is also needed.
+        """
+        return (os.environ.get(f"PLATFORM_EDGE_RATE_{self.slug.upper()}")
+                or os.environ.get("PLATFORM_EDGE_RATE")
+                or self.edge_rate)
+
     def manifest(self) -> dict:
         """What the browser needs to dress itself as this bot."""
         return {
@@ -96,6 +136,9 @@ class Bot:
             "rtl": list(self.rtl_langs), "features": sorted(self.features),
             "palette": self.palette, "avatar": self.avatar_svg,
             "ui": self.ui, "extrasLabel": self.extras_name,
+            # How fast this bot speaks, as a multiplier. The page types in
+            # step with the voice, so it has to know what the voice was told.
+            "speechRate": rate_factor(self.speech_rate),
         }
 
 
