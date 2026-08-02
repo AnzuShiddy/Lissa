@@ -403,7 +403,7 @@ async def say(slug: str, body: TTSIn, sid: str | None = Cookie(None)) -> Respons
             speech.note_tts_quota_hit()
     try:
         stream = edge_tts.Communicate(text, voice=bot.edge_voice,
-                                      rate=bot.edge_rate).stream()
+                                      rate=bot.speech_rate).stream()
         first = None
         async for msg in stream:
             if msg["type"] == "audio" and msg["data"]:

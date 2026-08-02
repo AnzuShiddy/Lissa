@@ -146,6 +146,14 @@ endpoint.
   thoughts. If the voice server is unreachable, the browser's built-in
   speech is the last resort. Capture runs on an `AudioWorklet`, with a
   `ScriptProcessorNode` fallback for older browsers.
+- **The typing keeps step with the voice.** When a clip plays, its own
+  duration paces the text. When there's no clip to measure — autoplay
+  blocked before the first tap, a playback error, or the browser voice
+  standing in — the pace is derived from the bot's speaking rate instead of
+  a fixed guess, so slowing a bot down slows its typing to match. Set
+  `PLATFORM_EDGE_RATE` (or `PLATFORM_EDGE_RATE_<SLUG>` for one bot) to
+  change the speed without a code change; both the voice and the typing
+  follow it, as does the browser stand-in voice.
 - **Voice out (terminal)**: Gemini's free TTS
   (`gemini-3.1-flash-tts-preview`) through PulseAudio. That free tier is
   only ~10 requests/day, so the terminal falls back to text-only when it
@@ -267,9 +275,11 @@ NODE_PATH=$(npm root -g) node tests/ui_test.js
 ## Deploy
 
 `render.yaml` is set up for Render's free tier; set `GEMINI_API_KEY` in the
-dashboard. Useful environment variables: `PLATFORM_RATE_PER_MIN`,
-`PLATFORM_DAILY_CALLS`, `PLATFORM_STATS_TOKEN` (**required** to open
-`/api/stats` at all), `PLATFORM_ANALYTICS_FILE`. Details in
+dashboard. Useful environment variables: `PLATFORM_EDGE_RATE` (and
+`PLATFORM_EDGE_RATE_<SLUG>`) to change how fast a bot speaks — the typing
+follows it — `PLATFORM_RATE_PER_MIN`, `PLATFORM_DAILY_CALLS`,
+`PLATFORM_STATS_TOKEN` (**required** to open `/api/stats` at all),
+`PLATFORM_ANALYTICS_FILE`. Details in
 [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Launch & demo tooling

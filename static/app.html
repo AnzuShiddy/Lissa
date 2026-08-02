@@ -2198,7 +2198,7 @@ async function pipePlay(p) {
       await playClip(p, raw, blob);
     } else if (clean) {
       // server voice unreachable — browser voice, typing at a guessed pace
-      const reveal = queueReveal(p, raw, Math.max(1000, raw.length * 50));
+      const reveal = queueReveal(p, raw, guessedRevealMs(raw));
       await speakBrowser(clean);
       await reveal;
     } else {
@@ -2232,7 +2232,7 @@ function playClip(p, raw, blob) {
       // A silent instant paste for the very first message (the one most
       // likely to hit a cold autoplay block) reads as broken next to
       // every other message's typing animation.
-      if (!revealed) { revealed = true; queueReveal(p, raw, Math.max(1000, raw.length * 50)); }
+      if (!revealed) { revealed = true; queueReveal(p, raw, guessedRevealMs(raw)); }
       done();
     };
     a.onended = finish;
@@ -2243,7 +2243,7 @@ function playClip(p, raw, blob) {
       // type the segment out over the length of the clip
       const ms = isFinite(a.duration) && a.duration > 0
         ? a.duration * 950
-        : Math.max(1000, raw.length * 50);
+        : guessedRevealMs(raw);
       queueReveal(p, raw, ms);
     };
     speakingUI(true);
@@ -2282,6 +2282,32 @@ function nudgeAutoplay(blob) {
 function queueReveal(p, text, ms) {
   p.revealChain = p.revealChain.then(() => revealText(p, text, ms));
   return p.revealChain;
+}
+
+/* How long a clip *would* run, when we can't measure one.
+
+   A played clip is authoritative — its own duration paces the typing. But
+   three paths have no clip to measure: autoplay blocked before the first
+   tap, a playback error, and the browser voice standing in for an
+   unreachable server. Those used to type at a flat 50ms per character,
+   which stopped matching the moment the speaking rate was changed: slow the
+   voice down and the text still raced ahead of it.
+
+   BASE_MS_PER_CHAR is the pace at *normal* speed. It's 46 rather than a
+   round 50 because 50 was tuned when the only voice ran at -8%, and
+   46 / 0.92 lands back on that familiar 50 — the default look doesn't
+   change, it just moves correctly now. */
+const BASE_MS_PER_CHAR = 46;
+
+function speechFactor() {
+  const f = Number(BOT.speechRate);
+  // A page cached from before speechRate existed falls back to the old -8%
+  // assumption, so it keeps its previous pace rather than jumping.
+  return isFinite(f) && f > 0 ? f : 0.92;
+}
+
+function guessedRevealMs(text) {
+  return Math.max(1000, text.length * (BASE_MS_PER_CHAR / speechFactor()));
 }
 
 function revealText(p, text, ms) {
@@ -2353,7 +2379,10 @@ function speakBrowser(text) {
     if (!browserVoice) browserVoice = pickBrowserVoice();
     if (browserVoice) u.voice = browserVoice;
     u.pitch = 1.06;
-    u.rate = 1.02;
+    // Track the configured speaking rate, so the stand-in voice doesn't race
+    // ahead of a bot that was deliberately slowed down — and so the typing,
+    // which is paced off the same number, still lands with it.
+    u.rate = 1.02 * speechFactor();
     u.onstart = () => speakingUI(true);
     u.onend = () => done();
     u.onerror = () => done();
