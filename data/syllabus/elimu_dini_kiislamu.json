@@ -1,0 +1,411 @@
+{
+ "subject": "Elimu ya Dini ya Kiislamu",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727257430-MUHTASARI%20WA%20ELIMU%20YA%20DINI%20YA%20KIISLAM%20KWA%20SHULE%20ZA%20SEKONDARI%20KIDATO%20CHA%20I%20-%20IV.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "(ii) Aina za dini kwa mujibu wa Qur’an na Sunnah,",
+    "activity": "Kila kundi kutoa muwakilishi mmoja kuwasilisha walichojifunza."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "(c) Kuchambua ufahamu wa Imani kwa mujibu wa Qur’an na Sunnah. (Maana, nguzo za Imani na nguzo ya ihsani, sifa za muumini wa kweli katika aya za Quran; (49:15), ( 8:2 – 4), (2:2 – 5), (23:1-11)",
+    "activity": "Bunguabongo na majadiliano: Ongoza wanafunzi katika vikundi kubungua bongo kisha wajadiliane juu ya (i) Maana ya Imani (ii) Nguzo za Imani na nguzo ya Ihsan (iii) Sifa za muumini wa kweli kwa mujibu wa Quran; (49:15), (8:2 – 4), (2:2 – 5), (23:1-11)"
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "(d) Kufafanua ufahamu wa Tawhiid na shirki. (Maana,namna ya kumpwekesha Allaah (SW), umuhimu wa Tawhiid, aina za shirki, madhara ya shirki)",
+    "activity": "Bunguabongo: Ongoza wanafunzi katika vikundi kubungua bongo juu ya maana ya Tawhiid Majadiliano: Ongoza wanafunzi kujadiliana juu ya umuhimu wa Tawhiid, aina na madhara ya shirki."
+   },
+   {
+    "main": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "competence": "(a) Kuchambua ufahamu wa Qur’an. (Maana, kushuka, namna ilivyo hifadhiwa na misingi ya kuifahamu)",
+    "activity": "Majadiliano: Ongoza wanafunzi katika vikundi vidogo vidogo wajadiliane kisha kuwasilisha kwa zamu mbele ya wenzao darasani walichojifunza juu ya (i) Maana ya Qur’an (ii) Historia ya kushuka kwa Qur’an (iii) Njia zilizotumika kuhifadhi Qur’an (iv) Misingi ya kuifahamu Qur’an."
+   },
+   {
+    "main": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "competence": "(b) Kuchambua ufahamu wa usomaji wa Qur’an. (umuhimu wa kusoma Qur’an kwa kuzingatia hukumu za Tajwiid, hukumu za nun sakina na tanwin)",
+    "activity": "Majadiliano Ongoza wanafunzi katika vikundi vidogo vidogo kujadiliana kisha kuwasilisha walichojifunza juu ya: (i) umuhimu wa kusoma Qur’an kwa kuzingatia hukumu za Tajwiid. (ii) hukumu za nun sakina na tanwin,"
+   },
+   {
+    "main": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "competence": "(c) Kuchambua sura zilizoteuliwa: Al-Fat-ha (1); An-Naas (114); Al-Falaq (113); Ikhlas (112). (Kusoma kwa hukumu, kuhifadhi, kutafsiri na kueleza mafunzo ya kila sura)",
+    "activity": "Kazimradi; Waongoze wanafunzi katika vikundi wakutane kwa muda wao wa ziada nje ya darasa kusoma kwa hukumu, kuhifadhi, kutafsiri sura zifuatazo: Al – Fat-ha (1), An Naas (114), Falaq (113) na Ikhlas (112) wang’amue mafunzo katika kila sura, kisha kuwasilisha kazi zao baada ya muda waliopewa kukamilika. Majadiliano; Jadiliana na wanafunzi namna ya kutekeleza ujumbe wa sura walizojifunza."
+   },
+   {
+    "main": "1.3 Kuishi kwa kuzingatia Sunnah ya Mtume Muhammad (S.A.W)",
+    "competence": "(a) Kuchambua ufahamu wa Sunnah na Hadithi. (Maana, umuhimu na tofauti ya Sunnah na Hadithi, kazi ya Sunnah)",
+    "activity": "Fikiri – jozisha – shirikishi: Waongoze wanafunzi kupitia fikiri – jozisha – shirikishi kufafanua maana na umuhimu wa Sunnah na Hadithi. Majadiliano: Waongoze wanafunzi kupitia majadiliano katika vikundi kueleza tofauti ya Sunnah na Hadithi na kazi ya sunnah."
+   },
+   {
+    "main": "1.3 Kuishi kwa kuzingatia Sunnah ya Mtume Muhammad (S.A.W)",
+    "competence": "(b) Kuchambua Hadithi zilizoteuliwa kuhusu Ikhlas, kujiheshimu na kuheshimu wazazi, viongozi na wakubwa, kuwa mpole na mnyenyekevu, kuwa mkweli na kujiepusha na uongo, kuwa mwaminifu na mwadilifu, kuchunga ahadi, kujiepusha na maongezi ya kipuuzi, kuwa na upendo, adabu za kunyoa/ kusuka nywele (Kusoma kwa kuhifadhi, kuandika, kutafsiri na kubainisha mafunzo)",
+    "activity": "Kazimradi; Waongoze wanafunzi katika vikundi wakutane kwa muda wao nje ya darasa kusoma kwa kuhifadhi, kuandika na kutoa tafsiri pamoja na kutoa mafunzo ya Hadithi kuhusu Ikhlas, kujiheshimu na kuheshimu wazazi, wakubwa na viongozi, kuwa mpole na mnyenyekevu, kuwa mkweli na kujiepusha na uongo, kuwa mwaminifu na mwadilifu, kuchunga ahadi, kujiepusha na maongezi ya kipuuzi, kuwa na upendo, adabu za kunyoa/kusuka nywele Matembezi ya galari; Ongoza wanafunzi kuorodhesha mafunzo yatokanayo na Hadithi husika na kubandika kwenye kuta za darasa, kufanya matembezi na kuulizana maswali katika vikundi mbalimbali. Fikiri - andika - jozisha - shirikisha; Ongoza wanafunzi katika vikundi vidogo vidogo kutafakari na kuandika mapendekezo namna ya kutekeleza mafunzo ya Hadithi husika kisha ufanye majumuisho."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha",
+    "competence": "2.1 Kutekeleza nguzo za Uislamu kwa kuzingatia lengo la kila nguzo. (a) Kufafanua ufahamu juu ya Uislamu na nguzo za Uislamu kwa mujibu wa Qur an na Sunnah (Maana, sifa za Muislamu, lengo, umuhimu wa kila nguzo)",
+    "activity": "Maswali na majibu; Ongoza wanafunzi Kusoma matini uliyoandaa kisha kujibu maswali uliyoandaa ili kubaini (i) Maana ya Uislamu. (ii) Sifa za Muislamu (iii) Maana ya kila nguzo ya Uislamu (iv) Lengo la kila nguzo ya Uislamu (iv) Umuhimu wa nguzo za Uislamu. (v) Tofauti kati ya Uislamu umejengwa juu ya nguzo tano na Uislamu ni nguzo tano"
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha",
+    "competence": "(b) Kueleza ufahamu wa Shahada. (Kutamka shahada mbili kwa matini ya kiarabu, Tafsiri ya shahada, hatua za shahada, umuhimu wa shahada)",
+    "activity": "Fikiri – jozisha – shirikisha: Ongoza wanafunzi kupitia fikiri – jozisha – shirikisha kusoma matini uliyoandaa ili waweze: (i) kutamka shahada mbili (ii) kutafsiri shahada mbili (iii) kubainisha hatua tatu za shahada (iv) kueleza umuhimu wa shahada"
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha",
+    "competence": "(c) Kufafanua utekelezaji wa swala za faradhi Sharti: (twahara- udhu, josho, tayamamu, kuondoa najisi), kuelekea qibla, kujisitiri, kuingia kwa wakati) nguzo, Sunnah, Makruh na yanayobatilisha sala, namna ya kuswali swala za jamaa na swala ya ijumaa , kuswali nyakati za dharura safarini, mgonjwa na vitani,)",
+    "activity": "Majadiliano: Ongoza wanafunzi katika vikundi vidogo vidogo kupitia majadiliano katika vikundi kufafanua (i) sharti, nguzo na Sunnah za swala (ii) namna ya kuswali nyakati za dharura - safarini, mgonjwa na vitani, (iii) namna ya kuswali swala za jamaa. Oneshombinu: Ongoza wanafunzi katika vikundi kuswali kwa kuzingatia masharti, nguzo na Sunnah, Makruh na yanayobatilisha swala, namna ya kuswali swala za jamaa na swala ya ijumaa , kuswali nyakati za dharura safarini, mgonjwa na vitani)."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha",
+    "competence": "(d) Kubainisha swala za sunnah (Swala za Iddi, Tarawehe, witri, Qabliyyah na Ba’adiyyah, Dhuha, Tahiyyaatul masjid, Qiyaamullayl na Istikhara).",
+    "activity": "Fikiri – jozisha – shirikisha: Ongoza wanafunzi kupitia fikiri – jozisha – shirikisha kusoma matini uliyoandaa ili waweze kubainisha: Swala za Iddi, Tarawehe, swala ya witri, Qabliyyah na Ba’adiyyah, Dhuha, tahiyyaatul – masjid, Qiyaamullayl na Istikhara."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha",
+    "competence": "(e) Kufafanua mambo anayostahiki kufanyiwa maiti wa Kiislamu. (Kuoshwa, kuvishwa sanda, kuswaliwa na kuzikwa).",
+    "activity": "Igizodhima: Ongoza wanafunzi kufanya igizo ili kuchanganua mambo anayofanyiwa maiti wa Kiislamu (i) Hatua za kumuosha, kumvika sanda na kumswalia (ii) sharti na nguzo za swala ya maiti (iii) namna ya kumswalia maiti (iv) kuandaa kaburi na namna ya kumzika maiti."
+   },
+   {
+    "main": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii",
+    "competence": "(a) Kuchambua ufahamu wa Fiqh. (maana ya Fiqh, matapo ya Fiqh, chimbuko, na umuhimu wa fiqh)",
+    "activity": "Fikiri – jozisha – fikirisha: Ongoza wanafunzi katika vikundi vidogo vidogo kupitia fikiri – jozisha – fikirisha kufafanua: (i) Maana ya Fiqh (ii) Matapo ya Fiqh (iii) Chimbuko la fiqh (iv) Umuhimu wa Fiqh Kisha mmoja wao katika kikundi kuwasilisha"
+   },
+   {
+    "main": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii",
+    "competence": "(b) Kufafanua misingi na vyanzo vya sharia ya Kiislamu (Qur an, Sunnah na Ijtihad).",
+    "activity": "Fikiri – jozisha – fikirisha: Ongoza wanafunzi katika vikundi vidogo vidogo kupitia fikiri – jozisha – fikirisha kufafanua misingi na vyanzo vya sharia za Kiislamu. kisha mmoja wao katika kikundi kuwasilisha walichojifunza"
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii",
+    "competence": "3.1 Kutumia Qur’an na Sunnah kulingania jamii. (a) Kuchambua Ufahamu wa kulingania Uislamu katika jamii. (Maana, lengo, misingi, umuhimu na faida).",
+    "activity": "Fikiri – jozisha – fikirisha: Ongoza wanafunzi katika vikundi vidogo vidogo kuchambua (i) maana, misingi na lengo la kulingania (ii) Umuhimu wa kulingania Uislamu na faida zake. Kisha mmoja wao katika kikundi kuwasilisha walichojifunza na ufanye majumuisho."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii",
+    "competence": "(b) Kufafanua nguzo za da`awah (Da`i, hadhira na ujumbe).",
+    "activity": "Majadiliano na Maswali na majibu: Ongoza wanafunzi katika vikundi vidogo vidogo kupitia majadiliano kufafanua nguzo tatu za da`awah ambazo ni da`i, hadhira na ujumbe. Kisha ufanye majumuisho."
+   },
+   {
+    "main": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii.",
+    "competence": "(a) Kufafanua ufahamu wa historia ya mwanadamu kwa mujibu wa Uislamu. (Tofauti ya mtazamo wa Uislamu na ule wa makafiri juu ya maana, umuhimu wa historia,lengo la kuumbwa mwanadamu na hadhi yake hapa ulimwenguni).",
+    "activity": "Bunguabongo: Ongoza wanafunzi katika vikundi vidogo vidogo kufafanua maana ya historia kwa mtazamo wa Uislamu. Majadiliano na Maswali na majibu: Ongoza wanafunzi katika vikundi vidogo vidogo kupitia majadiliano kufafanua; (i) Umuhimu wa historia (ii) Tofauti ya mtazamo wa Uislamu na ule wa makafiri juu ya historia (iii) Mtazamo wa Uislamu juu ya lengo la kuumbwa mwanadamu na hadhi yake Kila kikundi kitoe muwakilishi mmoja awasilishe walichojifuza."
+   },
+   {
+    "main": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii.",
+    "competence": "(b) Kuchambua historia ya nabii Adam (A.S), (Kuumbwa, maisha ya peponi, kuteremshwa ardhini na maisha ya watoto wake).",
+    "activity": "Majadiliano: Ongoza wanafunzi kujadiliana katika vikundi mafunzo yatokanayo na historia ya nabii Adam (A.S)."
+   },
+   {
+    "main": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii.",
+    "competence": "(c) Kuchambua historia ya manabii kabla ya Mtume Muhammad (S.A.W): Nuhu (A.S), Ibrahim (A.S), Lut (A.S), Musa (A.S); na Isa (A.S). (wasifu, hali ya jamii zao, mbinu za kulingania na mafunzo yatokanayo katika kujenga jamii bora).",
+    "activity": "Majadiliano: Ongoza wanafunzi kujadiliana katika vikundi mafunzo yatokanayo na historia ya manabii (Nuhu (A.S), Ibrahim (A.S), Lut (A.S), Musa (A.S); na Isa (A.S) Matembezi ya galari: Ongoza wanafunzi kufanya matembezi ya galari baada ya majadiliano ili kujifunza mafunzo yatokanayo na historia ya manabii."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "1.1 Kutambua uwepo wa Allaah (S.W) na sifa zake. (a) Kufafanua ufahamu wa dini kwa mujibu wa Qur’an. (tofauti ya mtazamo wa Uislamu na ukafiri juu ya chanzo na kazi ya dini, sababu za hitajio la dini kwa mwanadamu).",
+    "activity": "Majadiliano: Ongoza wanafunzi katika vikundi vidogo vidogo kusoma matini uliyoandaa waweze kujifunza kisha kufafanua. (i) tofauti kati ya mtazamo wa Uislamu na mtazamo wa kikafiri juu ya chanzo na kazi ya dini katika jamii, (ii) sababu za hitajio la dini kwa mwanadamu. Kila kikundi kuwepo mwakilishi wa kuwasilisha walichojifunza mbele ya darasa."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "(b) Kufafanua njia za kumjua Allaah (S.W) na kuthibitisha kuwepo kwake (njia za kumjua Allaah, kumuamini Allah sio sualla la kibubusa, udhaifu wa madia ya makafiri dhidi ya kuwepo Allaah (S.W), dalili za kuwepo Allaah (S.W))",
+    "activity": "Utafiti mdogo: elekeza wanafunzi kusoma matini ulioandaa ya njia za kumjua Allaah (S.W) na kuandika maelezo yao binafsi kuhusu nafasi ya fitra na akili katika kumtambua Allaah (S.W). Majadiliano; Ongoza wanafunzi katika vikundi kusoma matini uliyoandaa kisha kujadiliana juu ya kuonesha kuwa, kumuamini Allaah (S.W) si suala la kufuata mkumbo:"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "Udhaifu wa madai ya makafiri dhidi ya kuwepo kwa Allaah (S.W) (v) Athari za kumuamini Allaah (S.W) katika maisha ya kila siku.",
+    "competence": "(c) Kuchambua sifa na majina 99 ya Allaah (S.W) (kuyasoma, kuyahifadhi na kuyazingatia).",
+    "activity": "Kazi mradi Ongoza wanafunzi katika vikundi vidogo vidogo kujadiliana kisha kuwasilisha walichojifunza juu ya: (i) Sifa na majina ya Allaah (SW). (ii) Baada ya muda waliopewa kukamilika, waongoze wanafunzi wakutane kwa muda wao nje ya darasa kusoma majina ya Allaah (S.W) na tafsiri zake kisha kuwasilisha kazi zao."
+   },
+   {
+    "main": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "competence": "(a) Kuchambua ufahamu wa hukumu za usomaji wa Qur’an. (hukumu za mim na nuni zenye shadda, hukumu za mim sakina",
+    "activity": "Majadiliano Ongoza wanafunzi katika vikundi vidogo vidogo kujadiliana kisha kuwasilisha walichojifunza juu ya: (i) hukumu za mim na nuni zenye shadda, (ii) hukumu za mim sakini"
+   },
+   {
+    "main": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "competence": "(b) Kuchambua historia ya kushuka Qur’an. (Hatua za kushuka Qur’an, hekima ya Qur’an kushuka hatua kwa hatua, namna Qur’an ilivyohifadhiwa kuanzia wakati ikishuka hadi leo).",
+    "activity": "Bunguabongo: Ongoza wanafunzi katika vikundi kwa maswali ya kufikirisha katika vikundi vidogo vidogo kubungua bongo juu ya (i) Hatua mbili kuu za kushuka Qur’an (ii) Hekima ya Qur’an kushuka hatua kwa hatua (iii) Namna Qur’an ilivyohifadhiwa kuanzia wakati ikishuka hadi leo."
+   },
+   {
+    "main": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "competence": "(c) Kuchambua sura zilizoteuliwa: Lahab (111); Nasr (110); Kaafiruun (109); Maa’uun (107). (Kusoma kwa hukumu, kuhifadhi, kutafsiri na kutoa mafunzo).",
+    "activity": "Kazimradi; Waongoze wanafunzi katika vikundi wakutane kwa muda wao wa ziada nje ya darasa kusoma kwa kuhifadhi na kutoa tafsiri ya sura zilizoteuliwa: Lahab (111), Nasr (110), Kaafiruun (109), na Maa’uun (107) Wabaini mafunzo katika kila sura kisha kuwasilisha kazi zao baada ya muda uliowapa kukamilika. Majadiliano Jadiliana na wanafunzi namna ya kutekeleza mafunzo ya sura walizohifadhi."
+   },
+   {
+    "main": "1.3 Kuishi kwa kuzingatia Sunnah ya Mtume Muhammad (S.A.W)",
+    "competence": "(a) Kuchambua historia ya uandishi wa Hadithi za Mtume Muhammad (S.A.W). (Wakati wa uhai wa Mtume Muhammad (SAW), Maswahaba, Tabiina, Tabii Taabiina).",
+    "activity": "Maswali na majibu na Majadiliano: Ongoza wanafunzi katika vikundi vidogo vidogo kusoma matini iliyoandaliwa waweze kujifunza na kufafanua historia ya uandishi wa Hadithi za Mtume Muhammad (S.A.W) (i) Wakati wa uhai wa Mtume Muhammad (S.A.W) (ii) Maswahaba (iii) Taabiin (iv) Taabii taabiina"
+   },
+   {
+    "main": "1.3 Kuishi kwa kuzingatia Sunnah ya Mtume Muhammad (S.A.W)",
+    "competence": "(b) Kufafanua Hadithi zilizoteuliwa kuhusu; kuepuka usengenyaji, kujiepusha na dharau, kujiepusha na matusi, kuepuka mabishano, kuepuka kujisifu na kujitukuza, kuepukana na kibri na majivuno, kuepukana na kulaani ovyo, kujiepusha na viapo. (Kusoma kwa kuhifadhi, kuandika, kutafsiri na kubaini mafunzo).",
+    "activity": "Kazimradi; Waongoze wanafunzi katika vikundi wakutane kwa muda wao nje ya darasa kusoma kwa kuhifadhi, kuandika na kutoa tafsiri na mafunzo ya Hadithi kuhusu kuepuka usengenyaji, kujiepusha na dharau, kujiepusha na matusi, kuepuka mabishano, kuepuka kujisifu na kujitukuza, kuepukana na kibri na majivuno, kuepukana na kulaani ovyo, kujiepusha na viapo, kujiheshimu na kuheshimu wengine na kuwa mpole na mnyenyekevu kisha kuwasilisha kazi zao baada ya muda waliopewa kukamilika. Matembezi ya galari; Ongoza wanafunzi kuorodhesha mafunzo yatokanayo na Hadithi husika na kubandika kwenye kuta za darasa, kufanya matembezi na kuulizana maswali katika vikundi mbalimbali. Fikiri - andika - jozisha - shirikisha; Ongoza wanafunzi katika vikundi vidogovidogo kutafakari na kuandika mapendekezo namna ya kutekeleza mafunzo ya Hadithi husika kisha ufanye majumuisho"
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.1 Kutekeleza nguzo za Uislamu kwa kuzingatia lengo la kila nguzo. (a) Kufafanua utekelezaji wa ibada ya Zakat. (Masharti, mali zinazopasa kutolewa Zakat, nisaabu na makundi ya watu wanaostahiki kupewa Zakat).",
+    "activity": "Bunguabongo: Ongoza wanafunzi kuchangia fikra zao ili waweze kueleza maana ya Zakat na Swadaqat na umuhimu wake. Majadiliano: Ongoza wanafunzi kujadiliana katika vikundi vidogo vidogo juu ya (i) Masharti ya utoaji Zakat na Swadaqat (ii) Nisaab na kiasi cha mali kinachopaswa kutolewa. (iii) Wanaostahiki kupewa Zakat."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "(b) Kufafanua utekelezaji wa ibada ya funga (Maana, aina, umuhimu, nguzo za funga, sunnah na miiko ya funga, kubatilika kwa funga,)",
+    "activity": "Fikiri – jozisha – shirikisha: Ongoza wanafunzi katika vikundi vidogo vidogo kupitia Fikiri, jozisha, shirikisha Kufafanua (i) Maana. (ii) Aina (iii) Umuhimu (iv) Nguzo, sunnah na miiko ya funga (v) mambo yanayoharibu na kubatilisha funga Majadiliano: Ongoza wanafunzi katika vikundi kujadili masharti, nguzo na Sunnah za funga"
+   },
+   {
+    "main": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii",
+    "competence": "(a) Kuchambua ufahamu wa familia ya Kiislamu. (Maana,umuhimu, na taratibu za ndoa katika Uislamu, umri wa kuoa na kuolewa, majukumu katika familia na ukewenza)",
+    "activity": "Majadiliano na Kuwasilisha; Wanafunzi wakiwa katika vikundi vidogo vidogo waongoze kueleza (i) Maana ya ndoa ya Kiislamu (ii) Taratibu za kukamilisha ndoa ya Kiislamu (iii) Umri wa kuoa na kuolewa (iv) Majukumu ya mume kwa mke, mke kwa mume, wazazi kwa watoto na watoto kwa wazazi katika familia ya Kiislamu. (v) Ruhusa kwa mume kuoa mke zaidi ya mmoja."
+   },
+   {
+    "main": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii",
+    "competence": "(b) Kufafanua vipengele vya utamaduni wa Kiislamu (maana, mavazi, sherehe, misiba, maamkizi, michezo)",
+    "activity": "Changanyakete; Ongoza wanafunzi katika vikundi vidogovidogo kusoma matini kwa kujadiliana kisha kuandaa nukuu zifuatazo (i) Maana ya utamaduni wa Kiislamu (ii) orodha ya vipengele vya utamaduni wa Kiislamu. Elekeza kila kikundi kutoa mwakilishi mmoja kwenda kikundi kingine kufundisha walichojifunza katika kundi lao."
+   },
+   {
+    "main": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii",
+    "competence": "(c) Kufafanua adabu za matendo ya Muislamu ya kila siku: (kula, kwenda haja, kulala na kuamka, kuoga, kutoka na kurudi nyumbani, kupiga miayo na chafya, kuishi na watu kwa wema, kuwatembelea wagonjwa, kuingia na kutoka msikitini)",
+    "activity": "Majadiliano; Ongoza wanafunzi katika vikundi vidogo vidogo kujadiliana adabu za matendo ya Muislamu kwa siku."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1 Kutumia Qur’an na Sunnah kulingania jamii. (a) Kufafanua sifa za mlinganiaji. (Ujuzi sahihi,Imani thabiti, tabia njema, kuendeleza Uislamu kuwe ndio lengo kuu la maisha, kutaraji malipo kutoka kwa Allaah (S.W), kuwa na subira, kuwa na hekima).",
+    "activity": "Majadiliano; Ongoza wanafunzi katika vikundi vidogo vidogo kufafanua na kuandika taarifa kuhusu sifa za mlinganiaji. Kisha wachague muwakilishi wa kila kikundi awasilishe kazi yao mbele ya wenzao na ufanye majumuisho."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "(b) Kuchambua sifa za kundi la walinganiaji. (Mshikamano wa udugu na upendo, kushauriana, nidhamu na utii, kukosoana kwa nia njema na njia nzuri, kujiepusha na kujiona na ria, kuwa na subira, kuwa na hekima",
+    "activity": "Majadiliano; Ongoza wanafunzi katika vikundi vidogo vidogo kujadiliana na kuandika taarifa kuhusu sifa za walinganiaji. Kisha wachague muwakilishi wa kila kikundi awasilishe kazi yao mbele ya wenzao na ufanye majumuisho."
+   },
+   {
+    "main": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii",
+    "competence": "(a) Kufafanua hali ya jamii ya Bara Arabu zama za jahiliya (509 – 609A.D). (Utabiri wa ujio wa Mtume Muhammad (S.A.W), mifumo ya jamii kisiasa, kiuchumi, kiutamaduni na kimaadili, utukufu wa mji wa Makkah na kabila la Quraysh,).",
+    "activity": "Majadiliano Ongoza wanafunzi katika vikundi vidogo vidogo kusoma matini mbalimbali ili kubainisha utabiri wa ujio wa Mtume Muhammad (S.A.W), mifumo ya jamii kisiasa, kiuchumi, kiutamaduni na kimaadili katika bara Arab, utukufu wa mji wa Makkah na kabila la Quraysh, wahusianishe na yanayotokea katika mazingira yao."
+   },
+   {
+    "main": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii",
+    "competence": "(b) Kufafanua mbinu za ulinganiaji alizozitumia Mtume Muhammad (S.A.W) kipindi cha Makkah. (Kuzaliwa kwa Mtume (S.A.W), kulelewa, nasaba, makuzi, kuandaliwa, kupewa Utume, kulingania, upinzani wa makureishi, isra na miraji, hijra na mafunzo yatokanayo katika kujenga jamii)",
+    "activity": "Majadiliano: Ongoza wanafunzi katika vikundi kusoma matini uliyoandaa waweze kujifunza na kutoa ufafanuzi wa kina juu ya: (i) Kuzaliwa kwa Mtume (S.A.W), (ii) Nasaba na malezi ya Mtume Muhammad (S.A.W), (iii) Maandalizi ya Mtume Muhammad (S.A.W) kabla na baada ya kupewa utume na mafunzo yatokanayo (iv) sababu za makafiri wa Makkah kuupinga Uislamu na mafunzo yatokanayo (v) Mbinu za makafiri katika kuupinga Uislamu Makkah na mafunzo yatokanayo (vi) Jinsi Mtume Muhammad (S.A.W) alivyoandaa ummah wa waislamu Makkah na mafunzo yatokanayo (vii) Israa na Miraji na mafunzo yatokanayo (viii) Mchakato wa Hijra ya Mtume Muhammad (S.A.W) na Maswahaba kuhamia Madinah na mafunzo yatokanayo."
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.1 Kutambua uwepo wa Allaah (S.W) na sifa zake",
+    "activity": "(a) Kuchambua nguzo ya kuamini malaika wa Allaah (S.W) (maana, umuhimu, sifa, kazi na athari ya kuamini malaika katika maisha ya kila siku)"
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.1 Kutambua uwepo wa Allaah (S.W) na sifa zake",
+    "activity": "(b) Kuchambua nguzo ya kuamini vitabu vya Allaah (S.W). (Umuhimu wa kuamini vitabu vya Allaah (S.W), lengo la vitabu vya Allaah (S.W), tofauti ya Qur’an na vitabu vingine vya Allaah (S.W), Qur an haipitwi na wakati, athari ya kuamini vitabu vya Allaah (S.W) katika maisha ya jamii) (iv) Qur’an haipitwi na wakati. (v) Athari ya kuamini vitabu vya Allaah (S.W) katika maisha ya jamii."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.1 Kutambua uwepo wa Allaah (S.W) na sifa zake",
+    "activity": "(c ) Kuchambua ufahamu wa kuamini mitume wa Allaah (S.W). (uwepo wa mitume, sifa zao, mafundisho yao mwisho wa utume na taathira ya kuamini mitume katika maisha ya kila siku)."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.1 Kutambua uwepo wa Allaah (S.W) na sifa zake",
+    "activity": "(d) Kuchambua ufahamu wa kuamini siku ya mwisho. (Mazingira ya siku ya mwisho, udhaifu wa madai ya makafiri dhidi ya siku ya mwisho, hoja za kuthibitisha kuwepo kwa siku ya mwisho, ufahamu wa shufaa, athari ya kuamini siku ya mwisho katika maisha ya kila siku)"
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.1 Kutambua uwepo wa Allaah (S.W) na sifa zake",
+    "activity": "(e) Kufafanua ufahamu wa kuamini Qadar ya Allaah (S.W). (Maana, tofauti ya Qadar na Qudra, umuhimu, na athari ya kuamini Qadar katika maisha ya kila siku)."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "activity": "(a) Kuchambua ufahamu wa usomaji wa Qur’an. (Hukumu za lam, hukumu za qalqala, hukumu za mada, hukumu za waqfu)."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "activity": "(b) Kuchambua ithibati ya Qur’an. (Tofauti kati ya sura za Makka na sura za Madina, ufahamu wa sababu nuzuli)."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "activity": "(c) Kuchambua sura zilizoteuliwa: Quraysh (106), Fiil (105), Humazah (104), Asr (103). (Kusoma kwa hukumu, kuhifadhi na kutoa mafunzo)."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.3 Kuishi kwa kuzingatia Sunnah ya Mtume Muhammad S.A.W)",
+    "activity": "(a) Kuchambua sayansi ya Hadithi za Mtume Muhammad (S.W). (Aina, tanzu na uhakiki wa Hadithi)."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W)",
+    "competence": "1.3 Kuishi kwa kuzingatia Sunnah ya Mtume Muhammad S.A.W)",
+    "activity": "(b) Kuchambua Hadithi zilizoteuliwa kuhusu kujiepusha na ria na kujiona, kujiepusha na unafiki, kuwa mwenye huruma, kuwa na haya, kudhibiti hasira, kuwa mwenye subira na uvumilivu, kuwa mkarimu, kuepuka uchoyo na ubakhili, kuwa mwenye kutosheka, kuepuka husda. (Kusoma kwa kuhifadhi kuandika, kutafsiri na kung’amua mafunzo)."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.1 Kutekeleza nguzo za Uislamu kwa kuzingatia lengo la kila nguzo.",
+    "activity": "(a) Kuchambua nguzo ya Hija (maana, aina, umuhimu, masharti, nguzo na sunnah)"
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.1 Kutekeleza nguzo za Uislamu kwa kuzingatia lengo la kila nguzo.",
+    "activity": "(b) Kutathmini malengo ya nguzo za Uislamu (namna lengo la kila nguzo linavyofikiwa, sababu za baadhi ya Waislamu kutofikia malengo ya nguzo za Uislamu)"
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.1 Kutekeleza nguzo za Uislamu kwa kuzingatia lengo la kila nguzo.",
+    "activity": "(c) Kuchanganua faida za utekelezaji wa nguzo za Uislamu."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii",
+    "activity": "(a) Kufafanua ufahamu wa talaka na eda katika Uislamu. (maana, hekima ya talaka, Sulhu kati ya mume na mke, aina za talaka, Taratibu za talaka, aina za eda,)."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii",
+    "activity": "(b) Kuchambua malezi ya watoto baada ya ndoa kuvunjika (mwenye haki na wajibu wa kulea, ukomo wa kulelewa watoto na haki zao)"
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii",
+    "activity": "(c) Kuchambua ufahamu wa wasia na mirathi katika Uislamu (maana, taratibu, masharti ya wasia na mirathi, kanuni za kugawa mirathi na kukokotoa mafungu ya mirathi kwa kufuata sharia ya Kiislamu)"
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1Kutumia Qur’an na Sunnah kulingania jamii.",
+    "activity": "(a) Kuchambua mipango katika Da`awah (Maana, umuhimu, hatua, vigezo, mipango ya kistratejia)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1Kutumia Qur’an na Sunnah kulingania jamii.",
+    "activity": "(b) Kuchambua ufahamu wa uongozi bora katika kulingania (Maana, umuhimu, aina na sifa za kiongozi wa Kiislamu)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1Kutumia Qur’an na Sunnah kulingania jamii.",
+    "activity": "(c) Kuchambua mafunzo na mazoezi ya kuwaandaa walinganiaji (Kutoa elimu, kuilea nafsi, kujihusisha na masuala ya kijamii, kuandaa na kutoa ujumbe)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1Kutumia Qur’an na Sunnah kulingania jamii.",
+    "activity": "(d) Kuchambua hali ya Uislamu hivi leo. (Mtawanyo wa Waislamu na wasiokuwa waislamu, mafanikio-kielimu, kiuchumi, kisiasa na kijamii, vikwazo na utatuzi wake)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii.",
+    "activity": "(a) Kuchambua uanzishwaji na uendeshaji wa dola ya Kiislamu Madina. (Hali ya Madina kabla ya kuhamia Mtume Muhammad (S.A.W) kiuchumi na kisiasa, hatua alizochukua Mtume Muhammad (S.A.W) katika uanzishaji dola, mifumo ya kiuchumi, kisiasa, usalama na diplomasia)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii.",
+    "activity": "(b) Kuchambua upinzani dhidi ya Dola ya Kiislamu Madina. (vita vya Badri, vita vya Uhud, vita vya Ahzab, uadui wa Mayahudi, vita vya Hunein, hatua zilizochukuliwa na Mtume Muhammad (S.A.W) mafunzo yatokanayo)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii.",
+    "activity": "(c) Kubainisha ushindi wa Waislamu (Fat-hu- Makkah). (Mkataba wa Hudaybiyya, kukombolewa mji wa Makka msafara wa Tabuuk, Hija ya kuaga na Mafunzo yatokanayo)."
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "1.1 Kutambua uwepo wa Allaah (S.W) na sifa zake.",
+    "activity": "(a) Kueleza Itikadi, udhaifu na athari za dini zilizoundwa na watu. (Ukafiri, ushirikina-ukristo na uyahudi, na utawa-ubudha, uhindu)"
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "1.1 Kutambua uwepo wa Allaah (S.W) na sifa zake.",
+    "activity": "(b) Kujadili vigezo vya dini sahihi anayostahiki mwanadamu."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "activity": "(a) Kufafanua Ithibati ya Qur’an. (Hoja za kuthibitisha kuwa Qur’an ni Kitabu cha Allaah (S.W) na udhaifu wa madai ya wapinzani dhidi ya Qur’an)."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "1.2 Kuisoma Qur’an kwa mazingatio ya hukumu na ujumbe.",
+    "activity": "(b) Kuchambua sura zilizoteuliwa: Tyn (95), Nashrah (94) Takaathur (102) Al-Bayyinah, (98) Adh Dhuhaa (93) Al-A’alaa (87) (Kusoma kwa kuhifadhi, kutafsiri, kutoa mafunzo yatokanayo)."
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "1.3 Kuishi kwa kuzingatia Sunnah ya Mtume Muhammad (S.A.W)",
+    "activity": "(a) Kuchambua kukubalika kwa Hadithi. (Hoja za kukubalika na udhaifu wa hoja za wapinzani wa Hadithi)"
+   },
+   {
+    "main": "1.0 Kumtambua, kumpenda, kumtukuza na kumsifu Allaah (S.W).",
+    "competence": "1.3 Kuishi kwa kuzingatia Sunnah ya Mtume Muhammad (S.A.W)",
+    "activity": "(b) Kuchambua Hadithi zilizoteuliwa kuhusu kuwa na Hekima, kuepuka tamaa na kuombaomba, kumtegemea Allaah (S.W), kuepuka kukata tamaa, kuwa na Istiqama. (Kusoma kwa kuhifadhi, kuandika, kutafsiri na kubaini mafunzo)."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.1 Kutekeleza nguzo za Uislamu kwa kuzingatia lengo la kila nguzo.",
+    "activity": "(a) Kuandaa na kutoa khutba za Ijumaa na Eid (Maana, umuhimu, masharti, nguzo, sunnah na adabu)."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.1 Kutekeleza nguzo za Uislamu kwa kuzingatia lengo la kila nguzo.",
+    "activity": "(b) Kuandaa na kutoa khutba ya ndoa (Maana, umuhimu, masharti, nguzo, sunnah na adabu)"
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii.",
+    "activity": "(a) Kufafanua ufahamu wa kudhibiti uzazi katika Uislamu (Maana, udhaifu wa hoja za wanaoendesha kampeni ya kudhibiti uzazi, mtazamo wa Uislamu juu ya kudhibiti uzazi)."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii.",
+    "activity": "(b) Kuchambua hadhi na haki za mwanamke katika Uislamu (tofauti ya hadhi na haki za mwanamke katika Uislamu na jamii za kijahili, hifadhi ya mwanamke katika Uislamu)."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii.",
+    "activity": "(c ) Kuchambua ufahamu wa sharia za Kiislamu. (Maana ya sharia, tofauti kati ya sharia za Kiislamu na sheria za kikafiri, misingi ya halali na haramu katika Uislamu, makosa na adhabu katika sharia za Kiislamu)."
+   },
+   {
+    "main": "2.0 Kumtumikia Allaah (S.W) katika kila kipengele cha maisha.",
+    "competence": "2.2 Kuchunga mipaka ya Allaah (S.W) katika kuendesha maisha ya binafsi na jamii.",
+    "activity": "(d) Kufafanua ufahamu wa siasa na uchumi katika Uislamu. (tofauti kati ya Uislamu na ukafiri juu ya mtazamo wa siasa na dola, Tofauti ya msonge wa uongozi wa Kiislamu na uongozi wa kikafiri, tofauti kati ya mfumo wa uchumi wa Kiislamu na mfumo wa uchumi wa kikafiri, uchumi halali na haramu, uharamu wa riba, misingi ya mifumo ya kifedha ya Kiislamu)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1 Kutumia Qur’an na Sunnah kulingania jamii.",
+    "activity": "(a) Kuchambua nyanja za kulingania (Uongozi, itikadi, tarbia, wito kwa wasiokuwa Waislamu na ulinzi)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1 Kutumia Qur’an na Sunnah kulingania jamii.",
+    "activity": "(b) Kufafanua nyenzo za kulingania (Qur’an na Hadithi, vyombo vya habari, mitandao ya kijamii, vitabu, nk)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1 Kutumia Qur’an na Sunnah kulingania jamii.",
+    "activity": "(c) Kuchambua njia na mbinu za kulingania (semina, itkaf, vituo vya elimu, vituo vya, dhifa, mikutano)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.1 Kutumia Qur’an na Sunnah kulingania jamii.",
+    "activity": "(d) Kueleza mbinu zinazotumika kupiga vita Uislamu namna muislamu anavyotakiwa kuishi na wasiokuwa Waislamu (kiuchumi, kiutamaduni, kijamii, kisiasa na kielimu"
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii",
+    "activity": "(a) Kutathmini uendeshaji wa Dola ya Kiislamu wakati wa Makhalifa. (Taratibu zilizotumika kuwapata makhalifa, sababu za kupanuka Dola ya Kiislamu, sababu za Riddah, mfumo wa uongozi, uchumi, ulinzi na mahusiano ya kimataifa, sababu za kuporomoka dola ya Kiislamu na mafunzo yatokanayo katika kuimarisha umma)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii",
+    "activity": "(b) Kutathmini harakati za kuendeleza Uislamu baada ya makhalifa (Banu Umayya, Abasid, Uthmaniyya, mughals:- mbinu, mafanikio, changamoto, mafunzo)."
+   },
+   {
+    "main": "3.0 Kulingania na kusimamisha haki na uadilifu katika jamii.",
+    "competence": "3.2 Kutumia historia ya Uislamu kujenga mwenendo mwema wa jamii",
+    "activity": "(c) Kufafanua kuenea kwa Uislamu Tanzania (Njia zilizotumika, dola ya Kilwa, dola ya Zanzibar, Uislamu wakati na baada ya ukoloni hadi hivi leo)."
+   }
+  ]
+ }
+}

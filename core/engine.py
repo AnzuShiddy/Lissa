@@ -131,6 +131,13 @@ class Session:
         self.tokens = RATE_PER_MIN
         self.tokens_at = time.time()
         self.mem: dict = persona.blank_memory()
+        # What a tutoring bot has established the student is working on, as
+        # (subject, form). It belongs to the conversation rather than the
+        # browser: it's settled by asking, and re-asking after a few hours
+        # away is natural for a tutor in a way that re-asking for someone's
+        # coordinates would not be. Bots without the syllabus feature never
+        # touch it.
+        self.study: tuple[str | None, str | None] = (None, None)
         self.chat = self.client.chats.create(
             model=MODEL, config=config_for(bot, self.mem))
 

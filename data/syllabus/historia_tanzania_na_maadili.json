@@ -1,0 +1,356 @@
+{
+ "subject": "Historia ya Tanzania na Maadili",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727257138-Muhtasari%20Historia%20ya%20Tanzania%20&%20Maadili%20I%20-%20IV.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.1 Kuelezea chimbuko la jamii za Kitanzania na maadili yake",
+    "activity": "(a) Kueleza asili ya jamii za Kitanzania (Wabantu, Wanilo, Wakushito, Wakichembe)"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.1 Kuelezea chimbuko la jamii za Kitanzania na maadili yake",
+    "activity": "(b) Kubaini shughuli mbalimbali za makundi ya asili ya jamii za Kitanzania"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.1 Kuelezea chimbuko la jamii za Kitanzania na maadili yake",
+    "activity": "(c) Kueleza maadili ya jamii za asili ya Kitanzania"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.2 Kumudu maarifa na ujuzi wa maadili na urithi wa jamii za Kitanzania",
+    "activity": "(a) Kuchambua maadili na urithi wa jamii za Kitanzania"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.2 Kumudu maarifa na ujuzi wa maadili na urithi wa jamii za Kitanzania",
+    "activity": "(b) Kueleza matendo ya msingi yanayokuza na kulinda maadili na urithi wa jamii za Kitanzania"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.3 Kutumia maarifa na ujuzi wa historia na urithi kubuni fursa mbalimbali zilizopo katika jamii za Kitanzania",
+    "activity": "(a) Kubaini fursa mbalimbali zilizopo kwenye urithi wa jamii za Kitanzania"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.3 Kutumia maarifa na ujuzi wa historia na urithi kubuni fursa mbalimbali zilizopo katika jamii za Kitanzania",
+    "activity": "(b) Kueleza namna fursa zilizopo kwenye urithi wa jamii za Kitanzania zinavyoweza kutumika kukuza uchumi binafsi na jamii"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.3 Kutumia maarifa na ujuzi wa historia na urithi kubuni fursa mbalimbali zilizopo katika jamii za Kitanzania",
+    "activity": "(c) Kueleza njia mbalimbali za kutunza urithi wa jamii za Kitanzania"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.4 Kubaini fursa mbalimbali za kujenga ushirikiano na kukuza uchumi wa kitaifa",
+    "activity": "(a) Kuainisha shughuli mbalimbali za kujenga ushirikiano na kukuza uchumi wa Taifa"
+   },
+   {
+    "main": "1. Kulinda historia ya Tanzania, urithi na maadili ya Taifa",
+    "competence": "1.4 Kubaini fursa mbalimbali za kujenga ushirikiano na kukuza uchumi wa kitaifa",
+    "activity": "(b) Kufafanua namna shughuli mbalimbali zinavyochangia kujenga ushirikiano na kukuza uchumi wa Taifa"
+   },
+   {
+    "main": "2.0 Kumudu historia ya Tanzania na maadili kabla ya ukoloni",
+    "competence": "2.1 Kuchambua mifumo ya kijamii (elimu, afya, utamaduni) iliyokuza na kuendeleza maadili ya jamii za Kitanzania kabla ya ukoloni",
+    "activity": "(a) Kubaini mifumo ya kijamii ya Tanzania kabla ya ukoloni"
+   },
+   {
+    "main": "2.0 Kumudu historia ya Tanzania na maadili kabla ya ukoloni",
+    "competence": "2.1 Kuchambua mifumo ya kijamii (elimu, afya, utamaduni) iliyokuza na kuendeleza maadili ya jamii za Kitanzania kabla ya ukoloni",
+    "activity": "(b) Kueleza mifumo ya kijamii ya Tanzania ilivyokuza maadili kabla ya ukoloni"
+   },
+   {
+    "main": "2.0 Kumudu historia ya Tanzania na maadili kabla ya ukoloni",
+    "competence": "2.2 Kuchambua mifumo iliyokuza na kuendeleza uchumi na siasa katika jamiii za Kitanzania kabla ya ukoloni",
+    "activity": "(a) Kubaini mifumo ya kiuchumi na kisiasa katika jamii za Kitanzania kabla ya ukoloni"
+   },
+   {
+    "main": "2.0 Kumudu historia ya Tanzania na maadili kabla ya ukoloni",
+    "competence": "2.2 Kuchambua mifumo iliyokuza na kuendeleza uchumi na siasa katika jamiii za Kitanzania kabla ya ukoloni",
+    "activity": "(b) Kueleza jinsi mifumo ya kisiasa na kiuchumi ilivyokuza na kuendeleza shughuli za kiuchumi na kisiasa kabla ya ukoloni"
+   },
+   {
+    "main": "2.0 Kumudu historia ya Tanzania na maadili kabla ya ukoloni",
+    "competence": "2.2 Kuchambua mifumo iliyokuza na kuendeleza uchumi na siasa katika jamiii za Kitanzania kabla ya ukoloni",
+    "activity": "(c) Kufafanua uhusiano kati ya jamiii za Kitanzania na za Mashariki ya Kati, Mashariki ya Mbali na Ulaya katika kuendeleza shughuli za kiuchumi na kisiasa kabla ya ukoloni"
+   },
+   {
+    "main": "2.0 Kumudu historia ya Tanzania na maadili kabla ya ukoloni",
+    "competence": "2.2 Kuchambua mifumo iliyokuza na kuendeleza uchumi na siasa katika jamiii za Kitanzania kabla ya ukoloni",
+    "activity": "(d) Kutathmini mchango wa mifumo ya kisiasa na kiuchumi katika kukuza maadili ya jamii za Kitanzania kabla ya ukoloni"
+   },
+   {
+    "main": "2.0 Kumudu historia ya Tanzania na maadili kabla ya ukoloni",
+    "competence": "2.3 Kutathmini vichocheo vya mabadiliko ya sayansi na teknolojia katika jamii za Kitanzania kabla ya ukoloni",
+    "activity": "(a) Kueleza hali ya sayansi na teknolojia katika jamii za Kitanzania kabla ya ukoloni"
+   },
+   {
+    "main": "2.0 Kumudu historia ya Tanzania na maadili kabla ya ukoloni",
+    "competence": "2.3 Kutathmini vichocheo vya mabadiliko ya sayansi na teknolojia katika jamii za Kitanzania kabla ya ukoloni",
+    "activity": "(b) Kubaini vichocheo vya mabadiliko ya sayansi na teknolojia katika jamii za Kitanzania kabla ya ukoloni"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.1 Kutumia maarifa na ujuzi wa chimbuko na ukuaji wa mfumo wa ukoloni kuelewa uhusiano wa kihistoria kati ya Tanzania na mataifa yaliyoitawala",
+    "activity": "(a) Kuchambua chimbuko la ukoloni"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.1 Kutumia maarifa na ujuzi wa chimbuko na ukuaji wa mfumo wa ukoloni kuelewa uhusiano wa kihistoria kati ya Tanzania na mataifa yaliyoitawala",
+    "activity": "(b) Kubainisha mataifa yaliyoitawala Tanzania na mifumo yake ya kikoloni katika uchumi, utawala na utamaduni"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.1 Kutumia maarifa na ujuzi wa chimbuko na ukuaji wa mfumo wa ukoloni kuelewa uhusiano wa kihistoria kati ya Tanzania na mataifa yaliyoitawala",
+    "activity": "(c) Kujadili mchango wa mifumo ya kikoloni katika uhusiano wa Tanzania na mataifa yaliyoitawala"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.2 Kutathmini athari za mfumo wa ukoloni kwenye maadili ya jamii za Kitanzania",
+    "activity": "(a) Kueleza hali ya maadili ya jamii za Kitanzania kipindi ukoloni unaingia"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.2 Kutathmini athari za mfumo wa ukoloni kwenye maadili ya jamii za Kitanzania",
+    "activity": "(b) Kuchambua athari za mfumo wa ukoloni katika maadili ya jamii za Kitanzania"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.2 Kutathmini athari za mfumo wa ukoloni kwenye maadili ya jamii za Kitanzania",
+    "activity": "(c) Kubaini maadili yaliyo-dumishwa na jamii za Kitanzania wakati wa ukoloni"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.3 Kuchambua jitihada za jamii za Kitanzania kupinga ukoloni na maadili ya kikoloni",
+    "activity": "(a) Kubaini sababu za jamii za Kitanzania kupinga uvamizi wa kikoloni, ukoloni na maadili yake"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.3 Kuchambua jitihada za jamii za Kitanzania kupinga ukoloni na maadili ya kikoloni",
+    "activity": "(b) Kujadili njia mbalimbali zilizotumika na jamii za Kitanzania kupinga uvamizi wa kikoloni, ukoloni na maadili yake"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.3 Kuchambua jitihada za jamii za Kitanzania kupinga ukoloni na maadili ya kikoloni",
+    "activity": "(c) Kufafanua misingi na mbinu zilizotumika kupigania Uhuru wa Tanganyika na Zanzibar"
+   },
+   {
+    "main": "1.0 Kumudu historia ya Tanzania na maadili wakati wa ukoloni, 1890- 1960",
+    "competence": "1.3 Kuchambua jitihada za jamii za Kitanzania kupinga ukoloni na maadili ya kikoloni",
+    "activity": "(d) Kutathmini mchango wa harakati za kupinga uvamizi na ukoloni katika kutunza maadili ya Kitanzania na kujenga uzalendo"
+   },
+   {
+    "main": "2.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "2.1 Kuchambua mifumo ya uchumi, siasa, utamaduni, jamii na maadili iliyojengwa, 1961-1966",
+    "activity": "(a) Kueleza hali ya uchumi, siasa, utamaduni, jamii na maadili mara baada ya uhuru"
+   },
+   {
+    "main": "2.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "2.1 Kuchambua mifumo ya uchumi, siasa, utamaduni, jamii na maadili iliyojengwa, 1961-1966",
+    "activity": "(b) Kutathmini mikakati na changamoto za ujenzi wa Taifa kiuchumi, kisiasa, kiutamaduni, kijamii na kimaadili kipindi cha 1961-1966"
+   },
+   {
+    "main": "2.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "2.2 Kumudu historia ya Mapinduzi Matukufu ya Zanzibar",
+    "activity": "(a) Kueleza chimbuko la Mapinduzi Matukufu ya Zanzibar"
+   },
+   {
+    "main": "2.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "2.2 Kumudu historia ya Mapinduzi Matukufu ya Zanzibar",
+    "activity": "(b) Kubaini mchango wa Mapinduzi Matukufu ya Zanzibar katika kujenga umoja, mshikamano na maadili miongoni mwa Wazanzibari"
+   },
+   {
+    "main": "1.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "1.1 Kumudu historia ya Muungano wa Tanganyika na Zanzibar",
+    "activity": "(a) Kufafanua chimbuko la Muungano wa Tanganyika na Zanzibar"
+   },
+   {
+    "main": "1.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "1.1 Kumudu historia ya Muungano wa Tanganyika na Zanzibar",
+    "activity": "(b) Kueleza muundo na misingi ya Muungano wa Tanganyika na Zanzibar"
+   },
+   {
+    "main": "1.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "1.1 Kumudu historia ya Muungano wa Tanganyika na Zanzibar",
+    "activity": "(c) Kutathimini Muungano wa Tanganyika na Zanzibar katika kujenga umoja na maadili ya Kitaifa"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.1 Kuchambua chimbuko la Azimio la Arusha na matokeo yake kiuchumi, kisiasa, kiutamaduni na kimaadili",
+    "activity": "(a) Kujadili chimbuko la Azimio la Arusha"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.1 Kuchambua chimbuko la Azimio la Arusha na matokeo yake kiuchumi, kisiasa, kiutamaduni na kimaadili",
+    "activity": "(b) Kufafanua misingi na mchango wa Azimio la Arusha katika ujenzi wa Taifa kiuchumi, kisiasa, kijamii na kimaadili"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.1 Kuchambua chimbuko la Azimio la Arusha na matokeo yake kiuchumi, kisiasa, kiutamaduni na kimaadili",
+    "activity": "(c) Kutathmini changamoto za Azimio la Arusha kiuchumi, kisiasa, kijamii na kimaadili"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.2 Kueleza nafasi ya Tanzania katika kujenga uhusiano wa kikanda",
+    "activity": "(a) Kufafanua dhana ya uhusiano wa kikanda na ujenzi wa Taifa"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.2 Kueleza nafasi ya Tanzania katika kujenga uhusiano wa kikanda",
+    "activity": "(b) Kueleza mchango wa Tanzania katika kukuza uhusiano wa kikanda na kujenga utaifa (EAC & SADC)"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.2 Kueleza nafasi ya Tanzania katika kujenga uhusiano wa kikanda",
+    "activity": "(c) Kubaini changamoto za uhusiano wa kikanda katika ujenzi wa Taifa"
+   },
+   {
+    "main": "3.0 Kufanya utafiti wa historia na maadili ya Tanzania",
+    "competence": "3.1 Kumudu misingi ya utafiti wa kihistoria",
+    "activity": "(a) Kueleza dhana, misingi na maadili ya utafiti wa kihistoria"
+   },
+   {
+    "main": "3.0 Kufanya utafiti wa historia na maadili ya Tanzania",
+    "competence": "3.1 Kumudu misingi ya utafiti wa kihistoria",
+    "activity": "(b) Kuchambua hatua na mchakato wa utafiti wa kihistoria"
+   },
+   {
+    "main": "3.0 Kufanya utafiti wa historia na maadili ya Tanzania",
+    "competence": "3.2 Kutumia misingi ya utafiti wa kihistoria kufanya kazi mradi",
+    "activity": "Kubuni na kufanya kazimradi kuhusu historia ya Tanzania na maadili"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "1.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "1.1 Kumudu historia ya Muungano wa Tanganyika na Zanzibar",
+    "activity": "(a) Kufafanua chimbuko la Muungano wa Tanganyika na Zanzibar"
+   },
+   {
+    "main": "1.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "1.1 Kumudu historia ya Muungano wa Tanganyika na Zanzibar",
+    "activity": "(b) Kueleza muundo na misingi ya Muungano wa Tanganyika na Zanzibar"
+   },
+   {
+    "main": "1.0 Kumudu historia ya ujenzi wa Taifa na maadili yake katika kipindi cha 1961-1966",
+    "competence": "1.1 Kumudu historia ya Muungano wa Tanganyika na Zanzibar",
+    "activity": "(c) Kutathimini Muungano wa Tanganyika na Zanzibar katika kujenga umoja na maadili ya Kitaifa"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.1 Kuchambua chimbuko la Azimio la Arusha na matokeo yake kiuchumi, kisiasa, kiutamaduni na kimaadili",
+    "activity": "(a) Kujadili chimbuko la Azimio la Arusha"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.1 Kuchambua chimbuko la Azimio la Arusha na matokeo yake kiuchumi, kisiasa, kiutamaduni na kimaadili",
+    "activity": "(b) Kufafanua misingi na mchango wa Azimio la Arusha katika ujenzi wa Taifa kiuchumi, kisiasa, kijamii na kimaadili"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.1 Kuchambua chimbuko la Azimio la Arusha na matokeo yake kiuchumi, kisiasa, kiutamaduni na kimaadili",
+    "activity": "(c) Kutathmini changamoto za Azimio la Arusha kiuchumi, kisiasa, kijamii na kimaadili"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.2 Kueleza nafasi ya Tanzania katika kujenga uhusiano wa kikanda",
+    "activity": "(a) Kufafanua dhana ya uhusiano wa kikanda na ujenzi wa Taifa"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.2 Kueleza nafasi ya Tanzania katika kujenga uhusiano wa kikanda",
+    "activity": "(b) Kueleza mchango wa Tanzania katika kukuza uhusiano wa kikanda na kujenga utaifa (EAC & SADC)"
+   },
+   {
+    "main": "2.0 Kutathmini ujenzi wa Taifa na maadili wakati wa Azimio la Arusha, 1967-1985",
+    "competence": "2.2 Kueleza nafasi ya Tanzania katika kujenga uhusiano wa kikanda",
+    "activity": "(c) Kubaini changamoto za uhusiano wa kikanda katika ujenzi wa Taifa"
+   },
+   {
+    "main": "3.0 Kufanya utafiti wa historia na maadili ya Tanzania",
+    "competence": "3.1 Kumudu misingi ya utafiti wa kihistoria",
+    "activity": "(a) Kueleza dhana, misingi na maadili ya utafiti wa kihistoria"
+   },
+   {
+    "main": "3.0 Kufanya utafiti wa historia na maadili ya Tanzania",
+    "competence": "3.1 Kumudu misingi ya utafiti wa kihistoria",
+    "activity": "(b) Kuchambua hatua na mchakato wa utafiti wa kihistoria"
+   },
+   {
+    "main": "3.0 Kufanya utafiti wa historia na maadili ya Tanzania",
+    "competence": "3.2 Kutumia misingi ya utafiti wa kihistoria kufanya kazi mradi",
+    "activity": "Kubuni na kufanya kazimradi kuhusu historia ya Tanzania na maadili"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0 Kutathmini historia ya Tanzania na maadili wakati wa uliberali, 1986 hadi sasa",
+    "competence": "1.1 Kuchambua chimbuko la uliberali na utandawazi",
+    "activity": "(a) Kufafanua dhana ya uliberali na utandawazi"
+   },
+   {
+    "main": "1.0 Kutathmini historia ya Tanzania na maadili wakati wa uliberali, 1986 hadi sasa",
+    "competence": "1.1 Kuchambua chimbuko la uliberali na utandawazi",
+    "activity": "(b) Kubaini vichocheo vilivyo-sababisha Tanzania kuingia katika mfumo wa uliberali na utandawazi"
+   },
+   {
+    "main": "1.0 Kutathmini historia ya Tanzania na maadili wakati wa uliberali, 1986 hadi sasa",
+    "competence": "1.1 Kuchambua chimbuko la uliberali na utandawazi",
+    "activity": "(c) Kueleza athari za uliberali na utandawazi katika mifumo ya uchumi, utamaduni, siasa na maadili"
+   },
+   {
+    "main": "1.0 Kutathmini historia ya Tanzania na maadili wakati wa uliberali, 1986 hadi sasa",
+    "competence": "1.1 Kuchambua chimbuko la uliberali na utandawazi",
+    "activity": "(d) Kubaini jitihada zinazohukuliwa na Tanzania kudhibiti athari mbaya za uliberali na utandawazi"
+   },
+   {
+    "main": "1.0 Kutathmini historia ya Tanzania na maadili wakati wa uliberali, 1986 hadi sasa",
+    "competence": "1.2 Kuishi maadili mema ya Kitanzania wakati wa uliberali na utandawazi",
+    "activity": "(a) Kujadili matendo ya uadilifu katika muktadha wa uliberali na utandawazi"
+   },
+   {
+    "main": "1.0 Kutathmini historia ya Tanzania na maadili wakati wa uliberali, 1986 hadi sasa",
+    "competence": "1.2 Kuishi maadili mema ya Kitanzania wakati wa uliberali na utandawazi",
+    "activity": "(b) Kujadili mikakati mbalimbali ya kuhamasisha na kuelimisha jamii kuhusu maadili ya Kitanzania"
+   },
+   {
+    "main": "2.0 Kumudu muundo na kazi za Serikali ya Jamhuri ya Muungano wa Tanzania",
+    "competence": "2.1 Kueleza muundo na kazi za Serikali ya Jamhuri ya Muungano wa Tanzania na Serikali ya Mapinduzi ya Zanzibar",
+    "activity": "(a) Kuchambua muundo na kazi za mhimili tendaji (Executive) ya Serikali ya Jamhuri ya Muungano wa Tanzania na Serikali ya Mapinduzi Zanzibar"
+   },
+   {
+    "main": "2.0 Kumudu muundo na kazi za Serikali ya Jamhuri ya Muungano wa Tanzania",
+    "competence": "2.1 Kueleza muundo na kazi za Serikali ya Jamhuri ya Muungano wa Tanzania na Serikali ya Mapinduzi ya Zanzibar",
+    "activity": "(b) Kuchambua muundo na kazi za Bunge la Jamhuri na za Baraza la Wawakilishi Zanzibar"
+   },
+   {
+    "main": "2.0 Kumudu muundo na kazi za Serikali ya Jamhuri ya Muungano wa Tanzania",
+    "competence": "2.1 Kueleza muundo na kazi za Serikali ya Jamhuri ya Muungano wa Tanzania na Serikali ya Mapinduzi ya Zanzibar",
+    "activity": "(c) Kuchambua muundo na kazi za Mahakama katika pande zote za Muungano"
+   },
+   {
+    "main": "2.0 Kumudu muundo na kazi za Serikali ya Jamhuri ya Muungano wa Tanzania",
+    "competence": "2.2 Kubaini muundo na kazi za Serikali za Mitaa",
+    "activity": "(a) Kueleza dhana na chimbuko la serikali za mitaa"
+   },
+   {
+    "main": "2.0 Kumudu muundo na kazi za Serikali ya Jamhuri ya Muungano wa Tanzania",
+    "competence": "2.2 Kubaini muundo na kazi za Serikali za Mitaa",
+    "activity": "(b) Kuchambua muundo na kazi za serikali za mitaa katika ngazi mbalimbali za Jamhuri ya Muungano"
+   },
+   {
+    "main": "3.0 Kufanya utafiti wa historia ya Tanzania na maadili",
+    "competence": "3.1 Kutumia misingi ya utafiti wa kihistoria kufanya kazimradi",
+    "activity": "Kukamilisha kazimradi iliyoanza Kidato cha III na kuiwasilisha kwa tathmini"
+   }
+  ]
+ }
+}

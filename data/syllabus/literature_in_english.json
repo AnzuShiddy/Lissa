@@ -1,0 +1,237 @@
+{
+ "subject": "Literature in English",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727256752-LITERATURE%20IN%20ENGLISH%20O-LEVEL%20FINAL.pdf",
+ "forms": {
+  "Form Three": [
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.1 Demonstrate empathy for other people’s experiences nationally and globally",
+    "activity": "(a) Explain the concept of literature and its functions"
+   },
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.1 Demonstrate empathy for other people’s experiences nationally and globally",
+    "activity": "(b) Explain the concepts of oral and written literature"
+   },
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.1 Demonstrate empathy for other people’s experiences nationally and globally",
+    "activity": "(c) Relate people’s life experiences with folktales, songs, riddles, proverbs, fables and idioms from the Tanzanian context"
+   },
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.1 Demonstrate empathy for other people’s experiences nationally and globally",
+    "activity": "(d) Reflect on the characters’ actions, attitudes and experiences in selected novels"
+   },
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.2 Appreciate multiculturalism and develop self-consciousness",
+    "activity": "(a) Explain the concepts of multiculturalism and self-consciousness in the context of literature"
+   },
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.2 Appreciate multiculturalism and develop self-consciousness",
+    "activity": "(b) Reflect on one’s cultural values against those depicted in selected novels"
+   },
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.2 Appreciate multiculturalism and develop self-consciousness",
+    "activity": "(c) Assess the development of the protagonist and antagonist characters in selected novels"
+   },
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.3 Reflect values, perspectives and identities, and the impact of their beliefs and actions on society",
+    "activity": "(a) Explain the concepts of values, perspectives and identities"
+   },
+   {
+    "main": "1.0 Develop awareness of and empathy with national and global literary works",
+    "competence": "1.3 Reflect values, perspectives and identities, and the impact of their beliefs and actions on society",
+    "activity": "(b) Reflect on the characters’ perspectives, and values against one’s own"
+   },
+   {
+    "main": "2.0 Appreciate different implications and layers of meaning in literary works",
+    "competence": "2.1 Appreciate the use of literary devices in the works of art",
+    "activity": "(a) Analyse narrative techniques and stylistic devices in selected literary texts"
+   },
+   {
+    "main": "2.0 Appreciate different implications and layers of meaning in literary works",
+    "competence": "2.1 Appreciate the use of literary devices in the works of art",
+    "activity": "(b) Explain the significance of narrative techniques and stylistic devices in selected novels"
+   },
+   {
+    "main": "2.0 Appreciate different implications and layers of meaning in literary works",
+    "competence": "2.1 Appreciate the use of literary devices in the works of art",
+    "activity": "(c) Discuss literary devices which evoke emotions in selected novels"
+   },
+   {
+    "main": "2.0 Appreciate different implications and layers of meaning in literary works",
+    "competence": "2.2 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(a) Discuss the roles of observation, analysis, inference, communication and problem-solving in literature"
+   },
+   {
+    "main": "2.0 Appreciate different implications and layers of meaning in literary works",
+    "competence": "2.2 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(b) Assess the relationship among characters in selected novels"
+   },
+   {
+    "main": "2.0 Appreciate different implications and layers of meaning in literary works",
+    "competence": "2.2 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(c) Discuss the lessons derived from the choices and decisions of characters in selected novels"
+   },
+   {
+    "main": "2.0 Appreciate different implications and layers of meaning in literary works",
+    "competence": "2.2 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(d) Identify major themes in the selected novels"
+   },
+   {
+    "main": "2.0 Appreciate different implications and layers of meaning in literary works",
+    "competence": "2.2 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(e) Analyse themes such as corruption and bribery in selected novels"
+   },
+   {
+    "main": "1.3 Justify interpretations based on evidence and logic",
+    "competence": "1.3 Justify interpretations based on evidence and logic",
+    "activity": "(a) Justify the actions and context of characters in relation to themes in selected novels"
+   },
+   {
+    "main": "1.3 Justify interpretations based on evidence and logic",
+    "competence": "1.3 Justify interpretations based on evidence and logic",
+    "activity": "(b) Discuss the relationship between the title and messages in selected novels"
+   },
+   {
+    "main": "1.3 Justify interpretations based on evidence and logic",
+    "competence": "1.3 Justify interpretations based on evidence and logic",
+    "activity": "(c) Discuss the relevance of the novel to one’s society"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.1 Synthesize literary characteristics, themes, and/or approaches in several literary texts",
+    "activity": "(a) Discuss forms of poetry and figurative language"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.1 Synthesize literary characteristics, themes, and/or approaches in several literary texts",
+    "activity": "(b) Analyse themes portrayed in selected poems"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.1 Synthesize literary characteristics, themes, and/or approaches in several literary texts",
+    "activity": "(c) Discuss lessons derived from selected poems"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.1 Synthesize literary characteristics, themes, and/or approaches in several literary texts",
+    "activity": "(d) Apply literary skills to compose a poem"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(a) Explain the concepts of antithesis, anticlimax, paradox, irony, unreliable narrator and suspense in literary works"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(b) Discuss the relationship between the title and the content of selected plays"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(c) Discuss the effect of ironical titles in selected plays"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.3 Create imaginative and original literary works",
+    "activity": "(a) Explain the concepts of creativity and visualization in literary composition"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.3 Create imaginative and original literary works",
+    "activity": "(b) Make a plan for composing a poem (decide what to write about, determine the best format, explore words, rhymes, and rhythm)"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.3 Create imaginative and original literary works",
+    "activity": "(c) Apply writing skills to compose a poem"
+   },
+   {
+    "main": "3.0 Compose literary works",
+    "competence": "3.3 Create imaginative and original literary works",
+    "activity": "(d) Apply ICT tools and digital platforms in writing and publishing a poem"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0  Appreciate   different implications and layers of meaning in literary works",
+    "competence": "1.1 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(a)  Analyse themes depicted in selected plays"
+   },
+   {
+    "main": "1.0  Appreciate   different implications and layers of meaning in literary works",
+    "competence": "1.1 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(b)  Analyse conflicts portrayed in selected plays"
+   },
+   {
+    "main": "1.0  Appreciate   different implications and layers of meaning in literary works",
+    "competence": "1.1 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(c)  Relate personal experiences to themes in selected plays"
+   },
+   {
+    "main": "1.0  Appreciate   different implications and layers of meaning in literary works",
+    "competence": "1.1 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(d)  Discuss the  motivations of characters’ choices and decisions in selected plays"
+   },
+   {
+    "main": "1.0  Appreciate   different implications and layers of meaning in literary works",
+    "competence": "1.1 Apply critical thinking when reading, discussing and writing about literary texts",
+    "activity": "(e)  Suggest solutions to challenges depicted in selected plays"
+   },
+   {
+    "main": "2.0 Compose literary works",
+    "competence": "2.1 Synthesize literary characteristics, themes, and/or approaches in several literary texts",
+    "activity": "(a)  Explain the concepts of character, plot, setting, stage direction and spectacle in a play"
+   },
+   {
+    "main": "2.0 Compose literary works",
+    "competence": "2.1 Synthesize literary characteristics, themes, and/or approaches in several literary texts",
+    "activity": "(b)  Analyse stages of plot development"
+   },
+   {
+    "main": "2.0 Compose literary works",
+    "competence": "2.1 Synthesize literary characteristics, themes, and/or approaches in several literary texts",
+    "activity": "(c)  Apply literary skills to compose a two-acts play"
+   },
+   {
+    "main": "2.0 Compose literary works",
+    "competence": "2.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(a)  Discuss dramatic and situational irony in selected plays"
+   },
+   {
+    "main": "2.0 Compose literary works",
+    "competence": "2.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(b)  Discuss the effectiveness of suspense in selected plays"
+   },
+   {
+    "main": "2.0 Compose literary works",
+    "competence": "2.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(c)  Explain how antithesis creates ambiguity in selected plays"
+   },
+   {
+    "main": "1.3    Create imaginative and original literary works",
+    "competence": "2.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(a) Make a plan for composing a play (plot, setting, characterisation and stage direction)"
+   },
+   {
+    "main": "1.3    Create imaginative and original literary works",
+    "competence": "2.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(b)  Apply literary skills to compose a two-acts play"
+   },
+   {
+    "main": "1.3    Create imaginative and original literary works",
+    "competence": "2.2 Recognise ambiguity and uncertainty as necessary in creating literary works",
+    "activity": "(c)  Apply ICT tools and digital platforms in writing and publishing a play"
+   }
+  ]
+ }
+}

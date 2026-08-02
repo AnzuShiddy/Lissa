@@ -1,0 +1,241 @@
+{
+ "subject": "Chemistry",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727192894-CHEMISTRY%20O'LEVEL%20EDUCATION%20FINAL.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(a) Describe the concept of Chemistry (meaning, branches, applications and relationships with other disciplines)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(b) Discuss the contribution of Chemistry in the development of modern society"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(c) Describe the concept of matter (physical and chemical changes of matter)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(d) Describe the concepts of chemical elements (criteria for assigning chemical symbols), compounds (binary compound) and mixtures (types of solution and separation of mixtures)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(e) Compare the properties of compounds with those of constituent elements"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(f) Explain the concept of the periodic table (1st 20 elements in the Periodic Table; metals and non-metals)"
+   },
+   {
+    "main": "Conduct experiments in Chemistry",
+    "competence": "Conduct experiments in Chemistry",
+    "activity": "(a) Describe basic Chemistry laboratory skills (chemistry laboratory rules and safety measures, first aid, fire and firefighting, and Chemistry laboratory apparatus)"
+   },
+   {
+    "main": "Conduct experiments in Chemistry",
+    "competence": "Conduct experiments in Chemistry",
+    "activity": "(b) Perform experiments on the changes of matter from one state to another"
+   },
+   {
+    "main": "Conduct experiments in Chemistry",
+    "competence": "Conduct experiments in Chemistry",
+    "activity": "(c) Perform experiments on separation of different mixtures using different methods"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(a) Describe the modern concept of atomic structure (Dalton’ s atomic structure and sub-atomic particles)"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(b) Describe the concept of electronic arrangements",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(c) Use the concept of atomic structure to determine the atomic and mass numbers of an element",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(d) Explain the concept of chemical formulae and nomenclature (valence, oxidation state, radicals and naming of binary inorganic compounds using the IUP AC system)",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(e) Determine empirical and molecular formulae of common compounds",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(f) Describe the concept of chemical bonding (covalent and electrovalent bonding)",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(g) Describe the concept of chemical reactions (chemical equations, balancing chemical equations, and types of chemical reactions)",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(h) Relate the types of chemical reactions with common processes in daily life such as burning of fuel and digestion in living organisms",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(i) Describe acids, bases and salts (reactions of acids and bases with various substances) and their applications in daily life",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "1.2 Demonstrate an understanding of the physical and chemical properties of elements on the basis of their arrangements in the periodic table (a) Explain the changes in the physical and chemical properties of elements across and down the periodic table",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(b) Use the electronic configuration of an element to locate their positions in the periodic table",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "2.1 Conduct experiments in Chemistry (a) Prepare acid- base indicators using locally available materials",
+    "activity": ""
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(b) Use the prepared indicators to test acidity and alkalinity of substances found in the locality",
+    "activity": ""
+   },
+   {
+    "main": "1.0 Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "1.1 Demonstrate mastery of concepts, theories and principles in Chemistry (a) Describe the mole concept (comparison of the mole with other units of measurements and molar quantities of substances)",
+    "activity": ""
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(b) Explain Avogadro’s law in relation to molar quantities",
+    "activity": "Group discussion: Guide student in manageable groups to use the Avogadros Law in explaining the molar quantities"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(c) Explain the principles of volumetric analysis (preparation of standard solutions and volumetric calculations)",
+    "activity": "Brainstorming: Assign students to brainstorm on the concept of volumetric analysis Project works: Guide students to carry-out a visit to nearby possible industries eg. Foods, drinks, cosmetics and pharmaceuticals industries to analyse procedures for determining amounts of chemical substances. Group discussion: Guide students in manageable groups to perform volumetric calculations and make classroom presentations"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(d) Describe the applications of volumetric analysis in real life and industrial settings as in soft drinks and cocktail making, medicine and in agriculture",
+    "activity": "Experimentation: Guide students to perform experiments related to the applications of volumetric analysis"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(e) Explore the basic tenets of ionic theory and electrolysis (ionic theory, mechanism of electrolysis and laws of electrolysis)",
+    "activity": "Group discussion: Guide students in manageable groups to describe the concept of ionic theory and electrolysis and make presentations Experimentation: Guide students to carry-out experiments that demonstrate the mechanism of electrolysis using simple available chemicals and apparatus Field Trip: Guide students to carry-out fields trips to near by industries involved in extraction, electroplating and purification of metals and examine the applications of electrolysis"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(f) Describe the preparation and properties of various compounds of metals (oxides, hydroxides, carbonates, hydrogen carbonates, nitrates, chlorides and sulphates of metals)",
+    "activity": "Inquiry-based learning: Guide students to investigate properties of compound of metals and relate with extraction of metals, making of paints, textiles, drinking water, soaps, and detergents"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(g) Describe the oxidizing and displacement properties of non-metal compounds (oxygen, hydrogen, chlorine, hydrogen chloride, sulphur dioxide, nitrogen, ammonia, and carbon dioxide)",
+    "activity": "Group discussion: Guide students in manageable groups to describe the properties of non-metals and write report Project works: Guide students to carry-out visits to nearby industries for making gases, pesticides, fertilisers and other chemicals, analyse properties of the compounds of non-metals"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "2.1 Conduct experiments in Chemistry (a) Perform experiments on volumetric analysis",
+    "activity": "Experimentation: Guide students to perform titrations for various standard solutions Field trips: Guide students to execute a field trips to nearby industries mainly concerned with quantification of species in different substances and write a report for assessment"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(b) Perform experiments on the applications of electrolysis in corrosion inhibition and purification of metals",
+    "activity": "Experimentation: Guide students to investigate the applications of electrolysis in the electroplating process for common items in the environment"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(c) Use appropriate software to sketch the set-ups of experiments",
+    "activity": "Experimentation: Guide students to use various software in sketching experimental set-ups"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(d) Prepare various compounds of metals (oxides, hydroxides, carbonates, hydrogen carbonates, nitrates, chlorides, and sulphates)",
+    "activity": "Group discussion: Organise students in manageable groups to examine different compounds of metals Experimentation: Assign students to prepare various compounds of metals using available chemicals in the laboratory"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(e) Demonstrate oxidizing and displacement properties of non-metallic compounds (oxygen, hydrogen, chlorine, hydrogen chloride, sulphur dioxide, nitrogen, ammonia and carbon dioxide)",
+    "activity": "Group discussion: Organise students in manageable groups to describe properties of non-metal compounds and make presentations Inquiry-based learning: Guide students to investigate industrial mechanisms involving oxidizing and displacement properties of non-metals"
+   },
+   {
+    "main": "2.0 Conduct experiments in Chemistry",
+    "competence": "(f) Prepare sulphuric acid from sulphur dioxide",
+    "activity": "Experimentation: Guide students to prepare sulphuric acid by using sulphur dioxide"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic principles of extraction of metals",
+    "competence": "3.1 Demonstrate mastery of the principles of extraction of metals (a) Describe the extraction of iron from its ore (ores, stages, and methods of extraction)",
+    "activity": "Field trips: Organise students field trips to nearby mining sites/ factories to analyse the process for extraction of iron from its ores and write the report Group discussion: Organise students in manageable groups to describe stages and methods involved in extraction of metals and make presentation"
+   },
+   {
+    "main": "4.0 Conduct a project in Chemistry",
+    "competence": "4.1 Conduct a project in Chemistry (a) Design and carry-out a simple research project in Chemistry",
+    "activity": "Group discussion: Guide students in manageable groups to analyse social and scientific challenges such as water pollutions, water purifications, rusting, fire outbreak, pesticides, acid and chemical waste management Project works: Guide students to apply Chemistry principles to investigate on domestic strategies for water purifications, metals purification, metal extraction. and develop local and scientific mechanisms for addressing the identified scientific challenges"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(a) Explore the basic tenets of qualitative analysis (preliminary analysis, tests in solution and confirmatory test)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts, theories and principles in Chemistry",
+    "competence": "Demonstrate mastery of concepts, theories and principles in Chemistry",
+    "activity": "(b) Explore the basic tenets of Organic Chemistry (organic compounds; aliphatic hydrocarbons and alcohols)"
+   },
+   {
+    "main": "Demonstrate mastery of basic terminologies in Chemistry",
+    "competence": "Use the International Union of Pure and Applied Chemistry nomenclature to name chemical species",
+    "activity": "(a) Use Chemistry software to draw organic structures of hydrocarbons and alcohols with 1 carbon to 10 carbon atoms"
+   },
+   {
+    "main": "Demonstrate mastery of basic terminologies in Chemistry",
+    "competence": "Use the International Union of Pure and Applied Chemistry nomenclature to name chemical species",
+    "activity": "(b) Name aliphatic hydrocarbons and alcohols with 1 carbon to 10 carbon atoms using the IUPAC system and Chemistry software"
+   },
+   {
+    "main": "Demonstrate mastery of basic terminologies in Chemistry",
+    "competence": "Use chemical symbols, formulae and equations to represent chemical reaction",
+    "activity": "(a) Describe the chemical reactions of aliphatic hydrocarbons and alcohols in relation to their structures"
+   },
+   {
+    "main": "Conduct experiments in Chemistry",
+    "competence": "Conduct experiments in Chemistry",
+    "activity": "(a) Investigate the composition of chemical species in substances using systematic qualitative analysis"
+   },
+   {
+    "main": "Conduct experiments in Chemistry",
+    "competence": "Conduct experiments in Chemistry",
+    "activity": "(b) Demonstrate the local and industrial preparations of aliphatic hydrocarbons and alcohols"
+   },
+   {
+    "main": "Conduct a project in Chemistry",
+    "competence": "Conduct a project in Chemistry",
+    "activity": "(a) Complete and submit a report for the project started in Form Three"
+   }
+  ]
+ }
+}

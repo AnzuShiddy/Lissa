@@ -1,0 +1,226 @@
+{
+ "subject": "Bible Knowledge",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727192234-BIBLE%20KNOWLEDGE%20COMMISSIONER%20FINAL.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.1 Use the Book of Genesis to learn about creation, responsibility and taking care of life",
+    "activity": "(a) Explain the concept of the Bible and Bible Knowledge"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.1 Use the Book of Genesis to learn about creation, responsibility and taking care of life",
+    "activity": "(b) Classify the books in the Bible"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.1 Use the Book of Genesis to learn about creation, responsibility and taking care of life",
+    "activity": "(c) Explain the concept of the Book of Genesis"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.1 Use the Book of Genesis to learn about creation, responsibility and taking care of life",
+    "activity": "(d) Describe the concept of God’s creation"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.1 Use the Book of Genesis to learn about creation, responsibility and taking care of life",
+    "activity": "(e) Clarify man’s responsibility for God’s creations"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.1 Use the Book of Genesis to learn about creation, responsibility and taking care of life",
+    "activity": "(f) Explain the importance of taking care of life and the environment"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.2 Demonstrate mastery of the Holy Scripture through the Book of Genesis",
+    "activity": "(a) Analyse the Fall of Man and its consequences"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.2 Demonstrate mastery of the Holy Scripture through the Book of Genesis",
+    "activity": "(b) Describe the history of the biblical Patriarchs"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.3 Use the Book of Exodus to understand God’s love and compassion",
+    "activity": "(a) Describe the Concept of the Book of Exodus"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.3 Use the Book of Exodus to understand God’s love and compassion",
+    "activity": "(b) Show how the concept of God’s love and compassion appears in the Book of Exodus"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.3 Use the Book of Exodus to understand God’s love and compassion",
+    "activity": "(c) Identify the consequences of not appreciating God’s Love and Compassion"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.4 Demonstrate an appreciation of God’s commandments as outlined in the Book of Exodus",
+    "activity": "(a) Explain the Sinai Covenant"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.4 Demonstrate an appreciation of God’s commandments as outlined in the Book of Exodus",
+    "activity": "(b) Clarify God’s Commandments as stated in the Book of Exodus"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.4 Demonstrate an appreciation of God’s commandments as outlined in the Book of Exodus",
+    "activity": "(c) Show the indicators of Moses’ leadership qualities"
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.5 Demonstrate an appreciation of the importance of statistics based on the Book of Numbers",
+    "activity": "(a) Explain the concept of statistics as revealed in the Book of Numbers."
+   },
+   {
+    "main": "1.0 Demonstrate an understanding of Creation and God’s commandments",
+    "competence": "1.5 Demonstrate an appreciation of the importance of statistics based on the Book of Numbers",
+    "activity": "(b) Use the Book of Numbers to discuss the objectives and importance of statistics and the census in society"
+   },
+   {
+    "main": "2.0 Demonstrate an understanding of faith by living a holy life",
+    "competence": "2.1 Demonstrate mastery of the Holy Scripture through the Book of Joshua",
+    "activity": "(a) Identify the main ideas in the book of Joshua"
+   },
+   {
+    "main": "2.0 Demonstrate an understanding of faith by living a holy life",
+    "competence": "2.1 Demonstrate mastery of the Holy Scripture through the Book of Joshua",
+    "activity": "(b) Use the Book of Joshua to discuss the importance of preparing leaders"
+   },
+   {
+    "main": "2.0 Demonstrate an understanding of faith by living a holy life",
+    "competence": "2.1 Demonstrate mastery of the Holy Scripture through the Book of Joshua",
+    "activity": "(c) Describe the fall of the biblical cities of Jericho and Ai"
+   },
+   {
+    "main": "2.0 Demonstrate an understanding of faith by living a holy life",
+    "competence": "2.2 Use the Book of Joshua to appreciate the importance of courage, bravery, humility, perseverance and patriotism",
+    "activity": "(a) Discuss the indicators of strength and bravery according to the Book of Joshua"
+   },
+   {
+    "main": "2.0 Demonstrate an understanding of faith by living a holy life",
+    "competence": "2.2 Use the Book of Joshua to appreciate the importance of courage, bravery, humility, perseverance and patriotism",
+    "activity": "(b) Use the Book of Joshua to discuss the importance of bravery, humility and perseverance"
+   },
+   {
+    "main": "2.0 Demonstrate an understanding of faith by living a holy life",
+    "competence": "2.2 Use the Book of Joshua to appreciate the importance of courage, bravery, humility, perseverance and patriotism",
+    "activity": "(c) Explain the concept of patriotism as appears in the Book of Joshua"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.1 Demonstrate mastery of the Holy Scripture in the Gospel according to Luke",
+    "activity": "(a) Explain the term Gospel and Jewish institutions"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.1 Demonstrate mastery of the Holy Scripture in the Gospel according to Luke",
+    "activity": "(b) Discuss the authorship of the Gospel according to Luke (author, recipients and purpose)"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.1 Demonstrate mastery of the Holy Scripture in the Gospel according to Luke",
+    "activity": "(c) Discuss the themes of the Gospel according to Luke (salvation for all, the work of the Holy Spirit, worship and praise, the role of women, the Gospel of the lost and the Gospel of prayer)"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.1 Demonstrate mastery of the Holy Scripture in the Gospel according to Luke",
+    "activity": "(d) Identify the methods used by Jesus in his Ministry (parables and miracles)"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.1 Demonstrate mastery of the Holy Scripture in the Gospel according to Luke",
+    "activity": "(e) Use the Gospel according to Luke to defend human rights"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.1 Demonstrate mastery of the Holy Scripture in the Gospel according to Luke",
+    "activity": "(f) Discuss how the themes in the Gospel according to Luke relate to daily life (choose one theme for course work/project to be submitted in Form IV)"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.2 Use the Gospel according to Luke to appreciate the importance of family life",
+    "activity": "(a) Explain the concept of family"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.2 Use the Gospel according to Luke to appreciate the importance of family life",
+    "activity": "(b) Discuss the characteristics of the families found in the Gospel according to Luke"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.2 Use the Gospel according to Luke to discuss good parental care",
+    "activity": "(c) Use the Gospel according to Luke to discuss good parental care"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.3 Demonstrate mastery of the Holy Scripture in the Book of Acts of the Apostles",
+    "activity": "(a) Discuss the authorship of the Book of the Acts of the Apostles (author, recipients and purpose)"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.3 Demonstrate mastery of the Holy Scripture in the Book of Acts of the Apostles",
+    "activity": "(b) Discuss the themes appearing in the Book of the Acts of the Apostles"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.3 Demonstrate mastery of the Holy Scripture in the Book of Acts of the Apostles",
+    "activity": "(c) Use the Book of the Acts of the Apostles to defend human rights"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.4 Demonstrate an appreciation of devotion to spreading the Gospel",
+    "activity": "(a) Use the Book of the Acts of the Apostles to discuss the commission and order to spread the Gospel"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.4 Demonstrate an appreciation of devotion to spreading the Gospel",
+    "activity": "(b) Explain the role of the Holy Spirit in spreading the Gospel"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.4 Demonstrate an appreciation of devotion to spreading the Gospel",
+    "activity": "(a) Describe the life of the early Christian community and their role in spreading the Gospel"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.4 Demonstrate an appreciation of devotion to spreading the Gospel",
+    "activity": "(b) Discuss the acts of courage as revealed in the Book of the Acts of the Apostles"
+   },
+   {
+    "main": "3.0 Demonstrate an understanding of devotion to God as revealed in the Bible",
+    "competence": "3.4 Demonstrate an appreciation of devotion to spreading the Gospel",
+    "activity": "(c) Discuss Saul’s conversion and his missionary journeys"
+   },
+   {
+    "main": "3.5 Use the Book of Acts of the Apostles to appreciate the importance of justice, peace and equality",
+    "competence": "3.5 Use the Book of Acts of the Apostles to appreciate the importance of justice, peace and equality",
+    "activity": "(a) Determine the resolution of conflicts during the growth of the early Church"
+   },
+   {
+    "main": "3.5 Use the Book of Acts of the Apostles to appreciate the importance of justice, peace and equality",
+    "competence": "3.5 Use the Book of Acts of the Apostles to appreciate the importance of justice, peace and equality",
+    "activity": "(b) Discuss the importance, functions and qualities of deacons used in the early Church"
+   },
+   {
+    "main": "3.5 Use the Book of Acts of the Apostles to appreciate the importance of justice, peace and equality",
+    "competence": "3.5 Use the Book of Acts of the Apostles to appreciate the importance of justice, peace and equality",
+    "activity": "(c) Discuss the methods used by the Jerusalem Council to solve conflict and bring peace, equality and unity in the early Church"
+   }
+  ]
+ }
+}

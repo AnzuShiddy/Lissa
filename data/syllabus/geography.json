@@ -1,0 +1,96 @@
+{
+ "subject": "Geography",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727255849-GEOGRAPHY%20O-Level.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0   Demonstrate mastery of the structure of the Earth",
+    "competence": "1.1  Demonstrate an understanding of the origin and the structure of the Earth and Earth systems",
+    "activity": "(a) Explain the concept and scope of Geography (branches, importance and relationship with other disciplines)"
+   },
+   {
+    "main": "1.0   Demonstrate mastery of the structure of the Earth",
+    "competence": "1.1  Demonstrate an understanding of the origin and the structure of the Earth and Earth systems",
+    "activity": "(b) Describe the Earth (origin, shape, size, position and movements of the earth in the solar system, and parallels and meridians)"
+   },
+   {
+    "main": "1.0   Demonstrate mastery of the structure of the Earth",
+    "competence": "1.2   Demonstrate an understanding of the major features of the Earth surface",
+    "activity": "(a) Describe major features of the Earth’s surface (continents, oceans, major relief features, large inland water bodies and vegetation zones)"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0  Demonstrate mastery of the structure of the Earth",
+    "competence": "1.1  Demonstrate an understanding of the origin and the structure of the Earth and earth systems",
+    "activity": "(a)  Describe the internal structure of the Earth (crust, mantle, core) and their major characteristics (location, size/ thickness, density and gross composition)"
+   },
+   {
+    "main": "1.0  Demonstrate mastery of the structure of the Earth",
+    "competence": "1.1  Demonstrate an understanding of the origin and the structure of the Earth and earth systems",
+    "activity": "(b)   Describe the main external Earth systems (Hydrosphere, Atmosphere and Biosphere)"
+   },
+   {
+    "main": "2.0   Demonstrate mastery of basic skills and techniques in Geography",
+    "competence": "2.1  Demonstrate an understanding of the basic techniques of map and photograph interpretation",
+    "activity": "(a)  Describe the basic principles of reading and interpreting maps (key, symbols, direction, margin/frame, map title, scale and contour patterns) (b) Reading and interpreting various type of maps and their importance (topographical and statistical map)"
+   },
+   {
+    "main": "2.0   Demonstrate mastery of basic skills and techniques in Geography",
+    "competence": "2.1  Demonstrate an understanding of the basic techniques of map and photograph interpretation",
+    "activity": "(b) Describe the basic concept of photograph in Geography (meaning, types, elements and uses)"
+   },
+   {
+    "main": "2.0   Demonstrate mastery of basic skills and techniques in Geography",
+    "competence": "2.1  Demonstrate an understanding of the basic techniques of map and photograph interpretation",
+    "activity": "(c)  Describe the basic principles of photograph interpretation (identifying foreground, middle ground and background, associating objects with geographical phenomena)"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "1.0   Demonstrate mastery of the structure of the Earth",
+    "competence": "1.1 Demonstrate an understanding of the relationship between relief, climate and natural vegetation",
+    "activity": "(a) Describe the major climatic regions of the world (tropical, temperate, polar and sub-tropical)"
+   },
+   {
+    "main": "1.0   Demonstrate mastery of the structure of the Earth",
+    "competence": "1.1 Demonstrate an understanding of the relationship between relief, climate and natural vegetation",
+    "activity": "(b) Describe the relationship between major features of the Earth’s surface, climate, and natural vegetation"
+   },
+   {
+    "main": "2.0  Demonstrate mastery of basic skills and techniques in Geography",
+    "competence": "2.1  Demonstrate an understanding of the basic techniques in land surveying",
+    "activity": "(a) Explore the basic tenets of surveying (meaning, types, equipment, methods, and importance)"
+   },
+   {
+    "main": "2.0  Demonstrate mastery of basic skills and techniques in Geography",
+    "competence": "2.1  Demonstrate an understanding of the basic techniques in land surveying",
+    "activity": "(b) Carry out simple tape/chain surveying"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of human geography",
+    "competence": "3.1 Carry out a project in Geography",
+    "activity": "(a) Develop and carry out a simple research project in Geography"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0 Demonstrate mastery of human geography",
+    "competence": "1.1 Demonstrate an understanding of the relationship between geography, environmental health, human settlements and economic activities",
+    "activity": "(a) Describe the geographical factors that influence the spatial distribution of population, human settlements and economic activities (climate, soil, relief, vegetation, transport and water supply)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of human geography",
+    "competence": "1.1 Demonstrate an understanding of the relationship between geography, environmental health, human settlements and economic activities",
+    "activity": "(b) Examine the impacts of population distribution on economic activities and the environment (land use and settlement patterns changes)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of human geography",
+    "competence": "1.2 Carry out a project in Geography",
+    "activity": "(a) Complete and submit a report of the project started in Form Three"
+   }
+  ]
+ }
+}

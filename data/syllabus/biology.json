@@ -1,0 +1,181 @@
+{
+ "subject": "Biology",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727192422-BIOLOGY%20SYLLABUS%20ORDINARY%20SECONDARY%20FINAL%20.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(a) Explain the basic concepts of Biology (meaning, branches, basic terminologies, importance and its relationship with other disciplines)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(b) Describe a cell (meaning,types, structures and functions)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(c) Describe nutrition in plants (photosynthesis, leaf structure and mineral requirements)"
+   },
+   {
+    "main": "2.0 Communicating using scientific biological terminologies",
+    "competence": "2.1 Demonstrate mastery of scientific biological terminologies",
+    "activity": "(a) Explain the concept and systems of classification (meaning ,importance of classification, rules of scientific naming of organisms, artificial and natural classification systems)"
+   },
+   {
+    "main": "2.0 Communicating using scientific biological terminologies",
+    "competence": "2.1 Demonstrate mastery of scientific biological terminologies",
+    "activity": "(b) Describe the major groups of organisms: (Monera, Protista, Fungi, Plantae, Animalia and Viruses)"
+   },
+   {
+    "main": "3.0 Conduct biological investigations",
+    "competence": "3.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(a) Describe the basic skills for conducting biological experiments (observation, measurement and experimentation)"
+   },
+   {
+    "main": "3.0 Conduct biological investigations",
+    "competence": "3.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(b) Carry out microscopic observation of a cell"
+   },
+   {
+    "main": "3.0 Conduct biological investigations",
+    "competence": "3.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(c) Carry out investigations related to photosynthesis (conditions necessary for photosynthesis)"
+   },
+   {
+    "main": "3.0 Conduct biological investigations",
+    "competence": "3.2 Prepare and present results of biological investigations",
+    "activity": "(a) Prepare and present a report on cell and photosynthesis investigations"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(a) Describe nutrition in human and ruminants (nutrients, digestive system and processes)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(b) Describe the mechanism of transportation of materials in flowering plants (vascular system, absorption and movement of water and mineral salts and transpiration)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(c) Describe the mechanism of transportation of materials in the human body (the mammalian heart, blood vessels, blood, blood circulation)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(d) Describe the mechanisms of gaseous exchange and respiration in mammals (gaseous exchange in mammals, aerobic and anaerobic respiration)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(e) Describe the mechanism of gaseous exchange in plants (parts of plants responsible for gaseous exchange and the process)"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(a) Investigate food nutrients in various food samples"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(b) Investigate processes of transportation of materials in flowering plants"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(c) Carry out experiments to determine the pulse rate in human"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(d) Investigate aerobic and anaerobic respiration in living organisms"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.2 Prepare and present results of biological investigations",
+    "activity": "(a) Prepare and present a report of a biological investigation on ( food nutrients in various food samples, transportation of materials in flowering plants, pulse rate in human, aerobic and anaerobic respiration )"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(a) Describe coordination in plants (tropic, responses) and animals (nervous coordination in human, structure of neurones, sense organs and endocrine system)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(b) Describe the mechanism of excretion in the human body (systems: organs, products)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(c) Describe the mechanism of regulation in the human body (temperature regulation, blood sugar regulation and osmoregulation)"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(a) Investigate the process of nervous coordination (reflex arc and knee jerk)"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.1 Demonstrate mastery of basic skills for conducting biological investigations",
+    "activity": "(b) Investigate tropic responses in plants"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.2 Carry out a biological project work using biological principles",
+    "activity": "(a) Develop and carry out a simple research project in Biology"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the concepts, principles and processes of Biology",
+    "competence": "1.1 Describe the physiological, anatomical and ecological processes of living organisms",
+    "activity": "(a) Describe reproduction in plants (concept of reproduction in plants, asexual and sexual reproduction, pollination and fertilization)"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0 Demonstrate mastery of biological concepts",
+    "competence": "(b) Describe reproduction in humans (sexual reproduction in human, fertilization, pregnancy and child birth)",
+    "activity": "Question and answers: Guide students to explain the concept of reproduction in humans through question and answers: ICT based learning: Guide students to explore mechanism of meiosis through digital simulation Group discussion: Guide students in manageable groups to discuss sexual reproduction, fertilization, pregnancy and child birth in human"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of biological concepts",
+    "competence": "(c) Describe the mechanisms of growth in mammals and flowering plants (concept of growth, mitosis and growth, growth and developmental stages in human and seed germination)",
+    "activity": "Guest speaker: Invite guest speaker to share with students on family planning and contraception and disorders of reproductive system Brainstorm: Guide students to brainstorm on the concept of growth in flowering plants and mammals ICT based learning: Guide students to explain stages of mitosis, growth and developmental stages in human through digital simulation"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of biological concepts",
+    "competence": "(c) Describe the mechanisms of growth in mammals and flowering plants (concept of growth, mitosis and growth, growth and developmental stages in human and seed germination)",
+    "activity": "Group discussion: Guide students in manageable group to discuss growth process in plants and factors affecting growth in plants and animals Project : Guide students in manageable groups to carry out an experiments on growth in plants and small mammals"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of biological concepts",
+    "competence": "(d) Explore the basic tenets of genetics (genetic materials, principles of inhertance, monohybrid, Mendelian and non-Mendelian inheritance; variation",
+    "activity": "Brainstorming: Guide students to brainstorm on the concept of genetics Group discussion: Guide students in manageable groups to discuss genetic materials, principles of inheritance and variation ICT based learning; Guide students to demonstrate Mendelian laws of inheritance and non-Mendelian inheritance through simulation Problem solving: Guide students to apply principles of genetics to solve genetic problems"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.1 Demonstrate mastery of basic skills for conducting biological investigations (a) Carry out investigation related to reproduction in flowering plants (flower structure and embryo)",
+    "activity": "Practical work: Guide students to make longitudinal and cross-sections of flower to identify reproductive structures and the embryo ICT based learning: Guide students to investigate the reproductive structure of flowering plants through digital simulation"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.1 Demonstrate mastery of basic skills for conducting biological investigations (b) Investigate growth in flowering plants (hypogeal and epigeal germination)",
+    "activity": "Experimentation: Guide students in manageable groups to set up a simple experiment on the investigation of epigeal and hypogeal germination"
+   },
+   {
+    "main": "2.0 Conduct biological investigations",
+    "competence": "2.2 Carry out a biological project work using biological principles (a) Complete and submit a report for the research project started in Form Three",
+    "activity": "Project activity: Guide students to prepare and submit report of a research project"
+   }
+  ]
+ }
+}

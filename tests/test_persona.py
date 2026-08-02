@@ -28,8 +28,8 @@ def days_ago(n: int) -> str:
 
 
 class TestRegistry(unittest.TestCase):
-    def test_both_bots_registered(self):
-        self.assertEqual(set(bots.REGISTRY), {"lissa", "athar"})
+    def test_every_bot_is_registered(self):
+        self.assertEqual(set(bots.REGISTRY), {"lissa", "athar", "somo"})
 
     def test_unknown_slug_is_none(self):
         self.assertIsNone(bots.get("nobody"))
