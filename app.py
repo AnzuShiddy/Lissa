@@ -37,7 +37,11 @@ from core.persona import Bot
 STATIC = Path(__file__).parent / "static"
 SITE = "LucidDive"
 
-# When set, /api/stats requires ?token=<this>; unset leaves it open.
+# /api/stats requires ?token=<this>. Unset now closes the endpoint instead of
+# opening it: an unset secret is the normal state of a fresh deploy, so the old
+# "unset means public" rule meant one forgotten dashboard field silently
+# published the usage figures — which is exactly how it shipped. Keep-warm
+# pings /healthz, which stays open by design and carries no data.
 STATS_TOKEN = os.environ.get("PLATFORM_STATS_TOKEN", "")
 
 MAX_IMAGE_BYTES = 4 * 1024 * 1024
@@ -197,6 +201,20 @@ def service_worker() -> FileResponse:
 @app.get("/privacy")
 def privacy() -> FileResponse:
     return FileResponse(STATIC / "privacy.html", media_type="text/html")
+
+
+@app.get("/healthz")
+def healthz() -> dict:
+    """Liveness only — no counts, no session state, nothing worth guessing a
+    URL for. This is what the keep-warm schedule pings; a data endpoint makes
+    a poor heartbeat, because waking the instance shouldn't require reading
+    anything out of it.
+
+    Declared above /{slug} on purpose: that catch-all matches any single
+    segment, and FastAPI takes routes in definition order, so anything left
+    below it is unreachable.
+    """
+    return {"ok": True}
 
 
 @app.get("/{slug}")
@@ -431,8 +449,15 @@ def bot_list() -> dict:
 
 @app.get("/api/stats")
 def usage_stats(token: str = "") -> dict:
-    """Aggregate usage — counts only, nothing personal. Set
-    PLATFORM_STATS_TOKEN to require ?token=."""
-    if STATS_TOKEN and not secrets.compare_digest(token, STATS_TOKEN):
+    """Aggregate usage — counts only, nothing personal.
+
+    Requires ?token= matching PLATFORM_STATS_TOKEN. With no token configured
+    the endpoint is closed rather than open, so a deploy that forgets the
+    variable exposes nothing.
+    """
+    if not STATS_TOKEN:
+        raise HTTPException(status_code=404,
+                            detail="stats disabled: set PLATFORM_STATS_TOKEN")
+    if not secrets.compare_digest(token, STATS_TOKEN):
         raise HTTPException(status_code=403)
     return {**analytics.stats(), "sessions_live": engine.session_count()}

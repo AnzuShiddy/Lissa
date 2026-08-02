@@ -154,9 +154,14 @@ endpoint.
   — timestamps, message *lengths*, feature flags, and whether the visitor
   is new or returning. Never message content; sessions appear only as a
   one-way hash. Events append to `analytics.jsonl` and mirror to stdout so
-  a host's log store keeps a durable copy. `GET /api/stats` aggregates the
-  last two weeks. Logic in `core/analytics.py`, suite in
-  `tests/test_analytics.py`.
+  a host's log store keeps a durable copy — on a free tier with no disk that
+  log *is* the archive, and `tools/ingest_analytics.py` merges an export back
+  into the event log so a deploy doesn't cost you your history.
+  `GET /api/stats` aggregates the last two weeks and **requires**
+  `?token=<PLATFORM_STATS_TOKEN>`; with no token configured it is closed
+  rather than open. `/healthz` is the open heartbeat and carries no counts.
+  Logic in `core/analytics.py`, suites in `tests/test_analytics.py` and
+  `tests/test_ingest.py`.
 - **Rate limits**: a token bucket per session (`PLATFORM_RATE_PER_MIN`,
   default 8) and a daily ceiling (`PLATFORM_DAILY_CALLS`, default 600)
   protect the shared key. Hitting one gets an in-character "give me a sec"
@@ -237,6 +242,7 @@ come back empty rather than invented.
 | `bots/<slug>/` | one directory per bot: prompts, config, avatar |
 | `static/landing.html` | the bot picker at `/` |
 | `static/app.html` | the chat UI, themed per bot |
+| `tools/ingest_analytics.py` | merge a Render log export back into the event log |
 | `tools/` | icon generation and other one-off scripts |
 
 ## Tests
@@ -262,8 +268,8 @@ NODE_PATH=$(npm root -g) node tests/ui_test.js
 
 `render.yaml` is set up for Render's free tier; set `GEMINI_API_KEY` in the
 dashboard. Useful environment variables: `PLATFORM_RATE_PER_MIN`,
-`PLATFORM_DAILY_CALLS`, `PLATFORM_STATS_TOKEN` (puts `/api/stats` behind
-`?token=`), `PLATFORM_ANALYTICS_FILE`. Details in
+`PLATFORM_DAILY_CALLS`, `PLATFORM_STATS_TOKEN` (**required** to open
+`/api/stats` at all), `PLATFORM_ANALYTICS_FILE`. Details in
 [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Launch & demo tooling
