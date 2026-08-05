@@ -100,6 +100,49 @@ class DetectTests(unittest.TestCase):
                          ("Biology", "Form Two"))
 
 
+class CatalogueTests(unittest.TestCase):
+    """The catalogue is in every Somo prompt, so anything it claims is
+    something the tutor will repeat to a student as fact."""
+
+    def test_it_names_every_subject(self):
+        text = syllabus.catalogue()
+        for subject in syllabus.subjects():
+            with self.subTest(subject=subject):
+                self.assertIn(subject, text)
+
+    def test_it_never_claims_a_form_a_subject_does_not_have(self):
+        """The bug this replaced: a blanket "each covers Form One to Form
+        Four" handed the tutor a Form One Literature syllabus to invent."""
+        text = syllabus.catalogue()
+        for subject in syllabus.subjects():
+            missing = [f for f in syllabus.FORMS
+                       if f not in syllabus.forms_for(subject)]
+            if not missing:
+                continue
+            with self.subTest(subject=subject):
+                self.assertIn(subject, text)
+                # named as an exception, with the forms it actually has
+                for form in syllabus.forms_for(subject):
+                    self.assertIn(form, text)
+
+    def test_the_blanket_claim_survives_only_while_it_is_true(self):
+        every = all(syllabus.forms_for(s) == list(syllabus.FORMS)
+                    for s in syllabus.subjects())
+        says_all = "Each covers Form One to Form Four." in syllabus.catalogue()
+        self.assertEqual(says_all, every)
+
+    def test_literature_is_carried_as_the_exception_it_is(self):
+        text = syllabus.catalogue()
+        self.assertIn("Literature in English (Form Three and Form Four only)",
+                      text)
+
+    def test_and_list_reads_aloud(self):
+        self.assertEqual(syllabus._and_list([]), "")
+        self.assertEqual(syllabus._and_list(["a"]), "a")
+        self.assertEqual(syllabus._and_list(["a", "b"]), "a and b")
+        self.assertEqual(syllabus._and_list(["a", "b", "c"]), "a, b and c")
+
+
 class ContextTests(unittest.TestCase):
     def test_with_nothing_settled_it_offers_the_catalogue(self):
         """This is what lets the tutor ask a precise opening question."""
