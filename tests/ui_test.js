@@ -307,6 +307,48 @@ const check = (cond, name) => {
     "fix4: stop keeps partial text and halts the stream");
   check(await page.$eval("#mic", (el) => !el.disabled), "fix4: input unlocked after stop");
 
+  /* ---- stop button while she's only speaking ----
+     A long reply finishes streaming well before she finishes reading it, so
+     `busy` is false while the voice runs on. The button has to stay a stop
+     button through that window — the avatar also stops her, but it announces
+     itself through a tooltip, which a phone never shows. Driven through
+     speakingUI() rather than a real reply: this is button state, not TTS. */
+  await page.evaluate(() => { stopSpeaking(); speakingUI(true); });
+  let sendState = await page.evaluate(() => {
+    const b = document.getElementById("send");
+    return {
+      stop: b.classList.contains("stop"),
+      stopVoice: b.classList.contains("stop-voice"),
+      icon: getComputedStyle(b.querySelector(".stop-icon")).display !== "none",
+      title: b.title,
+      aria: b.getAttribute("aria-label"),
+    };
+  });
+  check(sendState.stopVoice && sendState.icon,
+    "speak-stop: send button shows the stop icon while she speaks");
+  check(!sendState.stop,
+    "speak-stop: uses .stop-voice, leaving .stop to mean a live stream");
+  check(sendState.title === "Stop the voice" && sendState.aria === sendState.title,
+    "speak-stop: labelled for the voice, not the reply (got: " + sendState.title + ")");
+  // but anything worth sending wins the button back
+  await page.fill("#msg", "hold on");
+  check(await page.$eval("#send", (b) => !b.classList.contains("stop-voice")),
+    "speak-stop: typing over her voice turns it back into send");
+  await page.fill("#msg", "");
+  check(await page.$eval("#send", (b) => b.classList.contains("stop-voice")),
+    "speak-stop: clearing the composer restores the stop button");
+  const usersBeforeStop = await page.$$eval(".bubble.user", (e) => e.length);
+  await page.click("#send");
+  sendState = await page.evaluate(() => ({
+    speaking: document.getElementById("avatarWrap").classList.contains("speaking"),
+    stopVoice: document.getElementById("send").classList.contains("stop-voice"),
+  }));
+  check(!sendState.speaking && !sendState.stopVoice,
+    "speak-stop: clicking it cuts the voice and restores send");
+  await page.waitForTimeout(300);
+  check(await page.$$eval(".bubble.user", (e) => e.length) === usersBeforeStop,
+    "speak-stop: stopping her voice doesn't also send a message");
+
   /* ---- fix 1: smart auto-scroll + pill ---- */
   await page.evaluate(() => {
     for (let i = 0; i < 20; i++) addBubble("lissa", "filler line " + i + "\nmore text");
