@@ -167,14 +167,38 @@ def activities(subject: str, form: str) -> list[dict]:
     return data["forms"].get(form, [])
 
 
+def _and_list(items: list[str]) -> str:
+    """"a", "a and b", "a, b and c" — the tutor reads this aloud."""
+    if len(items) <= 1:
+        return "".join(items)
+    return ", ".join(items[:-1]) + " and " + items[-1]
+
+
 def catalogue() -> str:
     """The one-line inventory the tutor always carries, so it knows the edge
-    of what it can ground on before a student names anything."""
+    of what it can ground on before a student names anything.
+
+    The forms are read off the data rather than asserted. Not every subject
+    runs the full four: Literature in English starts in Form Three in the
+    Tanzanian system, and a blanket "each covers Form One to Form Four" told
+    the tutor it held a Form One Literature syllabus that does not exist —
+    the exact invention test_a_subject_only_taught_in_the_upper_forms_says_so
+    guards the data against.
+    """
     names = subjects()
     if not names:
         return ""
-    return ("Subjects you have the TIE syllabus for: " + ", ".join(names)
-            + ". Each covers Form One to Form Four.")
+    line = "Subjects you have the TIE syllabus for: " + ", ".join(names) + "."
+    odd = [(name, forms) for name in names
+           if (forms := forms_for(name)) != list(FORMS)]
+    if not odd:
+        return line + " Each covers Form One to Form Four."
+    if len(odd) < len(names):
+        line += " Each covers Form One to Form Four, except:"
+    else:
+        line += " The forms each one covers:"
+    return line + " " + "; ".join(
+        f"{name} ({_and_list(forms)} only)" for name, forms in odd) + "."
 
 
 def context(subject: str | None, form: str | None) -> str:
