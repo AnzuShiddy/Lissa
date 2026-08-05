@@ -11,6 +11,7 @@ after a quiet spell takes ~30s to wake).
 | --- | --- | --- |
 | **Lissa** 💋 | `/lissa` | A warm, playful companion for late-night conversation. |
 | **Athar** 🌙 | `/athar` | Questions about Islam, answered from the Qur'an and the authentic Sunnah. |
+| **Somo** 📘 | `/somo` | A study partner for the Tanzanian secondary syllabus, Form One to Four. |
 
 The landing page at `/` lists whatever bots are registered. Everything
 below the persona — streaming, memory, recall, voice, analytics, rate
@@ -102,7 +103,7 @@ set the UI languages; `greetings` / `returning` / `awhile` are the scripted
 first lines; `edge_voice` and `edge_rate` pick the speaking voice;
 `palette` and `avatar_svg` set the look; and `features` gates optional
 machinery — a bot without `"prayer"` simply has no `/api/<slug>/prayer`
-endpoint.
+endpoint, and a bot without `"syllabus"` has no `/api/<slug>/syllabus`.
 
 ## How it works
 
@@ -234,6 +235,46 @@ sighting, and around the two Eids that is the entire question. At high
 latitudes, where the sun never reaches the Fajr or Isha angle, those times
 come back empty rather than invented.
 
+### Somo
+
+Somo teaches by asking. A tutor that simply answers is a worse search engine,
+so its first move is almost never the answer: it's a question back, aimed
+just past what the student has shown it they can do, one at a time. It says
+plainly whether an answer was right before moving on, and when someone is
+wrong it asks the question that makes the contradiction visible rather than
+correcting them outright. Two failed attempts on the same step and it stops
+asking and teaches it — Socratic method with someone genuinely lost is just
+cruelty with extra steps. Facts get told, not interrogated: a definition, a
+formula, a date is simply given. Homework gets walked through a step at a
+time, never done.
+
+**It is grounded in the real syllabus.** `core/syllabus.py` reads the
+Tanzania Institute of Education 2023 competence-based syllabus for Ordinary
+Secondary Education from `data/syllabus/` — 14 subjects, Form I–IV, 769
+learning activities parsed from the official TIE PDFs, each keeping the main
+competence, the specific competence and the activity as TIE worded them. No
+key, no API call, offline, like `core/prayer.py`.
+
+That wording is the point: Somo can quote what a student is actually assessed
+against instead of improvising a plausible topic list, and it is told not to
+present anything outside that text as syllabus. `GET /api/somo/syllabus`
+lists what it holds, because the honest answer to "does it know my subject"
+is that list rather than the bot's own say-so.
+
+The unit of grounding is (subject, form) — the whole syllabus is ~206k
+characters, far too much for a prompt, while one form of one subject is
+~2–3k. So Somo's first job is establishing which one it's working in, in
+either English or Kiswahili ("form two biology", "kidato cha nne, fizikia").
+That's held on the conversation rather than in the browser: it's settled by
+asking, and re-asking after a few hours away is natural for a tutor in a way
+that re-asking for someone's coordinates would not be.
+
+Two honest limits. Literature in English only runs Form III–IV, and the data
+says so rather than inventing a Form One syllabus. And 22 of the 769 learning
+activities didn't survive extraction from TIE's PDFs; the competence above
+each is intact, so those rows still carry, but the gap is real — and it is a
+gap in the parse, not in the syllabus.
+
 ## Layout
 
 | path | what it is |
@@ -246,6 +287,8 @@ come back empty rather than invented.
 | `core/recall.py` | semantic recall — only the relevant facts per message |
 | `core/speech.py` | transcription and TTS |
 | `core/prayer.py` | prayer times, qibla, Hijri date (standard library only) |
+| `core/syllabus.py` | the TIE secondary syllabus, read locally |
+| `data/syllabus/` | 14 subjects, Form I–IV, from the official TIE 2023 PDFs |
 | `core/analytics.py` | anonymous usage counters |
 | `bots/<slug>/` | one directory per bot: prompts, config, avatar |
 | `static/landing.html` | the bot picker at `/` |

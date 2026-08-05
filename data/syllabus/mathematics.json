@@ -1,0 +1,306 @@
+{
+ "subject": "Mathematics",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727256902-MATHEMATICS%20SYLLABUS%20-%20O%20level%20final.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.1 Use numerical skills in different contexts",
+    "activity": "(a) Explain the basic concepts of Mathematics (Meaning of mathematics, branches of mathematics, relationship between mathematics and other subjects, importance of mathematics)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.1 Use numerical skills in different contexts",
+    "activity": "(b) Explain the concept of rational, irrational, and real numbers"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.1 Use numerical skills in different contexts",
+    "activity": "(b) Convert repeating/recurring decimals into fractions and vice versa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.1 Use numerical skills in different contexts",
+    "activity": "(c) Represent rational numbers on a number line"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.1 Use numerical skills in different contexts",
+    "activity": "(d) Explain the concept of inequalities and absolute values of real numbers"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.1 Use numerical skills in different contexts",
+    "activity": "(e) Describe the importance of numbers in real-life situations"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.2 Use ratios and proportions in daily life",
+    "activity": "(a) Explain the concept of ratios and proportions"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.2 Use ratios and proportions in daily life",
+    "activity": "(b) Solve ratio and proportion problems"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.1 Use geometry, approximations, relations and functions in various contexts",
+    "activity": "(a) Explain the concept of approximations (rounding off, significant figures, and decimal places)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.1 Use geometry, approximations, relations and functions in various contexts",
+    "activity": "(b) Round off numbers and estimate values of expressions"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.1 Use geometry, approximations, relations and functions in various contexts",
+    "activity": "(c) Approximate numbers to the required significant figures and decimal places"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.1 Use geometry, approximations, relations and functions in various contexts",
+    "activity": "(d) Use approximations in computations and measurements of quantities in various contexts"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(a) Explore the basic tenets of algebra (algebraic expressions and equations, linear simultaneous equations of two unknowns, inequalities in one unknown)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(b) Use algebraic expressions to model situations (word problems into algebraic expressions and equations)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(c) Solve simultaneous equations using substitution and elimination methods"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(d) Solve inequalities in one unknown"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability and statistics",
+    "competence": "3.1 Use basic coordinate geometry, trigonometry and vectors skills in daily life",
+    "activity": "(a) Explore the basic tenets of coordinate geometry (gradient and equations of a straight line, graphs of linear equations)"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability and statistics",
+    "competence": "3.1 Use basic coordinate geometry, trigonometry and vectors skills in daily life",
+    "activity": "(b) Find the gradient/slope of a line"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability and statistics",
+    "competence": "3.1 Use basic coordinate geometry, trigonometry and vectors skills in daily life",
+    "activity": "(c) Determine the equation of a straight line and draw its graph"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability and statistics",
+    "competence": "3.1 Use basic coordinate geometry, trigonometry and vectors skills in daily life",
+    "activity": "(d) Solve linear simultaneous equations graphically"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability and statistics",
+    "competence": "3.1 Use basic coordinate geometry, trigonometry and vectors skills in daily life",
+    "activity": "(e) Use mathematical software to solve and draw graphs of simultaneous equations"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.1 Use rates and variations in different contexts",
+    "activity": "(a) Describe the concepts of rates and variations"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of mathematical language",
+    "competence": "1.1 Use rates and variations in different contexts",
+    "activity": "(b) Solve problems on rates and variations"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.1 Use geometry, approximations, relations and functions in various contexts",
+    "activity": "(a) Describe the concepts of geometry (similarities and congruence)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.1 Use geometry, approximations, relations and functions in various contexts",
+    "activity": "(b) Recognize properties of similar triangles"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.1 Use geometry, approximations, relations and functions in various contexts",
+    "activity": "(c) Explain postulates, proofs, and theorems of congruent triangles"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(a) Explore the basic tenets of algebra (binary operations, quadratic expressions and equations, radicals, exponents, and logarithms)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(b) Solve quadratic equations by using different methods (factorisation, Completing the square, and quadratic formula)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(c) Identify and use laws of exponents involving positive, negative, and zero exponents (multiplication law, division law, power law, and zero index)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(d) Write numbers in standard form"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(e) Use laws of logarithms to solve problems"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.2 Use algebra and matrices in problem solving",
+    "activity": "(f) Perform operations on radicals and rationalize the denominators"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.3 Use sets, sequences and series in problem solving",
+    "activity": "(a) Explore the basic tenets of sets (types of sets, subsets, operation with sets, and Venn diagrams of two sets)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.3 Use sets, sequences and series in problem solving",
+    "activity": "(b) Distinguish among different types of sets (universal set, equal sets, empty/null set, finite and infinite sets, equivalent sets, and disjoint sets)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.3 Use sets, sequences and series in problem solving",
+    "activity": "(c) Compare sets (subsets and universal sets)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.3 Use sets, sequences and series in problem solving",
+    "activity": "(d) Perform operations with sets (union, intersection, and complement of a set)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.3 Use sets, sequences and series in problem solving",
+    "activity": "(e) Represent two sets in a Venn diagram"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "2.3 Use sets, sequences and series in problem solving",
+    "activity": "(f) Find the number of elements in a set"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "3.1 Use basic coordinate geometry, trigonometry and vectors skills in daily life",
+    "activity": "(a) Explore the basic tenets of trigonometry (trigonometric ratios, angles of elevation and depression)"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "3.1 Use basic coordinate geometry, trigonometry and vectors skills in daily life",
+    "activity": "(b) Determine trigonometric ratios of angles and special angles"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "3.1 Use basic coordinate geometry, trigonometry and vectors skills in daily life",
+    "activity": "(c) Calculate angles of elevation and depression"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use geometry, approximations, relations and functions in various contexts",
+    "activity": "Describe the concepts of relations and functions (linear and quadratic) (types of relations, domain and range of relations, graphs of relations and functions, inverse of relations, and functions)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use geometry, approximations, relations and functions in various contexts",
+    "activity": "Find the domain and range of relations and functions"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use geometry, approximations, relations and functions in various contexts",
+    "activity": "Find the inverses of relations and functions"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use geometry, approximations, relations and functions in various contexts",
+    "activity": "Draw graphs of relations and functions"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use algebra and matrices in problem solving",
+    "activity": "Explore the basic tenets of algebra (linear programming: constraints, objective functions, and optimal solution)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use sets, sequences and series in problem solving",
+    "activity": "Explore the basic tenets of sequences and series (Arithmetic progression AP , Geometric progression GP)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use sets, sequences and series in problem solving",
+    "activity": "Find the general term for AP and GP and use them to derive formulae for the sums of APs and GPs"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use sets, sequences and series in problem solving",
+    "activity": "Calculate arithmetic mean, geometric mean, and compound interest"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability and statistics",
+    "competence": "Use basic skills of circles in daily life",
+    "activity": "Explore the basic tenets of a circle (angle properties, theorems, tangents, chords and radians)"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use algebra and matrices in problem solving",
+    "activity": "Explore the basic tenets of matrices ( 2×2 matrices: operations, determinant, inverse, and transformations)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in geometry and algebra",
+    "competence": "Use algebra and matrices in problem solving",
+    "activity": "Apply matrices to solve simultaneous equations of two unknowns (matrix inversion method and Cramer’ s rule)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "Use basic coordinate geometry, trigonometry, and vectors skills in daily life",
+    "activity": "Explore the basic tenets of coordinate geometry (midpoint of a line segment, distance between two points on a line, parallel, and perpendicular lines)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "Use basic coordinate geometry, trigonometry, and vectors skills in daily life",
+    "activity": "Apply sine and cosine rules to find distances or angles of elevation"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "Use basic coordinate geometry, trigonometry, and vectors skills in daily life",
+    "activity": "Derive and use compound angles to solve problems"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "Use basic coordinate geometry, trigonometry, and vectors skills in daily life",
+    "activity": "Explore the basic tenets of vectors (displacement and position vectors, magnitude and direction, sum and differences, multiplication of vectors by a scalar)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "Use probability in problem solving",
+    "activity": "Explore the basic tenets of probability of two events (probability of an event, mutually exclusive events, dependent events, combined events using tree diagrams, tables and formulae)"
+   },
+   {
+    "main": "Demonstrate mastery of basic concepts in coordinate geometry, trigonometry, circles, vectors, probability, and statistics",
+    "competence": "Use statistics in problem solving",
+    "activity": "Explore the basic tenets of statistics (frequency distribution, measures of central tendency, histogram, frequency polygon, and cumulative frequency curve ‘ogive’)"
+   }
+  ]
+ }
+}

@@ -1,0 +1,791 @@
+{
+ "subject": "English Language",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1756459411-ENGLISH%20lANGUAGE%20FINAL.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0 Manage information search from different sources for lifelong learning",
+    "competence": "1.1 Use ICT tools to search for information from different sources",
+    "activity": "(a) Familiarise with various types of search engines (e.g., Google, Google Scholar, Bing)"
+   },
+   {
+    "main": "1.0 Manage information search from different sources for lifelong learning",
+    "competence": "1.1 Use ICT tools to search for information from different sources",
+    "activity": "(b) Utilise ICT tools to search for general information (e.g., books, journals)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.1. Develop listening skills",
+    "activity": "(a) Answer questions based on information from presentations/tasks"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.1. Develop listening skills",
+    "activity": "(b) Practise pronunciation of words from oral and audio/audio-visual sources"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.1. Develop listening skills",
+    "activity": "(c) Write words heard from oral and audio/audio-visual sources"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.1. Develop listening skills",
+    "activity": "(d) Reproduce messages from oral presentations"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.2 Produce short and coherent oral messages with intelligible pronunciation and fluency",
+    "activity": "(a) Distinguish words with minimal sound distinctions that have different meanings (cut/cat; paper/pepper; date/debt)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.2 Produce short and coherent oral messages with intelligible pronunciation and fluency",
+    "activity": "(b) Practise pronunciation with proper word stress assignment"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.2 Produce short and coherent oral messages with intelligible pronunciation and fluency",
+    "activity": "(c) Practise pronunciation of words with short and long vowels (e.g., sit/seat, hit/heat, pot/port)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.2 Produce short and coherent oral messages with intelligible pronunciation and fluency",
+    "activity": "(d) Practise pronunciation of unfamiliar sounds (e.g., through the use of tongue twisters, songs, poems)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.2 Produce short and coherent oral messages with intelligible pronunciation and fluency",
+    "activity": "(e) Practise pronunciation of words with similar sounds that have different spellings (e.g., one/won, ewe/you)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.3 Develop vocabulary from conversations and written texts",
+    "activity": "(a) Write new vocabulary from conversations and written texts on particular topics (e.g., politics, sports, tourism, agriculture)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.3 Develop vocabulary from conversations and written texts",
+    "activity": "(b) Construct sentences using vocabulary acquired from conversations and written texts"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.3 Develop vocabulary from conversations and written texts",
+    "activity": "(c) Play vocabulary building games using digital and non-digital resources (e.g., word board games, charades, picture games, flash cards)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.4 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(a) Express ideas or opinions in contextualised oral and written language tasks using proper grammar and vocabulary (e.g hospital, market, library, bus stop, sport and games)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.4 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(b) Construct sentences using appropriate grammar and vocabulary relating to a specific context (structure: tenses – simple past, simple present, articles, present progressive, pronouns, coordinators, prepositions, adjectives, adverbs)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.4 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(c) Debate on topics using proper grammar and vocabulary"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.1 Read texts for comprehension",
+    "activity": "(a) Sequence the order of events in stories"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.1 Read texts for comprehension",
+    "activity": "(b) Make a summary of stories"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.1 Read texts for comprehension",
+    "activity": "(c) Retell stories"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(a) Paraphrase various oral messages from different contexts"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(b) Respond to oral messages from different contexts"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(c) Respond to questions about oral messages"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(a) Express ideas and opinions in different interpersonal communication settings (e.g., I think…, I guess…, In my opinion…, I would say …)"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(b) Use appropriate non-verbal cues in interpersonal communication"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(c) Use proper grammar and vocabulary in different interpersonal communication contexts (e.g., greetings, biding farewell, apologising)"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(d) Use appropriate language and expressions in communicating with people of different age groups and statuses (e.g., peers, elders, family members, leaders)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(a) Express daily routines (structure: present simple)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(b) Express ongoing activities (structure: present progressive)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(c) Express family relationship and occupations (structure: present simple+progressive)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(d) Express ownership/possession (structure: have/has in present simple and had in past simple, apostrophe, possessive pronouns)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(e) Give directions"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(a) Recognise the main stages of writing texts ( e.g., pre-writing, drafting, revising, editing)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(b) Write a variety of friendly letters and invitations (vocabulary: Dear Father/Uncle, Dear Mother/Aunt, Mr/Mrs…, Dr./Prof./Madam/Ms …)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(c) Create dialogues on various topics (e.g., the value of education, environment, culture, gender equality)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(d) Create and express orally daily and weekly timetables for routines"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.1 Develop listening skills",
+    "activity": "(a) Participate in various conversations in different communicative settings (e.g., peer discussions, storytelling)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.1 Develop listening skills",
+    "activity": "(b) Summarise information from oral presentations and audio/audio-visual sources"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.1 Develop listening skills",
+    "activity": "(c) Paraphrase information presented orally"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.2 Produce short and coherent oral messages with intelligible pronunciation and fluency",
+    "activity": "(a) Construct sentences with proper intonation"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.2 Produce short and coherent oral messages with intelligible pronunciation and fluency",
+    "activity": "(b) Use cohesive devices to deliver oral presentations of events (e.g., first of all, moreover, but, however, yet, in contrast, although, otherwise, still, on the contrary, on the other hand)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.3 Develop vocabulary from conversations and written texts",
+    "activity": "(a) Recognise words with opposite meanings from conversations and written texts"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.3 Develop vocabulary from conversations and written texts",
+    "activity": "(b) Use words from conversations and written texts to produce new vocabulary by attaching suffixes and prefixes (e.g., kind-unkind; slow-slowly)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.4 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(a) Produce contextualised oral and written descriptions based on personal experience"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.4 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(b) Compose passages on specific contexts (structure: tenses –past progressive, present perfect, past perfect, present progressive, adjectives, adverbs, coordinators, prepositions, determiners, conjunctions)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.4 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(c) Present messages in formal discussions on various issues using correct grammar and vocabulary"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.1 Read texts for comprehension",
+    "activity": "(a) Express the main ideas from a text"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.1 Read texts for comprehension",
+    "activity": "(b) Infer meanings of unfamiliar words and idiomatic expressions from a given text"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.1 Read texts for comprehension",
+    "activity": "(c) Relate the core messages from a text to real life experiences"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(a) Synthesise ideas from a variety of oral sources"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(b) Summarise information from a variety of oral sources"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(c) Participate in contextualised oral conversations"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(a) Express ideas and opinions in different group communicative settings (differing, counter-arguing, supporting ideas)"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(b) Use appropriate non-verbal cues in group communication"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(c) Use appropriate language to respond to messages in online group communicative contexts (e.g., WhatsApp, Telegram)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(a) Describe various locations (structure: prepositions, adjectives, adverbs)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(b) Express quality and quantity of objects and living organisms (structure: adjectives, quantifiers, adverbs)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(c) Negotiate prices using appropriate expressions (e.g., convincing a customer to buy a product, convincing a seller to lower the price) (Structure: May I…, I would like…, could you …, I offer you…)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(d) Request for services in different contexts"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(e) Participate in various conversations in different contexts (e.g., discussions, dialogues) by initiating, intervening, changing a topic, turn-taking and closing"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(a) Write claim and request letters in different contexts (e.g., learning facilities, sports gear, result report – Structure: I would like to bring your kind attention… I am writing to request…)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(b) Compose E-mails on various issues using appropriate language"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(c) Create short stories on various topics (structure: once upon a time …, I wonder…, what if…, back in time…)"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "1.0 Manage information search from different sources for lifelong learning",
+    "competence": "1.1 Organise information obtained from different sources",
+    "activity": "(a) Identify different ways/strategies for organising information from various sources"
+   },
+   {
+    "main": "1.0 Manage information search from different sources for lifelong learning",
+    "competence": "1.1 Organise information obtained from different sources",
+    "activity": "(b) Sort and categorise information obtained from various sources into related themes"
+   },
+   {
+    "main": "1.0 Manage information search from different sources for lifelong learning",
+    "competence": "1.1 Organise information obtained from different sources",
+    "activity": "(c) Compile information searched from various sources"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.1 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(a) Hold conversations about various contexts using appropriate grammar and vocabulary (structure: tenses, adverbs, adjectives, active and passive voice, conjunctions, coordinators, prepositions)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.1 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(b) Compose stories using proper grammar and vocabulary (structure: tenses, adverbs, adjectives, active and passive voice, conjunctions, coordinators, prepositions)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of English language skills",
+    "competence": "2.1 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(c) Describe events (e.g., general elections, state funerals, world cup) using correct grammar and vocabulary"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.1 Read texts for comprehension",
+    "activity": "(a) Distinguish facts from opinions within a given text"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.1 Read texts for comprehension",
+    "activity": "(b) Express connotative meanings of words in relation to a text"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.1 Read texts for comprehension",
+    "activity": "(c) Paraphrase a given text"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(a) Discuss information from various oral sources"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(b) Respond to various oral messages"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(c) Make comments on oral messages"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(a) Express ideas, opinions and facts in mass communication contexts"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(b) Use and interpret appropriate non-verbal cues in mass communication"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(c) Use appropriate language to respond to contextualised public messages (e.g., responding to criticism, accomplishment)"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(d) Use appropriate language in public communication settings, (e.g., interviews, presentations)"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(e) Express appreciation of other people’s ideas in public communication"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.3 Respond appropriately in a variety of oral and written communication contexts",
+    "activity": "(f) Evaluate information received through mass communication"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.4 Construct meaning from a variety of texts",
+    "activity": "(a) Compare ideas from various texts"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.4 Construct meaning from a variety of texts",
+    "activity": "(b) Read and generate meanings from a variety of texts"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.4 Construct meaning from a variety of texts",
+    "activity": "(c) Infer meanings of unfamiliar words from a variety of texts"
+   },
+   {
+    "main": "3.0 Comprehend oral and written information",
+    "competence": "3.4 Construct meaning from a variety of texts",
+    "activity": "(d) Paraphrase textual information from multiple sources"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(a) Express opinions through debates, dialogues and impromptu speeches using formulaic language (e.g., In my opinion…, personally…, I think …, I would say…, In my view…, from my perspective…, My point is…, It seems to me that…, I believe…)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(b) Present facts logically using appropriate formulaic language (e.g., due to the fact that…, it is true that…, the bottom line is…, the reality is…, in fact…actually… according to…)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(c) Describe conditions about various situations and circumstances (structure: conditional sentences)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(d) Ask and respond to questions in interview sessions (e.g., job interview, panel interview, TV/radio interview)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(e) Describe activities and events of a social or cultural nature (e.g., celebrations, parades, accidents, elections, funerals, sport and games) using different tenses"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(a) Write a letter to the editor, an order letter and a complaint letter (structure: Dear editor.., I would like to order…. We are glad to place our first order…, I am writing to complain about…, I am writing to bring your attention…, a complaint against…)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(b) Write reports on various events ( e.g., sports, graduation, study tours)"
+   },
+   {
+    "main": "4.0 Communicate effectively in different contexts",
+    "competence": "4.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(c) Write biographies (structure: past and present tense, third person)"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.1 Apply principles of editing and proofreading in a variety of texts",
+    "activity": "(a) Recognise the basic principles of editing and proofreading texts (e.g., sentence construction, language clarity, grammar, semantic rules, logical flow)"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.1 Apply principles of editing and proofreading in a variety of texts",
+    "activity": "(b) Describe the main steps of editing and proofreading"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.1 Apply principles of editing and proofreading in a variety of texts",
+    "activity": "(c) Describe the basic principles and methods of editing and proofreading"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.1 Apply principles of editing and proofreading in a variety of texts",
+    "activity": "(d) Use the principles of editing and proofreading to edit and proofread simple and short texts in a school context (e.g., laboratory rules, announcements)"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.2 Apply principles of interpretation to provide simple authentic interpretations",
+    "activity": "(a) Explain the concept of interpretation"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.2 Apply principles of interpretation to provide simple authentic interpretations",
+    "activity": "(b) Elaborate the principles of interpretation"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.2 Apply principles of interpretation to provide simple authentic interpretations",
+    "activity": "(c) Interpret a short simple text in a school context (e.g., greetings, self introductions) (English to Kiswahili and vice versa)"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.3 Apply principles of translation to produce simple authentic translation",
+    "activity": "(a) Explain the concept of translation"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.3 Apply principles of translation to produce simple authentic translation",
+    "activity": "(b) Elaborate the principles of translation"
+   },
+   {
+    "main": "5.0 Provide basic English language services to the community",
+    "competence": "5.3 Apply principles of translation to produce simple authentic translation",
+    "activity": "(c) Translate a simple short text in a school context (e.g., laboratory rules, timetables, joining instructions) (English to Kiswahili and vice versa)"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.1 Appreciate the aesthetics and value of literature",
+    "activity": "(a) Assess the language used in selected poems and plays"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.1 Appreciate the aesthetics and value of literature",
+    "activity": "(b) Compare own values and perspectives with those implied in selected poems and plays"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.2 Evaluate the context in which literary texts are written, read and understood",
+    "activity": "(a) Assess the socio-political and cultural contexts in which the selected poems and plays were written"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.2 Evaluate the context in which literary texts are written, read and understood",
+    "activity": "(b) Examine the socio-political, economic and cultural issues portrayed in selected poems and plays"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.2 Evaluate the context in which literary texts are written, read and understood",
+    "activity": "(c) Relate the context of the story in selected poems and plays with real life experiences"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.3 Analyse genres of literature and appreciate their conventions",
+    "activity": "(a) Describe different genres of written literature and their conventions"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.3 Analyse genres of literature and appreciate their conventions",
+    "activity": "(b) Analyse techniques of critiquing poems and plays based on their conventions"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.3 Analyse genres of literature and appreciate their conventions",
+    "activity": "(c) Critique selected poems and plays based on form and content"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.4 Create simple literary works",
+    "activity": "(a) Compose free verse poems on various topics using literary language"
+   },
+   {
+    "main": "6.0 Appreciate and create literary works",
+    "competence": "6.4 Create simple literary works",
+    "activity": "(b) Publish the poems on various platforms (e.g., note boards and online platforms)"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.1 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(a) Prepare and deliver short speeches about common topics (e.g., entrepreneurship, corruption, child rights and security, gender education, cyber security education, disaster management, health and reproductive education, drug abuse, life skills, financial management education, taxation)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of English language skills",
+    "competence": "1.1 Use appropriate grammar and vocabulary in oral and in written language tasks",
+    "activity": "(b) Compose different types of essays (narrative, descriptive, argumentative and expository) using correct grammar and vocabulary"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.1 Read texts for comprehension",
+    "activity": "(a) Discuss the author’s motives in a given text"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.1 Read texts for comprehension",
+    "activity": "(b) Deliver an oral presentation about the content of a text"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.1 Read texts for comprehension",
+    "activity": "(c) Draw inferences (conclusions) from a text"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(a) Deduce the main ideas from an oral presentation or language task"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(b) Examine information from oral sources"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.2 Comprehend oral messages with increasing difficulty",
+    "activity": "(c) Relate the core messages of an oral presentation to real life experiences"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.3 Construct meaning from a variety of texts",
+    "activity": "(a) Explore strategies for deriving meanings of words from given texts (e.g., contextual guessing)"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.3 Construct meaning from a variety of texts",
+    "activity": "(b) Synthesise ideas and draw conclusions from multiple and diverse texts"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.3 Construct meaning from a variety of texts",
+    "activity": "(c) Write a single text from information and opinions derived from a variety of texts"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.3 Construct meaning from a variety of texts",
+    "activity": "(d) Make inferences about a variety of texts"
+   },
+   {
+    "main": "2.0 Comprehend oral and written information",
+    "competence": "2.3 Construct meaning from a variety of texts",
+    "activity": "(e) Relate the core messages from multiple and diverse texts to real life experiences"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(a) Express feelings and emotions depicted/portrayed in various social contexts using appropriate phrases (e.g., I am saddened…, I am upset…, my condolences… I feel happy… hurray…)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(b) Deliver different kinds of planned and unplanned speeches (e.g., informative, persuasive speech) on different topics"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.1 Use appropriate grammar and vocabulary for oral communication in a variety of contexts",
+    "activity": "(c) Negotiate solutions to various problems using appropriate formalaic language (e.g., Would you mind…, don’t you think…, is it possible…, if I were you…)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(a) Write application letters for various purposes ( e.g., job application, school admission)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(b) Write speeches on a variety of topics, including cross-cutting issues"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.2 Create a variety of texts for different communicative purposes using the appropriate tone and register",
+    "activity": "(c) Write Curriculum Vitae (CV) for different purposes"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.3 Conduct a socio-cultural analysis of functional texts",
+    "activity": "(a) Analyse different functional texts in terms of purpose, content, organisation, format and design"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.3 Conduct a socio-cultural analysis of functional texts",
+    "activity": "(b) Read a variety of functional texts (e.g., recipes, product manuals, transport schedules, forms, brochures, and menus)"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.3 Conduct a socio-cultural analysis of functional texts",
+    "activity": "(c) Comment on the usefulness of different functional texts"
+   },
+   {
+    "main": "3.0 Communicate effectively in different contexts",
+    "competence": "3.3 Conduct a socio-cultural analysis of functional texts",
+    "activity": "(d) Compose functional texts to serve various purposes"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.1 Apply principles of editing and proofreading in a variety of texts",
+    "activity": "(a) Edit and proofread texts in a school context (e.g., school rules and regulations, essays/ compositions)"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.1 Apply principles of editing and proofreading in a variety of texts",
+    "activity": "(b) Edit and proofread short texts in contexts outside the school (e.g. posters, flyers, user manuals)"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.2 Apply principles of interpretation to provide simple authentic interpretations",
+    "activity": "(a) Interpret messages in informal contexts (e.g., family conversations and peer conversations) (from English to Kiswahili and vice versa)"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.2 Apply principles of interpretation to provide simple authentic interpretations",
+    "activity": "(b) Interpret messages in small formal settings (e.g., classroom and subject group discussions) (from English to Kiswahili and vice versa)"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.2 Apply principles of interpretation to provide simple authentic interpretations",
+    "activity": "(c) Interpret messages in large formal settings (e.g., church, mosque and meetings) (from English to Kiswahili and vice versa)."
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.3 Apply principles of translation to produce simple authentic translation",
+    "activity": "(a) Translate texts in contexts outside the school (from English to Kiswahili and vice versa)"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.3 Apply principles of translation to produce simple authentic translation",
+    "activity": "(b) Translate a variety of short texts (e.g., advertisements and functional texts) (from English to Kiswahili and vice versa)"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.3 Apply principles of translation to produce simple authentic translation",
+    "activity": "(c) Translate a variety of long texts (from English to Kiswahili and vice versa)"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.4 Manage short translation and editing projects using Computer-Assisted Tools",
+    "activity": "(a) Desribe the use of Computer-Assisted Tools in translating and editing"
+   },
+   {
+    "main": "4.0 Provide basic English language services to the community",
+    "competence": "4.4 Manage short translation and editing projects using Computer-Assisted Tools",
+    "activity": "(b) Use Computer-Assisted Translation Tools to translate and edit short simple texts"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.1 Appreciate the aesthetics and value of literature",
+    "activity": "(a) Assess the language used in a selected novella"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.1 Appreciate the aesthetics and value of literature",
+    "activity": "(b) Compare own values and perspectives with those implied in a selected novella"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.1 Appreciate the aesthetics and value of literature",
+    "activity": "(c) Dramatise episodes from a selected novella"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.2 Evaluate the context in which literary texts are written, read and understood",
+    "activity": "(a) Examine the socio-political and cultural issues portrayed in a selected novella"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.2 Evaluate the context in which literary texts are written, read and understood",
+    "activity": "(b) Relate the context of the story in a selected novella to real life experiences"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.3 Analyse genres of literature and appreciate their conventions",
+    "activity": "(a) Analyse techniques of critiquing literary texts based on their conventions"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.3 Analyse genres of literature and appreciate their conventions",
+    "activity": "(b) Critique a selected novella based on form and content"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.4 Create simple literary works",
+    "activity": "(a) Apply literary skills to compose short stories on various topics"
+   },
+   {
+    "main": "5.0 Appreciate and create literary works",
+    "competence": "5.4 Create simple literary works",
+    "activity": "(b) Publish the short stories on various platforms (e.g., note boards and online platforms)"
+   }
+  ]
+ }
+}

@@ -1,0 +1,45 @@
+<svg viewBox="0 0 120 120" role="img" data-i18n-aria="avatarAlt" aria-label="An open book with a question mark rising from it">
+<defs>
+  <radialGradient id="bgG" cx="50%" cy="36%" r="74%">
+    <stop offset="0%" stop-color="#1b2545"/><stop offset="100%" stop-color="#080d1c"/>
+  </radialGradient>
+  <linearGradient id="pageG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#dce6fb"/><stop offset="100%" stop-color="#93aee2"/>
+  </linearGradient>
+  <linearGradient id="pageG2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#c3d4f5"/><stop offset="100%" stop-color="#7794cf"/>
+  </linearGradient>
+  <linearGradient id="spineG" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#5b8def"/><stop offset="100%" stop-color="#2a4d9c"/>
+  </linearGradient>
+  <linearGradient id="askG" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ffd989"/><stop offset="100%" stop-color="#e0992a"/>
+  </linearGradient>
+  <radialGradient id="sparkG" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffd989" stop-opacity="0.75"/>
+    <stop offset="100%" stop-color="#ffd989" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+<circle cx="60" cy="60" r="60" fill="url(#bgG)"/>
+
+<!-- the question the tutor asks back, glowing above the page -->
+<circle cx="60" cy="34" r="21" fill="url(#sparkG)"/>
+<path d="M53.4 27.6c0-3.9 3.1-6.8 7.1-6.8 3.9 0 6.9 2.6 6.9 6.2 0 2.8-1.4 4.3-3.9 5.9-2.1 1.4-2.8 2.3-2.8 4.1v.8"
+      fill="none" stroke="url(#askG)" stroke-width="3.4" stroke-linecap="round"/>
+<circle cx="60.6" cy="43.6" r="2.2" fill="url(#askG)"/>
+
+<!-- open book -->
+<g>
+  <path d="M60 58.5c-6.5-4.6-14.5-6.6-24-6.1-2.2.1-3.6 1.2-3.6 3.1v29.9c0 1.8 1.3 2.7 3.4 2.6 9.3-.5 17.4 1.4 24.2 6z"
+        fill="url(#pageG)"/>
+  <path d="M60 58.5c6.5-4.6 14.5-6.6 24-6.1 2.2.1 3.6 1.2 3.6 3.1v29.9c0 1.8-1.3 2.7-3.4 2.6-9.3-.5-17.4 1.4-24.2 6z"
+        fill="url(#pageG2)"/>
+  <path d="M60 58.5v35.5" stroke="url(#spineG)" stroke-width="3.6" stroke-linecap="round"/>
+  <!-- lines of text, suggested not spelled out -->
+  <g stroke="#41609e" stroke-width="2" stroke-linecap="round" opacity="0.55">
+    <path d="M40 64.5h13"/><path d="M40 71.5h15"/><path d="M40 78.5h11"/>
+    <path d="M67 64.5h13"/><path d="M67 71.5h15"/><path d="M67 78.5h11"/>
+  </g>
+</g>
+</svg>

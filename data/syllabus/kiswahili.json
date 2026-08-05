@@ -1,0 +1,361 @@
+{
+ "subject": "Kiswahili",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1741937359-MUHTASARI%20WA%20KISWAHILI%20KIDATO%20%20I-IV%20FINAL.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.1   Kutambua Kiswahili kama kielelezo cha utaifa na utambulisho wa Mtanzania",
+    "activity": "(a)  Kutumia Kiswahili katika mijadala mbalimbali kwa kuzingatia utamaduni wa Mtanzania (mf. matumizi ya tafsida na uteuzi wa maneno kulingana na mila na desturi za Mtanzania)"
+   },
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.2   Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(a)  Kusimulia habari na matukio kwa kuzingatia kiimbo, mkazo, na lafudhi pamoja na dhima zake"
+   },
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.2   Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(b)  Kuandika hadithi kwa kuzingatia mpangilio na uhusiano sahihi wa maneno (nomino, vivumishi, vielezi, viwakilishi, vitenzi, vihisishi, vihusishi na viunganishi) katika sentensi"
+   },
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.2   Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(c)  Kuandika hadithi kwa kuzingatia mpangilio na uhusiano sahihi wa sentensi katika aya"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.1  Kusikiliza na kuelewa mazungumzo",
+    "activity": "(a)  Kusikiliza mazungumzo changamani na kujibu maswali"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.1  Kusikiliza na kuelewa mazungumzo",
+    "activity": "(b)  Kueleza kwa muhtasari mazungumzo changamani aliyoyasikiliza"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.1  Kusikiliza na kuelewa mazungumzo",
+    "activity": "(c)  Kushiriki katika majadiliano ya masuala mbalimbali kwa kuzingatia sifa za lugha ya mazungumzo (mf. lugha ya mkato, kupeana nafasi)"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.2  Kusoma matini kwa ufasaha na ufahamu",
+    "activity": "(a)   Kusoma matini fupi changamani kwa kuzingatia alama za uandishi, kasi sahihi na kiimbo cha tungo"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.2  Kusoma matini kwa ufasaha na ufahamu",
+    "activity": "(b)  Kueleza namna alama za uandishi na kiimbo vinavyoathiri ujumbe katika usomaji wa matini fupi changamani"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.2  Kusoma matini kwa ufasaha na ufahamu",
+    "activity": "(c)  Kuandika hoja kuu kutoka katika matini fupi changamani alizozisoma kwa kuzingatia sifa za lugha ya maandishi (mf. alama za uandishi, miunganiko sahihi ya tungo, usanifu)"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.2  Kusoma matini kwa ufasaha na ufahamu",
+    "activity": "(d)  Kutumia TEHAMA kutafuta maana ya maneno mapya kutoka katika matini aliyoisoma"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.1  Kutumia kamusi katika miktadha mbalimbali",
+    "activity": "(a)  Kutumia msamiati kwa usahihi katika mazungumzo na maandishi"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.1  Kutumia kamusi katika miktadha mbalimbali",
+    "activity": "(b)  Kutumia taarifa mbalimbali za kamusi katika mawasiliano ya mazungumzo na maandishi"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.2  Kuwasiliana kwa ufasaha kwa njia ya mazungumzo",
+    "activity": "(a)  Kuzungumza kwa ufasaha katika miktadha mbalimbali (mf. nyumbani, shuleni na hospitalini)"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.2  Kuwasiliana kwa ufasaha kwa njia ya mazungumzo",
+    "activity": "(b)  Kutumia lugha kwa ufasaha katika malumbano ya hoja"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.3  Kuwasiliana kwa njia ya maandishi katika miktadha mbalimbali",
+    "activity": "(a)  Kujieleza kwa ufasaha kwa maandishi katika miktadha mbalimbali"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.1  Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(a)  Kuandika habari kwa kuzingatia upatanisho wa kisarufi (kwa kuzingatia ngeli za nomino na viambishi vya upatanisho) Kuandika na kuwasilisha: Waongoze wanafunzi kuandika kuhusu habari fulani na kuwasilisha darasani ili kubaini uzingativu wa upatanisho wa kisarufi Ziara: Wanafunzi wafanye ziara eneo fulani mahususi kisha waandike kuhusiana na tukio walilolisikia au kulishuhudia kwenye ziara hiyo kwa kuzingatia upatanisho wa kisarufi"
+   },
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.1  Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(b)  Kuzungumza kwa kutumia miundo changamani ya sentensi katika miktadha mbalimbali (sentensi ambatani na changamani) Igizodhima: Waongoze wanafunzi kuigiza kuhusu mada fulani inayoruhusu kujenga hoja na kutumia miundo changamani ya sentensi"
+   },
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.1  Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(c)   Kuandika matini fupi kwa kutumia miundo changamani ya sentensi Uchambuzi wa matini: Waongoze wanafunzi kusoma matini mbalimbali zenye miundo changamani, kisha wabainishe miundo hiyo na kuitumia kuandika matini fupi"
+   },
+   {
+    "main": "2.0   Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.1  Kusikiliza na kuelewa mazungumzo",
+    "activity": "(a)  Kusikiliza habari changamani kwa umakini, udadisi na kuuliza maswali Masimulizi: Waongoze wanafunzi wasikilize habari changamani kwa umakini na udadisi ili kuelewa mazungumzo Maswali na majibu: Waongoze wanafunzi kujibu maswali kutokana na habari changamani waliyoisikiliza"
+   },
+   {
+    "main": "2.0   Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.1  Kusikiliza na kuelewa mazungumzo",
+    "activity": "(b)  Kusikiliza mijadala/habari changamani na kuwasilisha mawazo makuu aliyoyapata kwa kuzingatia uwazi na uwekevu Majadiliano: Waongoze wanafunzi kusikiliza mijadala/ habari changamani kisha wajadiliane na kuwasilisha mawazo makuu waliyoyapata kwa kuzingatia uwazi na uwekevu Masimulizi: Waongoze wanafunzi kusimulia habari changamani kisha kuwasilisha mawazo makuu waliyoyapata kwa kuzingatia uwazi na uwekevu"
+   },
+   {
+    "main": "2.0   Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.2  Kusoma matini kwa ufasaha na ufahamu",
+    "activity": "(a)  Kusoma matini ndefu changamani kwa kina na utunduizi Uchambuzi wa matini: Waongoze wanafunzi kusoma matini ndefu changamani kwa kina na utunduizi kisha waeleze mambo makuu yaliyomo katika matini hizo"
+   },
+   {
+    "main": "2.0   Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.2  Kusoma matini kwa ufasaha na ufahamu",
+    "activity": "(b)  Kusoma matini ndefu changamani, kuandika muhtasari wa hoja kuu zilizomo na kutoa maoni juu ya hoja hizo Uchambuzi wa matini: Waongoze wanafunzi kusoma matini ndefu changamani kisha waandike muhtasari wa hoja kuu zilizomo na kutoa maoni juu ya hoja hizo"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.1  Kuwasiliana kwa ufasaha kwa njia ya mazungumzo",
+    "activity": "(a)  Kuzungumza kwa kutumia mitindo mbalimbali ya lugha ya mazungumzo na kwa kuzingatia miktadha, umri, jinsia na uhusiano Igizodhima: Waongoze wanafunzi kuigiza kwa kuzingatia uhusika fulani kulingana na muktadha wa tukio, umri, jinsia na uhusiano"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.1  Kuwasiliana kwa ufasaha kwa njia ya mazungumzo",
+    "activity": "(b)  Kutumia kwa usahihi ishara zinazoambatana na mazungumzo katika kuwasiliana Igizodhima: Wanafunzi waigize mazungumzo mbalimbali wakizingatia ishara zinazoambatana na mazungumzo"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.2  Kuwasiliana kwa njia ya maandishi katika miktadha mbalimbali",
+    "activity": "(a)  Kuandika insha za wasifu na hoja (za kisanaa na zisizo za kisanaa) Fikiri - Andika- Jozisha - Shirikisha: Waongoze wanafunzi katika jozi kufikiri kisha waandike mambo ya kuzingatia katika uandishi wa insha za wasifu na hoja na kuwasilisha darasani Uchunguzi: Andaa insha kisha waongoze wanafunzi kuchunguza insha za kisanaa na zisizo za kisanaa, wabainishe vipengele vilivyojitokeza katika insha hizo kisha waandike insha"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.2  Kuwasiliana kwa njia ya maandishi katika miktadha mbalimbali",
+    "activity": "(b)  Kusikiliza hoja na kuandika kumbukumbu Ziara: Waongoze wanafunzi kushiriki mikutano mbalimbali na kuandika kumbukumbu Maigizo: Waongoze wanafunzi kuigiza vikao vyenye kuhusisha hoja mbalimbali"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.1  Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(a)  Kuunda maneno kwa njia mbalimbali kutokana na habari alizozisoma au kuzisikiliza (mf. utohoaji, uradidi, uhulutishaji)"
+   },
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.1  Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(b)  Kuandika habari kwa kuzingatia maneno yaliyoundwa kwa njia mbalimbali"
+   },
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.1  Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(c)  Kujenga hoja za uga mahususi kwa kutumia miundo mbalimbali ya sentensi (mf. siasa, uchumi, kilimo na biashara)"
+   },
+   {
+    "main": "1.0  Kumudu misingi ya Kiswahili",
+    "competence": "1.1  Kukuza uelewa wa sarufi ya Kiswahili",
+    "activity": "(d)  Kuandika matini ndefu na changamani kwa kutumia miundo mbalimbali ya sentensi"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.1  Kusikiliza na kuelewa mazungumzo",
+    "activity": "(a)  Kusikiliza habari changamani kitunduizi na kuchangia au kutoa maoni mwafaka"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.1  Kusikiliza na kuelewa mazungumzo",
+    "activity": "(b)  Kusikiliza habari na kuzielezea kwa maneno yake mwenyewe kwa kuzingatia stadi za mawasiliano (mf. uwazi, ukamilifu wa hoja, usahihi, muwala, uwekevu na staha)"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.2  Kusoma matini kwa ufasaha na ufahamu",
+    "activity": "(a)  Kusoma matini ndefu changamani na kuelezea kwa maandishi mawazo makuu yaliyomo kwa kuzingatia stadi za mawasiliano (mf. uwazi, ukamilifu wa hoja, usahihi, muwala, uwekevu na staha"
+   },
+   {
+    "main": "2.0  Kumudu lugha ya mazungumzo na ya maandishi",
+    "competence": "2.2  Kusoma matini kwa ufasaha na ufahamu",
+    "activity": "(b)  Kusoma matini ndefu changamani na kutathmini hoja zilizomo"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.1  Kuwasiliana kwa ufasaha kwa njia ya mazungumzo",
+    "activity": "(a)  Kutumia lugha fasaha katika mazungumzo ya hadhara (mf. mikutano ya hadhara, uwasilishaji mbele ya halaiki na mijadala mbalimbali)"
+   },
+   {
+    "main": "3.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "3.2  Kuwasiliana kwa njia ya maandishi katika miktadha mbalimbali",
+    "activity": "(a)  Kuandika barua na makala za magazetini"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.1  Kukuza uelewa wa misingi ya fasihi ya Kiswahili",
+    "activity": "(a)  Kufafanua dhana ya fasihi na fasihi ya Kiswahili (maana, aina na dhima)"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.1  Kukuza uelewa wa misingi ya fasihi ya Kiswahili",
+    "activity": "(b)  Kuchambua tanzu za fasihi simulizi na andishi"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.2  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(a)  Kujadili dhana ya uhakiki wa kazi za fasihi (maana ya uhakiki, mhakiki na sifa za mhakiki)"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.2  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(b)  Kufafanua misingi ya uhakiki wa kazi za fasihi simulizi na fasihi andishi (vipengele vya fani na maudhui)"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.2  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(c)  Kuhakiki fani na maudhui katika kazi za fasihi simulizi (mashairi na maigizo)"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.2  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(d)  Kuhakiki fani na maudhui katika tamthiliya"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.2  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(e)  Kutathmini namna maudhui ya kazi alizozihakiki yanavyosadifu jamii inayomzunguka"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.3   Kubuni kazi za fasihi ya Kiswahili",
+    "activity": "(a)   Kujadili kanuni za utunzi wa nyimbo, ngonjera na maigizo"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.3   Kubuni kazi za fasihi ya Kiswahili",
+    "activity": "(b)  Kutunga nyimbo, ngonjera na maigizo"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.3   Kubuni kazi za fasihi ya Kiswahili",
+    "activity": "(c)  Kuimba nyimbo na kutamba ngonjera"
+   },
+   {
+    "main": "4.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "4.3   Kubuni kazi za fasihi ya Kiswahili",
+    "activity": "(d)  Kuigiza maigizo"
+   },
+   {
+    "main": "5.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "5.1  Kufanya tafsiri sahili katika lugha ya Kiswahili",
+    "activity": "(a)  Kujadili dhana, misingi, kanuni, na hatua za tafsiri"
+   },
+   {
+    "main": "5.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "5.1  Kufanya tafsiri sahili katika lugha ya Kiswahili",
+    "activity": "(b)  Kutafsiri matini fupi sahili"
+   },
+   {
+    "main": "5.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "5.1  Kufanya tafsiri sahili katika lugha ya Kiswahili",
+    "activity": "(c)  Kutatua changamoto zinazojitokeza katika kutafsiri matini"
+   },
+   {
+    "main": "5.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "5.2  Kuhariri matini mbalimbali za Kiswahili",
+    "activity": "(a)  Kujadili dhana, kanuni na misingi ya uhariri"
+   },
+   {
+    "main": "5.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "5.2  Kuhariri matini mbalimbali za Kiswahili",
+    "activity": "(b)  Kuhariri matini fupi za Kiswahili"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "1.1  Kuwasiliana kwa ufasaha kwa njia ya mazungumzo",
+    "activity": "(a)  Kuigiza usaili kwa kuzungumza na kuandika"
+   },
+   {
+    "main": "1.0  Kuwasiliana katika miktadha mbalimbali",
+    "competence": "1.2  Kuwasiliana kwa njia ya maandishi katika miktadha mbalimbali",
+    "activity": "(a)  Kuandika wasifukazi na tawasifu"
+   },
+   {
+    "main": "2.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "2.1  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(a)  Kujadili dhana ya mashairi andishi"
+   },
+   {
+    "main": "2.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "2.1  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(b)  Kuhakiki fani na maudhui katika mashairi andishi"
+   },
+   {
+    "main": "2.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "2.1  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(c)  Kuhakiki fani na maudhui katika riwaya"
+   },
+   {
+    "main": "2.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "2.1  Kuhakiki kazi za fasihi ya Kiswahili",
+    "activity": "(d)  Kuhusianisha kazi za fasihi na maisha halisi"
+   },
+   {
+    "main": "2.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "2.2   Kubuni kazi za fasihi ya Kiswahili",
+    "activity": "(a)  Kujadili kanuni za utunzi wa hadithi fupi simulizi na andishi"
+   },
+   {
+    "main": "2.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "2.2   Kubuni kazi za fasihi ya Kiswahili",
+    "activity": "(b)  Kutunga hadithi fupi simulizi na andishi"
+   },
+   {
+    "main": "2.0  Kuthamini kazi za fasihi ya Kiswahili",
+    "competence": "2.2   Kubuni kazi za fasihi ya Kiswahili",
+    "activity": "(c)   Kutamba hadithi"
+   },
+   {
+    "main": "3.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "3.1  Kufanya tafsiri sahili katika lugha ya Kiswahili",
+    "activity": "(a)  Kutafsiri matini ndefu sahili"
+   },
+   {
+    "main": "3.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "3.1  Kufanya tafsiri sahili katika lugha ya Kiswahili",
+    "activity": "(b)  Kutathmini matini zilizotafsiriwa"
+   },
+   {
+    "main": "3.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "3.2  Kuhariri matini mbalimbali za Kiswahili",
+    "activity": "(a)  Kuhariri matini ndefu za Kiswahili"
+   },
+   {
+    "main": "3.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "3.2  Kuhariri matini mbalimbali za Kiswahili",
+    "activity": "(b)  Kutathmini matini zilizohaririwa"
+   },
+   {
+    "main": "3.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "3.3  Kufanya ukalimani sahili kwa lugha ya Kiswahili",
+    "activity": "(a)  Kujadili dhana na misingi ya ukalimani"
+   },
+   {
+    "main": "3.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "3.3  Kufanya ukalimani sahili kwa lugha ya Kiswahili",
+    "activity": "(b)  Kueleza stadi muhimu katika ukalimani"
+   },
+   {
+    "main": "3.0  Kutoa huduma ya lugha ya Kiswahili katika jamii",
+    "competence": "3.3  Kufanya ukalimani sahili kwa lugha ya Kiswahili",
+    "activity": "(c)  Kukalimani mazungumzo mafupi na sahili katika miktadha mbalimbali"
+   }
+  ]
+ }
+}

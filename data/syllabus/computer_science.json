@@ -1,0 +1,276 @@
+{
+ "subject": "Computer Science",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727193276-COMPUTER%20SCIENCE%20SYLABUS%20I%20TO%20IV%20(12_07_2023).pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.1 Demonstrate an understanding of the concept of Computer Science",
+    "activity": "(a) Describe the concept of Computer Science (meaning, importance, application)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.1 Demonstrate an understanding of the concept of Computer Science",
+    "activity": "(b) Describe fields related to Computer Science (IT, ICT, IS, Computer Engineering)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.2 Demonstrate an understanding of computer systems",
+    "activity": "(a) Describe computer systems (Meaning, types, functions, and significance)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.2 Demonstrate an understanding of computer systems",
+    "activity": "(b) Describe computer hardware (meaning, components, functions, computer generation)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.2 Demonstrate an understanding of computer systems",
+    "activity": "(c) Describe computer software (meaning, types, functions)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.2 Demonstrate an understanding of computer systems",
+    "activity": "(d) Describe and observe principles of computer system handling (safety measures, management, cleanliness, data backup and utilities)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.3 Demonstrate mastery of maintenance and troubleshooting of computer system",
+    "activity": "(a) Install simple computer software"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.3 Demonstrate mastery of maintenance and troubleshooting of computer system",
+    "activity": "(b) Organise computer files in different operating systems (windows, Linux, etc)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.1 Demonstrate mastery of the basic principles in problem solving",
+    "activity": "(a) Describe the steps in solving a problem using computers (concept of problem solving, steps of problem solving, concept of algorithms)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.1 Demonstrate mastery of the basic principles in problem solving",
+    "activity": "(b) Demonstrate an understanding of basic principle of algorithms"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.1 Demonstrate mastery of the basic principles in problem solving",
+    "activity": "(c) Design and present a single algorithm using flow charts and pseudocode"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.5 Demonstrate mastery of the Internet, and basics of cyber security",
+    "activity": "(a) Describe the concept of internet and cyber security (ethics, security, and privacy)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.5 Demonstrate mastery of the Internet, and basics of cyber security",
+    "activity": "(b) Use Internet services (searching information, www, electronic mail)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.5 Demonstrate mastery of the Internet, and basics of cyber security",
+    "activity": "(c) Understand cyber security threats and related counter measures"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.5 Demonstrate mastery of the Internet, and basics of cyber security",
+    "activity": "(d) Evaluate ethical issues, related principles, and practices of cyber security"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.5 Demonstrate mastery of the Internet, and basics of cyber security",
+    "activity": "(e) Apply basic cyber security measures (passwords, safe browsing, netiquette)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming (using an appropriate structured programming language such as C, python, etc.)",
+    "activity": "(a) Describe concept of programming language (categories, paradigm, generic structures)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming (using an appropriate structured programming language such as C, python, etc.)",
+    "activity": "(b) Describe programming tools (compiler/interpreter, text editor, IDE, Debugger)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming (using an appropriate structured programming language such as C, python, etc.)",
+    "activity": "(c) Install and configure the selected programming language (compiler/interpreter, text editor, IDE, Debugger)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming (using an appropriate structured programming language such as C, python, etc.)",
+    "activity": "(d) Use programming tools of selected programming language to write a program (compile/run and debug a simple program)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming (using an appropriate structured programming language such as C, python, etc.)",
+    "activity": "(e) Use variables, constants, and data types of a selected programming language in a program (operators and expressions)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming (using an appropriate structured programming language such as C, python, etc.)",
+    "activity": "(f) Use syntax and constructs of the selected programming language to write programs branching"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming (using an appropriate structured programming language such as C, python, etc.)",
+    "activity": "(g) Debugging computer programs"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.3 Demonstrate an understanding of the basic principles of computer architecture",
+    "activity": "(a) Describe the concept of data representation (digital data, number systems, data type, character coding (UNICODE and ASCII)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.3 Demonstrate an understanding of the basic principles of computer architecture",
+    "activity": "(b) Represent numbers in different number systems (binary, octal, decimal, and hexadecimal)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.3 Demonstrate an understanding of the basic principles of computer architecture",
+    "activity": "(c) Convert numbers from one system to another (binary, decimal, and hexadecimal)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.3 Demonstrate an understanding of the basic principles of computer architecture",
+    "activity": "(d) Perform arithmetic operations (addition and subtraction) using binary numbers"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming",
+    "activity": "(a) Use the syntax and constructs of selected programming language to write program (using an appropriate structured programming language such as C, python, etc.) (iteration, functions, array, and string)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming",
+    "activity": "(b) Use scope of variable in a program"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming",
+    "activity": "(c) Text and Debug computer program that employs iteration, array, string, branching and functions"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.2 Demonstrate an understanding of basic principles of computer programming",
+    "activity": "(d) Appraise the utility of the developed program"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.4 Demonstrate an understanding of the basics of computer networks",
+    "activity": "(a) Describe the concept of computer network) (meaning, mode, media, components, etc.)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.4 Demonstrate an understanding of the basics of computer networks",
+    "activity": "(b) Design a simple computer network involving a typical topology"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.4 Demonstrate an understanding of the basics of computer networks",
+    "activity": "(c) Create a computer network involving typical topology"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of the basic principles of data management",
+    "competence": "3.1 Demonstrate the mastery of basic principles of databases and database management systems",
+    "activity": "(a) Describe the concept of data and information"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of the basic principles of data management",
+    "competence": "3.1 Demonstrate the mastery of basic principles of databases and database management systems",
+    "activity": "(b) Manage simple data (create, store, retrieve, check data quality)"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of the basic principles of data management",
+    "competence": "3.1 Demonstrate the mastery of basic principles of databases and database management systems",
+    "activity": "(c) Describe the concept of database and database management system"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of the basic principles of data management",
+    "competence": "3.1 Demonstrate the mastery of basic principles of databases and database management systems",
+    "activity": "(d) Design a database"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of the basic principles of data management",
+    "competence": "3.1 Demonstrate the mastery of basic principles of databases and database management systems",
+    "activity": "(e) Create a database using selected software (e.g., MS – Access)"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.4 Demonstrate mastery of systems administration",
+    "activity": "(a) Maintain computer systems – desktop, laptop, tablets, mobile (create, delete/ disable user account, create, modify, and reset password, user support, peripherals)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.4 Demonstrate mastery of systems administration",
+    "activity": "(b) Apply troubleshooting tools and techniques"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the basic Concepts of Computer Science",
+    "competence": "1.4 Demonstrate mastery of systems administration",
+    "activity": "(c) Use selected OS to Perform system administration tasks"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.5 Demonstrate mastery of basic principles of web development (HTML, CSS, and JavaScript)",
+    "activity": "(a) Describe the background of HTML and selected programming languages (CSS, JavaScript)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.5 Demonstrate mastery of basic principles of web development (HTML, CSS, and JavaScript)",
+    "activity": "(b) Install and configure the CSS and JavaScript interpreter (e.g., a web browser)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.5 Demonstrate mastery of basic principles of web development (HTML, CSS, and JavaScript)",
+    "activity": "(c) Create webpages using HTML and CSS, JavaScript"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.5 Demonstrate mastery of basic principles of web development (HTML, CSS, and JavaScript)",
+    "activity": "(d) Publish website"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.5 Demonstrate mastery of basic principles of web development (HTML, CSS, and JavaScript)",
+    "activity": "(e) Appraise the published website"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.6 Demonstrate mastery of basic principles of mobile App",
+    "activity": "(a) Create mobile App using the syntax of the selected program"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.6 Demonstrate mastery of basic principles of mobile App",
+    "activity": "(b) Publish Mobile Apps"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the basic principles of Computer Science",
+    "competence": "2.6 Demonstrate mastery of basic principles of mobile App",
+    "activity": "(c) Appraise the efficacy of the published Mobile Apps"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of the basic principles of data management",
+    "competence": "3.2 Demonstrate the mastery of the basic principles of data analysis",
+    "activity": "(a) Describe principles of data analysis (data collection, pre-processing, processing, visualization, interpretation)"
+   },
+   {
+    "main": "3.0 Demonstrate mastery of the basic principles of data management",
+    "competence": "3.2 Demonstrate the mastery of the basic principles of data analysis",
+    "activity": "(b) Analysis simple data using selected tools (e.g., SPSS, Excel, etc.)"
+   }
+  ]
+ }
+}

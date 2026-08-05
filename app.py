@@ -31,7 +31,7 @@ from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
 import bots
-from core import analytics, engine, persona, prayer, speech
+from core import analytics, engine, persona, prayer, speech, syllabus
 from core.persona import Bot
 
 STATIC = Path(__file__).parent / "static"
@@ -153,6 +153,33 @@ class TTSIn(BaseModel):
     edge: bool = False  # true = don't spend Gemini quota on this (greetings)
 
 
+def situation(bot: Bot, body: Place | None, sess: engine.Session) -> str:
+    """The whole situational note for one turn.
+
+    Each feature contributes what it knows and the rest stay silent, so a bot
+    without prayer never carries prayer times and a bot without syllabus never
+    carries competences. Recomputed per request: "how long until Maghrib?"
+    has to answer from the clock now, and a tutor that has just been told the
+    student's form has to use it on this reply, not the next one.
+    """
+    parts = [body.context_for(bot) if body else ""]
+    if bot.has("syllabus"):
+        parts.append(syllabus.context(*sess.study))
+    return "\n".join(p for p in parts if p)
+
+
+def note_study(bot: Bot, sess: engine.Session, text: str) -> None:
+    """Keep whatever the student just told us about what they're studying.
+
+    Each half is remembered separately, because "and now form three" a week
+    later should change the form without wiping the subject.
+    """
+    if not (bot.has("syllabus") and text):
+        return
+    subject, form = syllabus.detect(text)
+    sess.study = (subject or sess.study[0], form or sess.study[1])
+
+
 def clean_hour(hour: int | None) -> int | None:
     return hour if isinstance(hour, int) and 0 <= hour <= 23 else None
 
@@ -267,7 +294,7 @@ def hello(slug: str, body: MemoryIn, sid: str | None = Cookie(None)) -> dict:
     mem = persona.touch_memory(bot, body.memory(bot))
     with sess.lock:
         if not sess.transcript():
-            sess.rebuild(mem, body.context_for(bot))
+            sess.rebuild(mem, situation(bot, body, sess))
     return {
         "text": persona.greeting(bot, sess.mem, body.lang, clean_hour(body.hour)),
         "memory": sess.mem,
@@ -326,10 +353,10 @@ def chat(slug: str, body: ChatIn, sid: str | None = Cookie(None)) -> StreamingRe
             headers={"x-ratelimited": str(wait)},
         )
 
-    # Recomputed per message rather than per session: "how long until
-    # Maghrib?" has to be answered from the clock now, not from whenever the
-    # page was opened.
-    context = body.context_for(bot)
+    # Before the situation is built, not after: a student who has just said
+    # "form two biology" must get this reply grounded in it, not the next one.
+    note_study(bot, sess, text)
+    context = situation(bot, body, sess)
     return StreamingResponse(engine.stream_reply(sess, parts, text, context),
                              media_type="text/plain; charset=utf-8")
 
@@ -360,7 +387,7 @@ def reset(slug: str, body: MemoryIn | None = None,
     lang = body.lang if body else "en"
     hour = clean_hour(body.hour) if body else None
     with sess.lock:
-        sess.rebuild(mem, body.context_for(bot) if body else "")
+        sess.rebuild(mem, situation(bot, body, sess))
     return {"text": persona.greeting(bot, mem, lang, hour), "memory": mem}
 
 
@@ -437,6 +464,20 @@ def prayer_times(slug: str, body: Place) -> dict:
     if data is None:
         raise HTTPException(status_code=422, detail="valid lat/lon required")
     return data
+
+
+@app.get("/api/{slug}/syllabus")
+def syllabus_index(slug: str) -> dict:
+    """What this tutor can ground on: every subject it holds, and the forms
+    each covers. Read straight off disk — no model call, so it costs no quota
+    and is never rate limited.
+
+    Worth being able to see from outside: the honest answer to "does it
+    actually know my subject" is this list, not the bot's own say-so.
+    """
+    feature_or_404(bot_or_404(slug), "syllabus")
+    return {"subjects": [{"name": name, "forms": syllabus.forms_for(name)}
+                         for name in syllabus.subjects()]}
 
 
 @app.get("/api/bots")

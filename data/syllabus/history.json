@@ -1,0 +1,141 @@
+{
+ "subject": "History",
+ "level": "Ordinary Secondary Education (Form I-IV)",
+ "syllabus_edition": "2023 (Tanzania Institute of Education)",
+ "source_pdf": "https://www.tie.go.tz/uploads/documents/sw-1727255952-HISTORY%20FOR%20FORM%20I-IV.pdf",
+ "forms": {
+  "Form One": [
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.1 Demonstrate an understanding of the concept of History and sources of historical information",
+    "activity": "Describe the concept of History and the sources of historical information"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.2 Demonstrate an understanding of theories of the origin of human beings",
+    "activity": "(a) Describe the theories of the origin of human beings"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.2 Demonstrate an understanding of theories of the origin of human beings",
+    "activity": "(b) Describe the stages of human evolution and their technological Ages"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.3 Demonstrate an understanding of the economic, political, social and technological development of pre-colonial Africa",
+    "activity": "(a) Describe different modes of production in pre-colonial Africa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.3 Demonstrate an understanding of the economic, political, social and technological development of pre-colonial Africa",
+    "activity": "(b) Explain different economic activities and their impact on pre-colonial African societies"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.3 Demonstrate an understanding of the economic, political, social and technological development of pre-colonial Africa",
+    "activity": "(c) Describe social-political organisations and education in pre-colonial African societies"
+   }
+  ],
+  "Form Two": [
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.1 Demonstrate an understanding of interactions among African societies during the pre-colonial period",
+    "activity": "Describe the pre-colonial interactions among the societies of Indian Ocean Islands, Eastern, Western, Northern and Southern Africa (conditions and consequences) Each student to imagine the types, factors that facilitated interactions and effects of pre-colonial interactions with societies of Indian Ocean Islands, Eastern, Western, Northern and Southern Africa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.2. Demonstrate an understanding of the early contacts among the people of Africa, the Middle East, the Far East and Europe from the 1st Century to the 19th Century",
+    "activity": "(a) Describe the early contacts between African societies and the Middle East, Far East and Europe from the 1st Century up to the 15th Century (conditions and consequences) Use jigsaw to let students study African contact with either the Middle East, Far East or Europe by focusing on factors that facilitated the contact and the effects from the 1st Century to the 15th Century, then let each group present in the whole class. Let them reflect on the existing African relations with the Middle East, Far East and Europe and relate them with those of the 1st Century to the 15th Century"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.2. Demonstrate an understanding of the early contacts among the people of Africa, the Middle East, the Far East and Europe from the 1st Century to the 19th Century",
+    "activity": "(b) Explain the contacts between African societies and the Portuguese, French, Dutch and British from the 15th Century up to the 18th Century By using the jigsaw, divide students into four groups and assign each group to study African societies’ contacts with either the Portuguese or French or Dutch or the British with an emphasis on factors that facilitated the contact and the effects from the 15th Century to the 18th Century; then let each group present followed by discussions"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of African history before colonialism",
+    "competence": "1.2. Demonstrate an understanding of the early contacts among the people of Africa, the Middle East, the Far East and Europe from the 1st Century to the 19th Century",
+    "activity": "(c) Describe the origin, development and effects of the slave trade from the 15th Century to the 19th Century Use scenarios to guide students in describing the origin, development and effects of the slave trade from the 15th Century to the 19th Century"
+   }
+  ],
+  "Form Three": [
+   {
+    "main": "1.0 Demonstrate mastery of the relationship between capitalism and Africa",
+    "competence": "1.1 Demonstrate an understanding of the development of capitalism and its impact on Africa",
+    "activity": "Describe the development of capitalism in Europe and its impact on Africa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the relationship between capitalism and Africa",
+    "competence": "1.2 Demonstrate an understanding of colonial systems in Africa",
+    "activity": "(a) Discuss colonial administrative systems in Africa (German, French, British and Portuguese)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the relationship between capitalism and Africa",
+    "competence": "1.2 Demonstrate an understanding of colonial systems in Africa",
+    "activity": "(b) Discuss colonial economic systems in Africa (Establishment, characteristics, sectors, labour issues)"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the relationship between capitalism and Africa",
+    "competence": "1.2 Demonstrate an understanding of colonial systems in Africa",
+    "activity": "(c) Assess the nature and patterns of colonial social services in Africa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the relationship between capitalism and Africa",
+    "competence": "1.2 Demonstrate an understanding of colonial systems in Africa",
+    "activity": "(d) Relate colonial economic, political, infrastructure, and education systems in Africa with the current African systems"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the relationship between capitalism and Africa",
+    "competence": "1.3 Demonstrate an understanding of the history of nationalist movements in Africa",
+    "activity": "(a) Describe nationalist movements in Africa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the relationship between capitalism and Africa",
+    "competence": "1.3 Demonstrate an understanding of the history of nationalist movements in Africa",
+    "activity": "(b) Assess the rise of nationalist movements in Africa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the relationship between capitalism and Africa",
+    "competence": "1.3 Demonstrate an understanding of the history of nationalist movements in Africa",
+    "activity": "(c) Appraise the lessons drawn from the nationalist movements in Africa"
+   }
+  ],
+  "Form Four": [
+   {
+    "main": "1.0 Demonstrate mastery of the history of nation-building in post-colonial Africa",
+    "competence": "1.1 Demonstrate mastery of the history of nation-building in post-colonial Africa",
+    "activity": "(a) Describe the concept and origin of nation-building in Africa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the history of nation-building in post-colonial Africa",
+    "competence": "1.1 Demonstrate mastery of the history of nation-building in post-colonial Africa",
+    "activity": "(b) Evaluate the strategies used in nation-building"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the history of nation-building in post-colonial Africa",
+    "competence": "1.2 Demonstrate an understanding of the successes and challenges of nation-building in post-colonial Africa",
+    "activity": "(a) Appraise the achievements and challenges of nation-building in post-colonial Africa"
+   },
+   {
+    "main": "1.0 Demonstrate mastery of the history of nation-building in post-colonial Africa",
+    "competence": "1.2 Demonstrate an understanding of the successes and challenges of nation-building in post-colonial Africa",
+    "activity": "(b) Design and carry out a project on nation-building between the 1960s and 1970s (use one African country as a case study)"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the history of Africa’s participation in regional and international affairs",
+    "competence": "2.1 Demonstrate an understanding of the regional integration in Africa",
+    "activity": "(a) Describe the origin and development of the Organisation of African Unity (OAU/ African Union (AU) and economic regional groupings in Africa"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the history of Africa’s participation in regional and international affairs",
+    "competence": "2.1 Demonstrate an understanding of the regional integration in Africa",
+    "activity": "(b) Assess the performance of continental and regional integration efforts in Africa"
+   },
+   {
+    "main": "2.0 Demonstrate mastery of the history of Africa’s participation in regional and international affairs",
+    "competence": "2.2 Demonstrate an understanding of the history of Africa’s participation in the United Nations Organisation",
+    "activity": "Appraise African participation in the United Nations and its agencies"
+   }
+  ]
+ }
+}

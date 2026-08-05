@@ -6,9 +6,10 @@ order they appear on the landing page.
 
 from bots.athar import BOT as athar
 from bots.lissa import BOT as lissa
+from bots.somo import BOT as somo
 from core.persona import Bot
 
-REGISTRY: dict[str, Bot] = {bot.slug: bot for bot in (lissa, athar)}
+REGISTRY: dict[str, Bot] = {bot.slug: bot for bot in (lissa, athar, somo)}
 
 
 def get(slug: str) -> Bot | None:
