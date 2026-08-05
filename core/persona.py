@@ -447,17 +447,23 @@ def stated_name(transcript: str) -> str | None:
     return found
 
 
-def name_fact(raw: Any) -> dict | None:
+def name_fact(raw: Any, not_named: str = "") -> dict | None:
     """The core fact a reported name earns, or None if it isn't one.
 
     Kept deliberately close to how the model phrases the rest of the list, so
     memory_store.merge() matches it against a name fact from an earlier cycle
     and reinforces that record instead of stacking up a second one.
+
+    `not_named` is the bot's own name. It says its name constantly and signs
+    the other half of every transcript, and "Their name is Lissa." written in
+    as a core fact would be both wrong and permanent.
     """
     if not isinstance(raw, str):
         return None
     name = " ".join(raw.split())  # newlines and runs of spaces collapse
     if not name or len(name) > NAME_MAX or name.lower() in _NOT_A_NAME:
+        return None
+    if not_named and name.lower() == not_named.strip().lower():
         return None
     return {"text": f"Their name is {name}.", "core": True}
 
@@ -480,14 +486,18 @@ def fold_observations(bot: Bot, mem: dict, observed: dict,
     observations on the same record, so adding both would leave the person
     with their name twice over.
 
-    `transcript` is the last resort under that: where someone introduced
-    themselves in so many words, stated_name() reads it off what they wrote
-    and no model judgment is involved. The model's own answer still wins when
-    it gives one — it catches the phrasings a pattern never will.
+    Where someone introduced themselves in so many words, what they wrote
+    settles it and no model judgment is involved: stated_name() only fires on
+    lead-ins that exist to give a name, so when it fires it is quoting the
+    person. A model paraphrase of the same conversation cannot outrank that —
+    it can only be a different reading of the sentence the person already made
+    unambiguous. The model's answer is the fallback beneath it, for the
+    phrasings no pattern will ever catch.
     """
     mentioned = [dict(f) if isinstance(f, dict) else {"text": f}
                  for f in observed.get("facts", []) if f]
-    named = name_fact(observed.get("name")) or name_fact(stated_name(transcript))
+    named = (name_fact(stated_name(transcript), bot.name)
+             or name_fact(observed.get("name"), bot.name))
     if named:
         already = next(
             (f for f in mentioned
