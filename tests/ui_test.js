@@ -278,6 +278,44 @@ const check = (cond, name) => {
     "persona: names her actual music taste (got: " + musicReply.slice(0, 80) + ")");
   await personaCtx.close();
 
+  /* ---- the shell paints without waiting for the server ----
+     The free instance sleeps after ~15 min and the page itself is served by
+     that sleeping server, so a returning visitor used to watch a blank tab
+     through the whole cold start: the worker was network-first, and a slow
+     server never fails, it just takes half a minute. Offline is the honest
+     stand-in for "asleep" — it's the same question (can this render without
+     the server answering?) with a deterministic answer. Own context so the
+     offline toggle and the worker can't leak into the shared session. */
+  const swCtx = await browser.newContext();
+  const swPage = await swCtx.newPage();
+  await swPage.goto("http://localhost:8765/somo");
+  await swPage.evaluate(() => navigator.serviceWorker.ready);
+  // the shell is only cached once the worker has actually written it
+  const cached = await swPage.evaluate(async () => {
+    for (let i = 0; i < 40; i++) {
+      const c = await caches.open("luciddive-v2");
+      if (await c.match(location.href)) return true;
+      await new Promise((r) => setTimeout(r, 250));
+    }
+    return false;
+  });
+  check(cached, "shell: the worker caches the bot page it just served");
+
+  await swCtx.setOffline(true);
+  let painted = false;
+  try {
+    await swPage.reload({ timeout: 15000 });
+    painted = await swPage.evaluate(() =>
+      !!document.getElementById("send") && !!document.getElementById("msg"));
+  } catch { painted = false; }
+  check(painted, "shell: renders with the server unreachable, not a blank tab");
+  // and it's the real page, themed for this bot — not a generic fallback
+  const themed = await swPage.evaluate(() =>
+    typeof BOT === "object" && BOT.slug === "somo");
+  check(themed, "shell: the cached page is still the right bot");
+  await swCtx.setOffline(false);
+  await swCtx.close();
+
   /* ---- fix 4: stop button mid-stream ---- */
   await page.fill("#msg", "tell me a long detailed story about the sea, at least 300 words");
   await page.keyboard.press("Enter");
