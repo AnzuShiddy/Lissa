@@ -18,6 +18,7 @@ import random
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any
 
 from core import memory_store, recall
 
@@ -333,12 +334,22 @@ def transcript_of(bot: Bot, session) -> str:
 
 def memory_schema(types):
     """The JSON shape the distiller must return. Takes the genai `types`
-    module so this stays importable without the SDK for tests."""
+    module so this stays importable without the SDK for tests.
+
+    "name" is a field of its own rather than one more entry in "facts". Every
+    bot's prompt already says the name is the most important thing to keep and
+    to always mark it core, and the model still drops it — it competes for a
+    slot against everything else the conversation turned up, and a lively hour
+    about the sea crowds it out. Asked as a direct question with a slot that
+    must be filled, the same model answers it reliably. name_fact() then makes
+    the promotion to a core fact ours rather than the model's.
+    """
     strings = types.Schema(type=types.Type.ARRAY,
                            items=types.Schema(type=types.Type.STRING))
     return types.Schema(
         type=types.Type.OBJECT,
         properties={
+            "name": types.Schema(type=types.Type.STRING),
             "facts": types.Schema(
                 type=types.Type.ARRAY,
                 items=types.Schema(
@@ -350,8 +361,33 @@ def memory_schema(types):
             "threads": strings,
             "extras": strings,
         },
-        required=["facts", "outdated", "threads", "extras"],
+        required=["name", "facts", "outdated", "threads", "extras"],
     )
+
+
+# A model told to return "" when it doesn't know the name sometimes says so in
+# words instead. These are never a real name, and one of them written into
+# memory as a core fact would outlive everything else in there.
+_NOT_A_NAME = frozenset(
+    ["unknown", "none", "n/a", "na", "null", "nil", "undefined", "unnamed",
+     "user", "the user", "student", "the student", "anonymous", "-"]
+)
+NAME_MAX = 60  # a name, not a sentence — anything longer is the model rambling
+
+
+def name_fact(raw: Any) -> dict | None:
+    """The core fact a reported name earns, or None if it isn't one.
+
+    Kept deliberately close to how the model phrases the rest of the list, so
+    memory_store.merge() matches it against a name fact from an earlier cycle
+    and reinforces that record instead of stacking up a second one.
+    """
+    if not isinstance(raw, str):
+        return None
+    name = " ".join(raw.split())  # newlines and runs of spaces collapse
+    if not name or len(name) > NAME_MAX or name.lower() in _NOT_A_NAME:
+        return None
+    return {"text": f"Their name is {name}.", "core": True}
 
 
 def fold_observations(bot: Bot, mem: dict, observed: dict) -> dict:
@@ -363,8 +399,29 @@ def fold_observations(bot: Bot, mem: dict, observed: dict) -> dict:
     and extras overwrite wholesale — they aren't weighted, and the prompt asks
     the model to carry live ones forward. met/last/chats/flavour are ours and
     never come from the model.
+
+    A reported name is folded in as a core fact whether or not the model also
+    thought to list it — see memory_schema() for why that isn't left to the
+    prompt. When the model did list it, that entry is promoted to core rather
+    than a second one being added: merge() deliberately refuses to land two
+    observations on the same record, so adding both would leave the person
+    with their name twice over.
     """
-    facts = memory_store.merge(mem["facts"], observed.get("facts", []),
+    mentioned = [dict(f) if isinstance(f, dict) else {"text": f}
+                 for f in observed.get("facts", []) if f]
+    named = name_fact(observed.get("name"))
+    if named:
+        already = next(
+            (f for f in mentioned
+             if memory_store.similarity(named["text"], f.get("text") or "")
+             >= memory_store.MATCH_THRESHOLD),
+            None,
+        )
+        if already:
+            already["core"] = True
+        else:
+            mentioned.insert(0, named)
+    facts = memory_store.merge(mem["facts"], mentioned,
                                observed.get("outdated", []), bot.max_facts)
     fresh = clean_memory(bot, {"threads": observed.get("threads", []),
                                "extras": observed.get("extras", [])})
