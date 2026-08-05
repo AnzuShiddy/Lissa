@@ -337,7 +337,7 @@ const check = (cond, name) => {
   await page.fill("#msg", "");
   check(await page.$eval("#send", (b) => b.classList.contains("stop-voice")),
     "speak-stop: clearing the composer restores the stop button");
-  const usersBefore = await page.$$eval(".bubble.user", (e) => e.length);
+  const usersBeforeStop = await page.$$eval(".bubble.user", (e) => e.length);
   await page.click("#send");
   sendState = await page.evaluate(() => ({
     speaking: document.getElementById("avatarWrap").classList.contains("speaking"),
@@ -346,7 +346,7 @@ const check = (cond, name) => {
   check(!sendState.speaking && !sendState.stopVoice,
     "speak-stop: clicking it cuts the voice and restores send");
   await page.waitForTimeout(300);
-  check(await page.$$eval(".bubble.user", (e) => e.length) === usersBefore,
+  check(await page.$$eval(".bubble.user", (e) => e.length) === usersBeforeStop,
     "speak-stop: stopping her voice doesn't also send a message");
 
   /* ---- fix 1: smart auto-scroll + pill ---- */
