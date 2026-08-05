@@ -180,7 +180,13 @@ Things they resolved to do (may be empty):
 Latest conversation transcript:
 {transcript}
 
-Return JSON with four keys.
+Return JSON with five keys.
+
+"name": what the person is called, if they have ever said — in this
+conversation or in the facts above. Just the name, nothing else: "Zanzibar",
+not "Their name is Zanzibar". Empty string if it has genuinely never been
+given; never guess one, and never put anything but a name here. Answer this
+one even when the conversation was about something else entirely.
 
 "facts": everything THIS conversation tells you about the PERSON — their name,
 where they live, their family and work, what they already know and don't,

@@ -243,5 +243,101 @@ class TestFolding(unittest.TestCase):
         self.assertEqual(folded["flavour"], LISSA.flavours[2])
 
 
+class TestNameIsKept(unittest.TestCase):
+    """A name must survive distillation without the model choosing to list it.
+
+    Every bot's prompt already asks for exactly that and the model still drops
+    it when a conversation gives it more interesting things to report, so the
+    guarantee lives here instead.
+    """
+
+    def blank(self):
+        return persona.clean_memory(LISSA, persona.blank_memory())
+
+    def test_reported_name_becomes_a_core_fact_the_model_never_listed(self):
+        folded = persona.fold_observations(LISSA, self.blank(), {
+            "name": "Zanzibar",
+            "facts": [{"text": "The user enjoys stories about the sea.",
+                       "core": False}],
+            "outdated": [], "threads": [], "extras": [],
+        })
+        named = [f for f in folded["facts"] if "Zanzibar" in f["text"]]
+        self.assertEqual(len(named), 1)
+        self.assertTrue(named[0]["core"])
+
+    def test_name_does_not_duplicate_when_the_model_also_lists_it(self):
+        folded = persona.fold_observations(LISSA, self.blank(), {
+            "name": "Zanzibar",
+            "facts": [{"text": "The user's name is Zanzibar.", "core": True}],
+            "outdated": [], "threads": [], "extras": [],
+        })
+        named = [f for f in folded["facts"] if "Zanzibar" in f["text"]]
+        self.assertEqual(len(named), 1)
+
+    def test_name_reinforces_the_record_from_an_earlier_cycle(self):
+        mem = persona.clean_memory(LISSA, {"facts": [
+            {"text": "Their name is Zanzibar.", "core": True, "weight": 2.0},
+        ]})
+        folded = persona.fold_observations(LISSA, mem, {
+            "name": "Zanzibar", "facts": [], "outdated": [],
+            "threads": [], "extras": [],
+        })
+        named = [f for f in folded["facts"] if "Zanzibar" in f["text"]]
+        self.assertEqual(len(named), 1)
+        self.assertGreater(named[0]["weight"], 2.0)
+
+    def test_a_name_outranks_the_cap(self):
+        """max_facts can't evict it, however much else the cycle turned up."""
+        crowd = [{"text": f"The user mentioned topic {i}.", "core": False}
+                 for i in range(LISSA.max_facts + 10)]
+        folded = persona.fold_observations(LISSA, self.blank(), {
+            "name": "Zanzibar", "facts": crowd, "outdated": [],
+            "threads": [], "extras": [],
+        })
+        self.assertLessEqual(len(folded["facts"]), LISSA.max_facts)
+        self.assertTrue(any("Zanzibar" in f["text"] for f in folded["facts"]))
+
+    def test_a_known_name_is_never_lost_to_decay(self):
+        """Ten quiet cycles: everything else fades, the name does not."""
+        mem = persona.fold_observations(LISSA, self.blank(), {
+            "name": "Zanzibar",
+            "facts": [{"text": "The user is tired today.", "core": False}],
+            "outdated": [], "threads": [], "extras": [],
+        })
+        for _ in range(10):
+            mem = persona.fold_observations(LISSA, mem, {
+                "name": "", "facts": [], "outdated": [],
+                "threads": [], "extras": [],
+            })
+        texts = [f["text"] for f in mem["facts"]]
+        self.assertTrue(any("Zanzibar" in t for t in texts))
+        self.assertFalse(any("tired" in t for t in texts))
+
+    def test_junk_never_becomes_a_name(self):
+        for junk in ["", "   ", "unknown", "None", "N/A", "the user",
+                     "x" * (persona.NAME_MAX + 1), None, 42, ["Zanzibar"]]:
+            with self.subTest(junk=junk):
+                self.assertIsNone(persona.name_fact(junk))
+
+    def test_a_real_name_survives_whitespace_and_case(self):
+        fact = persona.name_fact("  Zanzibar\n  Mwinyi ")
+        self.assertEqual(fact, {"text": "Their name is Zanzibar Mwinyi.",
+                                "core": True})
+
+    def test_missing_name_key_folds_as_before(self):
+        """Old callers and the /api/memorize body don't send one."""
+        folded = persona.fold_observations(LISSA, self.blank(), {
+            "facts": [{"text": "The user likes mango juice.", "core": False}],
+            "outdated": [], "threads": [], "extras": [],
+        })
+        self.assertEqual(len(folded["facts"]), 1)
+
+    def test_every_bot_asks_for_the_name(self):
+        for bot in bots.all_bots():
+            with self.subTest(bot=bot.slug):
+                prompt = persona.distill_prompt(bot, self.blank(), "User: hi")
+                self.assertIn('"name"', prompt)
+
+
 if __name__ == "__main__":
     unittest.main()

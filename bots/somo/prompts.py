@@ -125,7 +125,13 @@ Where they were struggling (may be empty):
 Latest conversation transcript:
 {transcript}
 
-Return JSON with four keys.
+Return JSON with five keys.
+
+"name": what the student is called, if they have ever said — in this
+conversation or in the facts above. Just the name, nothing else: "Zainabu",
+not "Their name is Zainabu". Empty string if it has genuinely never been
+given; never guess one, and never put anything but a name here. Answer this
+one even when the lesson was about something else entirely.
 
 "facts": everything THIS conversation tells you about the STUDENT — their
 name, their form, which subjects they are taking, which they find hard, what
