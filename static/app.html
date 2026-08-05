@@ -547,8 +547,10 @@
   }
   #send:hover { filter: brightness(1.08); background: linear-gradient(135deg, var(--accent), var(--user-end)); }
   #send .stop-icon { display: none; }
-  #send.stop .send-icon { display: none; }
-  #send.stop .stop-icon { display: block; }
+  /* .stop = a reply is streaming (aborts it); .stop-voice = the text is all
+     here and only the voice is still going (cuts it). Two states, one icon. */
+  #send.stop .send-icon, #send.stop-voice .send-icon { display: none; }
+  #send.stop .stop-icon, #send.stop-voice .stop-icon { display: block; }
   /* photo attachment */
   .bubble img { display: block; max-width: 100%; border-radius: 14px; }
   .bubble img + div { margin-top: 8px; }
@@ -1181,7 +1183,7 @@ const I18N = {
     attachRemove: "Remove photo", attachTitle: "Send a photo",
     msgPlaceholder: "Ask {name} something…", msgAria: "Message to {name}",
     micTitle: "Tap to record, hold to talk",
-    sendTitle: "Send", stopTitle: "Stop the reply",
+    sendTitle: "Send", stopTitle: "Stop the reply", stopVoiceTitle: "Stop the voice",
     recCancelTitle: "Cancel", recCancelAria: "Cancel recording",
     recDoneTitle: "Send it", recDoneAria: "Send recording",
     panelTitle: "What {name} remembers",
@@ -1260,7 +1262,7 @@ const I18N = {
     attachRemove: "إزالة الصورة", attachTitle: "إرسال صورة",
     msgPlaceholder: "اسأل {name}…", msgAria: "رسالة إلى {name}",
     micTitle: "اضغط للتسجيل، واستمر بالضغط للتحدث",
-    sendTitle: "إرسال", stopTitle: "إيقاف الرد",
+    sendTitle: "إرسال", stopTitle: "إيقاف الرد", stopVoiceTitle: "إيقاف الصوت",
     recCancelTitle: "إلغاء", recCancelAria: "إلغاء التسجيل",
     recDoneTitle: "إرسال", recDoneAria: "إرسال التسجيل",
     panelTitle: "ما يتذكره {name}",
@@ -1339,7 +1341,7 @@ const I18N = {
     attachRemove: "Ondoa picha", attachTitle: "Tuma picha",
     msgPlaceholder: "Muulize {name} kitu…", msgAria: "Ujumbe kwa {name}",
     micTitle: "Gusa kurekodi, shikilia kuongea",
-    sendTitle: "Tuma", stopTitle: "Simamisha jibu",
+    sendTitle: "Tuma", stopTitle: "Simamisha jibu", stopVoiceTitle: "Simamisha sauti",
     recCancelTitle: "Ghairi", recCancelAria: "Ghairi kurekodi",
     recDoneTitle: "Tuma", recDoneAria: "Tuma rekodi",
     panelTitle: "Anachokumbuka {name}",
@@ -1418,7 +1420,7 @@ const I18N = {
     attachRemove: "Retirer la photo", attachTitle: "Envoyer une photo",
     msgPlaceholder: "Pose une question à {name}…", msgAria: "Message à {name}",
     micTitle: "Appuie pour enregistrer, maintiens pour parler",
-    sendTitle: "Envoyer", stopTitle: "Arrêter la réponse",
+    sendTitle: "Envoyer", stopTitle: "Arrêter la réponse", stopVoiceTitle: "Arrêter la voix",
     recCancelTitle: "Annuler", recCancelAria: "Annuler l'enregistrement",
     recDoneTitle: "Envoyer", recDoneAria: "Envoyer l'enregistrement",
     panelTitle: "Ce dont {name} se souvient",
@@ -1497,7 +1499,7 @@ const I18N = {
     attachRemove: "Remover foto", attachTitle: "Enviar uma foto",
     msgPlaceholder: "Pergunte algo ao {name}…", msgAria: "Mensagem para o {name}",
     micTitle: "Toque para gravar, segure para falar",
-    sendTitle: "Enviar", stopTitle: "Parar a resposta",
+    sendTitle: "Enviar", stopTitle: "Parar a resposta", stopVoiceTitle: "Parar a voz",
     recCancelTitle: "Cancelar", recCancelAria: "Cancelar gravação",
     recDoneTitle: "Enviar", recDoneAria: "Enviar gravação",
     panelTitle: "O que {name} se lembra",
@@ -1618,6 +1620,7 @@ langSelect.onchange = () => {
   try { localStorage.setItem(LANG_KEY, currentLang); } catch {}
   applyI18n();
   renderNotice(); // generated content — applyI18n's attribute scan can't reach it
+  refreshSendBtn(); // that scan just reset the send button to its idle title
   if (overlay.classList.contains("show")) renderFacts();
   if (prayerOverlay.classList.contains("show")) renderPrayer();
   // the header status is also generated content — refresh it too, but only
@@ -1949,13 +1952,32 @@ function addRetry(bubble, action) {
   bubble.appendChild(btn);
 }
 
+/* The send button doubles as the stop button, in two different senses:
+   while a reply streams it aborts the stream, and once the text has all
+   arrived but the voice is still going it cuts the voice. The second case
+   is why this isn't just `busy` — a long reply finishes streaming seconds
+   before she stops reading it, and until now the only way to interrupt her
+   then was clicking the avatar, which announces itself through a tooltip a
+   phone never shows.
+
+   It stays a send button whenever there's something to send, though: typing
+   over her and pressing send should send, and send() already cuts the voice
+   on its way out. */
+function refreshSendBtn() {
+  const empty = !msg.value.trim() && !pendingImage;
+  const stopVoice = !busy && empty && avatarWrap.classList.contains("speaking");
+  sendBtn.classList.toggle("stop", busy);
+  sendBtn.classList.toggle("stop-voice", stopVoice);
+  sendBtn.title = busy ? t("stopTitle")
+    : stopVoice ? t("stopVoiceTitle")
+    : t("sendTitle");
+  sendBtn.setAttribute("aria-label", sendBtn.title);
+}
+
 function setBusy(b) {
   busy = b;
   micBtn.disabled = b;
-  // while a reply streams, the send button becomes a stop button
-  sendBtn.classList.toggle("stop", b);
-  sendBtn.title = b ? t("stopTitle") : t("sendTitle");
-  sendBtn.setAttribute("aria-label", sendBtn.title);
+  refreshSendBtn();
   setStatus(b ? t("statusTyping") : t("statusOnline"), b);
 }
 
@@ -1989,12 +2011,14 @@ async function setAttachment(file) {
   pendingImage = await shrinkImage(file);
   attachImg.src = pendingImage;
   attachPreview.hidden = false;
+  refreshSendBtn(); // an attached photo is something to send
 }
 
 function clearAttachment() {
   pendingImage = null;
   attachPreview.hidden = true;
   attachImg.removeAttribute("src");
+  refreshSendBtn();
 }
 
 /* ---------- chat ---------- */
@@ -2115,6 +2139,7 @@ let nudgeAudio = null; // greeting clip replayed after an autoplay block
 
 function speakingUI(on) {
   avatarWrap.classList.toggle("speaking", on);
+  refreshSendBtn(); // the button follows her voice, not just the stream
   if (!busy && !rec) setStatus(on ? t("statusSpeaking") : t("statusOnline"), on);
 }
 
@@ -3009,6 +3034,7 @@ resetBtn.onclick = async () => {
 
 sendBtn.onclick = () => {
   if (busy) { if (chatAbort) chatAbort.abort(); return; } // acting as stop
+  if (sendBtn.classList.contains("stop-voice")) { stopSpeaking(); return; }
   send(msg.value);
 };
 // Enter sends, Shift+Enter makes a newline; ignore Enter while an IME
@@ -3023,6 +3049,7 @@ msg.addEventListener("keydown", (e) => {
 msg.addEventListener("input", () => {
   msg.style.height = "auto";
   msg.style.height = Math.min(msg.scrollHeight, 120) + "px";
+  refreshSendBtn(); // typing over her voice turns stop back into send
 });
 
 /* photo attachment wiring */
