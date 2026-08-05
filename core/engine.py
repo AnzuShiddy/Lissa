@@ -258,7 +258,7 @@ def distill_chat(bot: Bot, client, chat, mem: dict) -> dict:
         observed = json.loads(response.text)
         if not isinstance(observed, dict):
             return mem
-        return persona.fold_observations(bot, mem, observed)
+        return persona.fold_observations(bot, mem, observed, transcript)
     except Exception:
         pass
     return mem

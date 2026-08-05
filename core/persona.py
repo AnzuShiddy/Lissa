@@ -374,6 +374,78 @@ _NOT_A_NAME = frozenset(
 )
 NAME_MAX = 60  # a name, not a sentence — anything longer is the model rambling
 
+# Phrasings whose entire purpose is to state a name, in the five languages the
+# platform speaks. "I'm ..." is deliberately absent: "I'm tired" is not an
+# introduction, and a wrong name written in as core never decays back out.
+_NAME_LEAD = re.compile(
+    r"(?:my\s+name\s+is|my\s+name's|call\s+me|i\s+go\s+by"
+    r"|jina\s+langu\s+ni|(?:ni)?naitwa"
+    r"|je\s+m'?appelle|mon\s+nom\s+est"
+    r"|meu\s+nome\s+[eé]|me\s+chamo"
+    r"|اسمي)\s+",
+    re.IGNORECASE,
+)
+
+# Where a name stops: punctuation, or the connective starting the next clause.
+# "my name is Zanzibar and I love mango juice" gives up the name, not the juice.
+_NAME_END = re.compile(
+    r"[,.;:!?]|\s+(?:and|but|or|so|because|na|lakini|et|mais|e|mas|y|و)\s+",
+    re.IGNORECASE,
+)
+
+# Words that follow the lead-in without being a name.
+_NOT_A_NAME_OPENER = frozenset(
+    ["a", "an", "the", "not", "just", "only", "still", "actually", "really"]
+)
+_NOT_A_NAME_WORD = frozenset(
+    ["later", "back", "tomorrow", "tonight", "soon", "now", "again", "anytime",
+     "sometime", "when", "whenever", "if", "please", "maybe", "that", "this",
+     # "my name is a secret" is a refusal to give one, not a name
+     "secret", "private", "important", "irrelevant", "mystery", "none"]
+)
+
+
+def stated_name(transcript: str) -> str | None:
+    """A name the person gave in so many words, or None.
+
+    The model is asked for the name directly and still leaves the field empty
+    often enough to lose someone's name — see memory_schema(). Where the
+    person said it outright, no model needs to be involved at all.
+
+    Deliberately narrow, because a false positive here is written to memory as
+    a core fact and core facts never decay: only lead-ins that exist to
+    introduce someone, only the user's own lines (the bot says its own name
+    constantly), and only the last one, since a correction should win.
+    """
+    found = None
+    for line in (transcript or "").splitlines():
+        speaker, sep, said = line.partition(":")
+        if not sep or speaker.strip().lower() != "user":
+            continue
+        for lead in _NAME_LEAD.finditer(said):
+            tail = said[lead.end():]
+            stop = _NAME_END.search(tail)
+            if stop:
+                tail = tail[:stop.start()]
+            words = tail.split()
+            while words and words[0].lower().strip(".,'\"") in _NOT_A_NAME_OPENER:
+                words.pop(0)
+            if not words or words[0].lower().strip(".,'\"") in _NOT_A_NAME_WORD:
+                continue
+            # The first word, then only further *capitalized* ones: that takes
+            # "Zanzibar Mwinyi" whole while leaving the tail of "Zanzibar these
+            # days" behind. Scripts without case (Arabic) give one word, which
+            # is the common shape there anyway.
+            name = [words[0]]
+            for word in words[1:3]:
+                if not word[:1].isupper():
+                    break
+                name.append(word)
+            candidate = " ".join(name).strip(" '\"“”‘’-")
+            if candidate and not any(ch.isdigit() for ch in candidate):
+                found = candidate
+    return found
+
 
 def name_fact(raw: Any) -> dict | None:
     """The core fact a reported name earns, or None if it isn't one.
@@ -390,7 +462,8 @@ def name_fact(raw: Any) -> dict | None:
     return {"text": f"Their name is {name}.", "core": True}
 
 
-def fold_observations(bot: Bot, mem: dict, observed: dict) -> dict:
+def fold_observations(bot: Bot, mem: dict, observed: dict,
+                      transcript: str = "") -> dict:
     """Merge one distillation cycle into memory.
 
     The model reports only what this conversation supports; the weighting,
@@ -406,10 +479,15 @@ def fold_observations(bot: Bot, mem: dict, observed: dict) -> dict:
     than a second one being added: merge() deliberately refuses to land two
     observations on the same record, so adding both would leave the person
     with their name twice over.
+
+    `transcript` is the last resort under that: where someone introduced
+    themselves in so many words, stated_name() reads it off what they wrote
+    and no model judgment is involved. The model's own answer still wins when
+    it gives one — it catches the phrasings a pattern never will.
     """
     mentioned = [dict(f) if isinstance(f, dict) else {"text": f}
                  for f in observed.get("facts", []) if f]
-    named = name_fact(observed.get("name"))
+    named = name_fact(observed.get("name")) or name_fact(stated_name(transcript))
     if named:
         already = next(
             (f for f in mentioned

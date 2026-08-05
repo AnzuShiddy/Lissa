@@ -243,6 +243,76 @@ class TestFolding(unittest.TestCase):
         self.assertEqual(folded["flavour"], LISSA.flavours[2])
 
 
+class TestStatedName(unittest.TestCase):
+    """Reading a name off what the person actually wrote.
+
+    Precision matters more than recall here: a miss falls back to the model,
+    but a false positive is written to memory as a core fact, and core facts
+    never decay back out.
+    """
+
+    def user(self, said):
+        return f"Lissa: hey!\nUser: {said}\nLissa: nice to meet you."
+
+    def test_it_reads_the_plain_introductions(self):
+        for said, expect in [
+            ("By the way, my name is Zanzibar and I love mango juice.", "Zanzibar"),
+            ("my name is Zanzibar", "Zanzibar"),
+            ("My name's Zanzibar!", "Zanzibar"),
+            ("call me Zanzibar", "Zanzibar"),
+            ("I go by Zanzibar these days", "Zanzibar"),
+            ("my name is zanzibar", "zanzibar"),
+            ("my name is Zanzibar Mwinyi, nice to meet you", "Zanzibar Mwinyi"),
+            ("jina langu ni Zanzibar", "Zanzibar"),
+            ("naitwa Zanzibar", "Zanzibar"),
+            ("ninaitwa Zanzibar", "Zanzibar"),
+            ("je m'appelle Zanzibar", "Zanzibar"),
+            ("mon nom est Zanzibar", "Zanzibar"),
+            ("meu nome é Zanzibar", "Zanzibar"),
+            ("me chamo Zanzibar", "Zanzibar"),
+            ("اسمي زنجبار", "زنجبار"),
+        ]:
+            with self.subTest(said=said):
+                self.assertEqual(persona.stated_name(self.user(said)), expect)
+
+    def test_it_stops_at_the_end_of_the_name(self):
+        got = persona.stated_name(
+            self.user("my name is Zanzibar and I live in Dar es Salaam"))
+        self.assertEqual(got, "Zanzibar")
+
+    def test_it_ignores_what_the_bot_says(self):
+        """She says her own name constantly. It is not the visitor's."""
+        transcript = ("Lissa: my name is Lissa, by the way\n"
+                      "User: nice to meet you")
+        self.assertIsNone(persona.stated_name(transcript))
+
+    def test_a_correction_wins(self):
+        transcript = (self.user("my name is Zanzibar") + "\n"
+                      "User: sorry, my name is Amani actually")
+        self.assertEqual(persona.stated_name(transcript), "Amani")
+
+    def test_it_does_not_invent_a_name(self):
+        for said in [
+            "call me later",          # the classic false positive
+            "call me back tomorrow",
+            "I'm tired",              # why "I'm ..." is not a lead-in
+            "I'm going to bed",
+            "my name is a secret",
+            "my name is not important",
+            "what is your name?",
+            "do you remember my name?",
+            "my favourite fruit is mango",
+            "",
+        ]:
+            with self.subTest(said=said):
+                self.assertIsNone(persona.stated_name(self.user(said)))
+
+    def test_junk_transcripts_are_survivable(self):
+        for junk in ["", "   ", "no colons here at all", "User:", ":\n:\n:"]:
+            with self.subTest(junk=junk):
+                self.assertIsNone(persona.stated_name(junk))
+
+
 class TestNameIsKept(unittest.TestCase):
     """A name must survive distillation without the model choosing to list it.
 
@@ -331,6 +401,34 @@ class TestNameIsKept(unittest.TestCase):
             "outdated": [], "threads": [], "extras": [],
         })
         self.assertEqual(len(folded["facts"]), 1)
+
+    def test_the_transcript_saves_a_name_the_model_left_empty(self):
+        """The failure that survived making "name" a schema field: the model
+        returns "" even though the person said it outright."""
+        folded = persona.fold_observations(
+            LISSA, self.blank(),
+            {"name": "", "facts": [{"text": "The user counted to seven.",
+                                    "core": False}],
+             "outdated": [], "threads": [], "extras": []},
+            transcript="User: By the way, my name is Zanzibar and I love "
+                       "mango juice. Remember that!\n"
+                       "Lissa: Zanzibar! Noted.",
+        )
+        named = [f for f in folded["facts"] if "Zanzibar" in f["text"]]
+        self.assertEqual(len(named), 1)
+        self.assertTrue(named[0]["core"])
+        self.assertNotIn("mango", named[0]["text"])
+
+    def test_the_model_still_wins_when_it_answers(self):
+        """It catches phrasings no pattern will."""
+        folded = persona.fold_observations(
+            LISSA, self.blank(),
+            {"name": "Zanzibar", "facts": [], "outdated": [],
+             "threads": [], "extras": []},
+            transcript="User: everyone round here calls me the mango guy",
+        )
+        texts = " ".join(f["text"] for f in folded["facts"])
+        self.assertIn("Zanzibar", texts)
 
     def test_every_bot_asks_for_the_name(self):
         for bot in bots.all_bots():
