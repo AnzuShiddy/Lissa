@@ -665,8 +665,11 @@ const check = (cond, name) => {
   // .text instead of treating each entry as a bare string
   const factTexts = storedFacts.map((f) => (typeof f === "string" ? f : f.text));
   check(storedFacts.length > 0, "memory: facts distilled into localStorage on reset");
+  // the whole list, not a truncation: when this fails the question is always
+  // "what did it store instead", and 80 characters showed one fact of six
   check(factTexts.join(" ").toLowerCase().includes("zanzibar"),
-    "memory: facts captured the name (got: " + factTexts.join(" | ").slice(0, 80) + ")");
+    "memory: facts captured the name (got " + factTexts.length + ": " +
+    factTexts.join(" | ").slice(0, 400) + ")");
   check(storedFacts.every((f) => typeof f.text === "string" && typeof f.weight === "number"),
     "memory: facts stored as weighted records");
   const nameRec = storedFacts.find((f) => f.text && f.text.toLowerCase().includes("zanzibar"));

@@ -419,8 +419,7 @@ class TestNameIsKept(unittest.TestCase):
         self.assertTrue(named[0]["core"])
         self.assertNotIn("mango", named[0]["text"])
 
-    def test_the_model_still_wins_when_it_answers(self):
-        """It catches phrasings no pattern will."""
+    def test_the_model_answers_for_phrasings_no_pattern_catches(self):
         folded = persona.fold_observations(
             LISSA, self.blank(),
             {"name": "Zanzibar", "facts": [], "outdated": [],
@@ -429,6 +428,32 @@ class TestNameIsKept(unittest.TestCase):
         )
         texts = " ".join(f["text"] for f in folded["facts"])
         self.assertIn("Zanzibar", texts)
+
+    def test_what_the_person_wrote_beats_what_the_model_made_of_it(self):
+        """The model reading the same sentence differently is not new
+        evidence — the person already said it in words a pattern matched."""
+        folded = persona.fold_observations(
+            LISSA, self.blank(),
+            {"name": "Mango", "facts": [], "outdated": [],
+             "threads": [], "extras": []},
+            transcript="User: my name is Zanzibar and I love mango juice",
+        )
+        texts = " ".join(f["text"] for f in folded["facts"])
+        self.assertIn("Zanzibar", texts)
+        self.assertNotIn("Mango", texts)
+
+    def test_the_bot_never_becomes_the_person(self):
+        """She says her own name constantly and signs half the transcript."""
+        self.assertIsNone(persona.name_fact("Lissa", LISSA.name))
+        self.assertIsNone(persona.name_fact("lissa", LISSA.name))
+        self.assertIsNone(persona.name_fact("  LISSA  ", LISSA.name))
+        self.assertIsNotNone(persona.name_fact("Zanzibar", LISSA.name))
+        folded = persona.fold_observations(
+            LISSA, self.blank(),
+            {"name": "Lissa", "facts": [], "outdated": [],
+             "threads": [], "extras": []},
+        )
+        self.assertEqual(folded["facts"], [])
 
     def test_every_bot_asks_for_the_name(self):
         for bot in bots.all_bots():
