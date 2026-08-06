@@ -28,6 +28,31 @@ If you prefer the web dashboard:
 7. **Add Environment Variables:**
    - `GEMINI_API_KEY` = your API key
 
+## The CI key is not the production key
+
+The UI suite in `.github/workflows/tests.yml` drives the real API — roughly
+twenty chat calls per run, plus TTS, embeddings and distillation. It reads
+`GEMINI_API_KEY_CI` from the repository's Actions secrets, and that must
+**not** be the key the live site runs on. A day of re-running the suite has
+already exhausted a free tier's daily quota once; while the two shared a key,
+that meant the live site answered real visitors with nothing until the quota
+reset the next day. A test run must not be able to take production down.
+
+Setting it up:
+
+1. Go to <https://aistudio.google.com/apikey> and click **Create API key**
+2. **Create a new project** for it rather than reusing the one the live key
+   belongs to — call it something like `luciddive-ci`. This is the part that
+   matters: free-tier quota is metered **per project**, not per key, so two
+   keys in one project share one daily limit and split nothing
+3. Copy the key, then in the repo: **Settings → Secrets and variables →
+   Actions → New repository secret**, named `GEMINI_API_KEY_CI`
+4. Leave Render's `GEMINI_API_KEY` alone — that stays the production key
+
+With the secret unset the UI suite skips itself rather than failing, which is
+also what happens on forks. `unit` still runs, needs no key and no network,
+and is the job that actually gates the branch.
+
 ## Behavior Notes
 
 - **Free tier:** Spins down after 15 min of inactivity (first request takes ~30s to wake)

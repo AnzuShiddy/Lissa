@@ -334,7 +334,10 @@ dashboard. Useful environment variables: `PLATFORM_EDGE_RATE` (and
 follows it — `PLATFORM_RATE_PER_MIN`, `PLATFORM_DAILY_CALLS`,
 `PLATFORM_MAX_MESSAGE`, `PLATFORM_MAX_SESSIONS`, `PLATFORM_LOG_LEVEL`,
 `PLATFORM_STATS_TOKEN` (**required** to open `/api/stats` at all),
-`PLATFORM_ANALYTICS_FILE`. Details in
+`PLATFORM_ANALYTICS_FILE`. CI reads its own `GEMINI_API_KEY_CI` secret, from
+its own Google project — free-tier quota is metered per project, and a day of
+test runs must not be able to leave the live site with nothing to answer
+with. Details in
 [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Launch & demo tooling
