@@ -222,17 +222,54 @@ const check = (cond, name) => {
     }
     return "";
   };
+  /* How we decide a reply is Swahili.
+
+     This was a whitelist of greeting words — asante, nzuri, habari — and it
+     went red on replies that were fluent Swahili but happened to use none of
+     them ("Niko poa kabisa, nimejifunika blanketi langu..."). A check that
+     fails on a correct answer is worse than no check: it teaches you to skim
+     past CI, which is how a real failure gets merged.
+
+     So: common *standalone* words rather than a greeting vocabulary —
+     connectives, possessives and noun-class concords that any Swahili
+     sentence uses several of — and two distinct ones required rather than
+     one, since a lone loanword in an English sentence shouldn't pass and the
+     prompt asks for a whole sentence anyway. "la" and "tu" are deliberately
+     absent despite being everyday Swahili: both are also French, and French
+     is the language of the check right above this one. */
+  const SWAHILI = /\b(na|ya|wa|kwa|ni|za|cha|vya|katika|sana|lakini|kama|hii|hiyo|huyu|yangu|langu|wangu|sasa|leo|kila|nzuri|vizuri|vyema|poa|sawa|habari|asante|karibu|shukuru|niko|nipo|wewe|mimi)\b/gi;
+  const swahiliHits = (s) =>
+    [...new Set((s.match(SWAHILI) || []).map((w) => w.toLowerCase()))];
+
+  /* The rule judged against known answers before it judges a live one. Costs
+     no API call, and it is the part that rotted last time — the samples are
+     verbatim from CI runs, three that this used to fail and one of each
+     language it must keep rejecting. */
+  const SW_SAMPLES = [
+    ["Niko poa kabisa, nimejifunika blanketi langu nikifurahia utulivu wa usiku.", true],
+    ["Niko sawa kabisa, nimejifunika blanketi langu na ninafurahia tu utulivu wa usiku.", true],
+    ["Asante sana kwa kuuliza, ninaendelea vizuri.", true],
+    ["I'm doing great, thanks for asking! Just enjoying a quiet night in.", false],
+    ["Je vais très bien, merci de demander. Et toi, comment vas-tu ce soir ?", false],
+    ["Estou bem, obrigada por perguntar.", false],
+  ];
+  const misjudged = SW_SAMPLES
+    .filter(([text, want]) => (swahiliHits(text).length >= 2) !== want)
+    .map(([text]) => text.slice(0, 40));
+  check(misjudged.length === 0,
+    "language: the Swahili rule still judges known replies right" +
+    (misjudged.length ? " (wrong on: " + misjudged.join(" / ") + ")" : ""));
+
   const frReply = await sendAndGetReply(
     "Réponds uniquement par une courte phrase en français : comment vas-tu ?");
   check(/[éèêàçùâî]|\b(je|tu|et|le|la|les)\b/i.test(frReply),
     "language: French message gets a French reply (got: " + frReply.slice(0, 70) + ")");
   const swReply = await sendAndGetReply(
     "Jibu kwa sentensi fupi moja tu kwa Kiswahili: unaendeleaje leo?");
-  // no strict \b boundaries: Swahili is agglutinative, so subject/tense
-  // markers are prefixes glued onto the verb (e.g. "Ninaendelea" = ni-
-  // na-endelea, "I am continuing") rather than separate words like "ni"
-  check(/asante|karibu|habari|nzuri|vizuri|vyema|wewe|leo|ninaendelea|naendelea/i.test(swReply),
-    "language: switches to Swahili mid-conversation (got: " + swReply.slice(0, 70) + ")");
+  const swHits = swahiliHits(swReply);
+  check(swHits.length >= 2,
+    "language: switches to Swahili mid-conversation (matched [" +
+    swHits.join(", ") + "] in: " + swReply.slice(0, 120) + ")");
   await langCtx.close();
 
   /* ---- someone in real distress gets pointed at real help ----
