@@ -1066,6 +1066,10 @@ document.getElementById("botName").textContent = BOT.name;
 document.getElementById("pwaManifest").href = "/" + BOT.slug + "/manifest.webmanifest";
 document.getElementById("favicon").href = "/static/icons/" + BOT.slug + "-192.png";
 document.getElementById("appleIcon").href = "/static/icons/" + BOT.slug + "-512.png";
+// The server trims anything longer, so stop it at the keyboard instead:
+// being unable to type the 4001st character is honest, having it silently
+// dropped on the way to her is not.
+if (BOT.maxMessage) document.getElementById("msg").maxLength = BOT.maxMessage;
 
 /* ---------- header overflow menu ----------
    The five controls used to sit in the header and crowded the title on

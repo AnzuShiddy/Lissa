@@ -8,6 +8,7 @@ that keeps a rolling alias from taking the deployment down — live here once.
 from __future__ import annotations
 
 import json
+import logging
 import os
 import queue
 import secrets
@@ -21,6 +22,8 @@ from google.genai import errors, types
 from core import persona
 from core.persona import Bot
 
+log = logging.getLogger("luciddive.engine")
+
 MODEL = "gemini-flash-lite-latest"  # lite: much higher free-tier daily quota
 
 # Keep replies snappy and cheap by asking for as little internal "thinking" as
@@ -32,6 +35,14 @@ MODEL = "gemini-flash-lite-latest"  # lite: much higher free-tier daily quota
 THINKING_LEVEL = "minimal"
 
 SESSION_TTL = 4 * 3600  # a conversation outlives a coffee break, not a day
+
+# A ceiling as well as an age limit. Eviction used to be by TTL alone, which
+# bounds how *long* a conversation is held but not how many are held at once:
+# inside any four-hour window the store grew one entry per (visitor, bot) with
+# nothing to stop it, and each entry holds a full chat history. On a free
+# instance that is the memory limit, reached by ordinary traffic rather than
+# by anyone attacking it.
+MAX_SESSIONS = int(os.environ.get("PLATFORM_MAX_SESSIONS", "400"))
 
 # The public deployment serves every bot from one shared API key, so throttle
 # quota-burning calls: a per-visitor token bucket plus a global daily cap.
@@ -161,6 +172,27 @@ _sessions: dict[tuple[str, str], Session] = {}
 _sessions_lock = threading.Lock()
 
 
+def evict(sessions: dict, now: float, ttl: float = SESSION_TTL,
+          cap: int = MAX_SESSIONS) -> None:
+    """Drop what's stale, then what's oldest if there are still too many.
+
+    In place, and pure enough to test without an API key — building a real
+    Session needs a client. Age goes first because a finished conversation is
+    worth less than a live one; only if that leaves the store over the cap
+    does least-recently-used come into it, which under real pressure means
+    someone loses a conversation they were having. That is the honest trade
+    against the process dying and everyone losing theirs.
+    """
+    for key, sess in list(sessions.items()):
+        if now - sess.last_used > ttl:
+            del sessions[key]
+    if len(sessions) <= cap:
+        return
+    oldest = sorted(sessions.items(), key=lambda kv: kv[1].last_used)
+    for key, _ in oldest[:len(sessions) - cap]:
+        del sessions[key]
+
+
 def get_session(sid: str | None, bot: Bot) -> tuple[str, Session]:
     with _sessions_lock:
         if sid and (sid, bot.slug) in _sessions:
@@ -170,10 +202,9 @@ def get_session(sid: str | None, bot: Bot) -> tuple[str, Session]:
         sid = sid or secrets.token_urlsafe(16)
         sess = Session(bot)
         _sessions[(sid, bot.slug)] = sess
-        now = time.time()
-        for key, old in list(_sessions.items()):
-            if now - old.last_used > SESSION_TTL:
-                del _sessions[key]
+        # after the insert, so the session we just handed out is the newest
+        # and cannot be the one evicted
+        evict(_sessions, time.time())
         return sid, sess
 
 
@@ -219,11 +250,17 @@ def stream_reply(sess: Session, parts: list, text: str, context: str = ""):
                             return
                         except errors.APIError as retry_err:
                             e = retry_err
+                    # Codes and bot slugs only — never the message. What is
+                    # worth knowing from a log here is "the key is spent" or
+                    # "the alias moved again", and neither needs the content.
                     if getattr(e, "code", None) == 429:
+                        log.warning("chat rate-limited by the API (bot=%s)", sess.bot.slug)
                         q.put("\n\n(Free-tier rate limit hit — wait a few seconds and try again.)")
                     else:
+                        log.error("chat client error %s (bot=%s)", e.code, sess.bot.slug)
                         q.put(f"\n\n(API error {e.code}: {e.message})")
                 except errors.APIError as e:
+                    log.error("chat api error %s (bot=%s)", e.code, sess.bot.slug)
                     q.put(f"\n\n(Gemini had a hiccup ({e.code}) — try again in a moment.)")
         finally:
             q.put(None)

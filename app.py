@@ -15,10 +15,12 @@ anyone is written to disk.
 
 import base64
 import json
+import logging
 import os
 import re
 import secrets
 import time
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -46,7 +48,39 @@ STATS_TOKEN = os.environ.get("PLATFORM_STATS_TOKEN", "")
 
 MAX_IMAGE_BYTES = 4 * 1024 * 1024
 
-app = FastAPI(title=SITE)
+# Text had no ceiling at all while images had one, and text is the half that
+# reaches the model. The composer carries the same number so a real visitor
+# is stopped at the keyboard rather than silently trimmed; this is the floor
+# under that, for anything not going through the composer.
+MAX_MESSAGE_CHARS = int(os.environ.get("PLATFORM_MAX_MESSAGE", "4000"))
+
+# docs/DEPLOY.md tells you to read startup, API errors and TTS fallbacks out
+# of the host's log tab. That was documentation of something that didn't
+# exist — analytics lines were the only thing ever written. basicConfig only
+# takes effect if nothing else has configured logging, so under uvicorn's own
+# setup this defers to it rather than fighting it.
+logging.basicConfig(
+    level=os.environ.get("PLATFORM_LOG_LEVEL", "INFO"),
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+# httpx writes an INFO line per request, and every model, embedding and TTS
+# call is one — that would bury the events above in a log where each line
+# costs something to keep.
+for noisy in ("httpx", "httpcore"):
+    logging.getLogger(noisy).setLevel(logging.WARNING)
+log = logging.getLogger("luciddive")
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    log.info("%s up: %s (stats %s)", SITE,
+             ", ".join(b.slug for b in bots.all_bots()),
+             "open" if STATS_TOKEN else "closed")
+    yield
+    log.info("%s shutting down", SITE)
+
+
+app = FastAPI(title=SITE, lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
 
@@ -184,6 +218,14 @@ def clean_hour(hour: int | None) -> int | None:
     return hour if isinstance(hour, int) and 0 <= hour <= 23 else None
 
 
+def clamp_message(text: str) -> str:
+    """Bound what reaches the model. Trimming rather than rejecting: the
+    composer already stops a real visitor at MAX_MESSAGE_CHARS, so anything
+    arriving longer skipped the UI, and a 422 there would surface to anyone
+    it *did* reach as an unexplained connection error."""
+    return (text or "").strip()[:MAX_MESSAGE_CHARS]
+
+
 def decode_image(data_url: str) -> tuple[bytes, str] | None:
     try:
         head, b64 = data_url.split(",", 1)
@@ -251,7 +293,11 @@ def bot_page(slug: str, sid: str | None = Cookie(None)) -> Response:
     html = render(STATIC / "app.html",
                   site=SITE,
                   title=f"{bot.name} {bot.emoji}",
-                  manifest=json.dumps(bot.manifest(), ensure_ascii=False),
+                  # the cap is the platform's, not the bot's, so it joins the
+                  # manifest here rather than living on Bot
+                  manifest=json.dumps({**bot.manifest(),
+                                       "maxMessage": MAX_MESSAGE_CHARS},
+                                      ensure_ascii=False),
                   theme_color=bot.palette["dark"]["bg1"])
     r = Response(html, media_type="text/html")
     # One session id across the platform; conversations are keyed by
@@ -333,7 +379,7 @@ def chat(slug: str, body: ChatIn, sid: str | None = Cookie(None)) -> StreamingRe
         img = decode_image(body.image)
         if img:
             parts.append(types.Part.from_bytes(data=img[0], mime_type=img[1]))
-    text = body.message.strip()
+    text = clamp_message(body.message)
     if text:
         parts.append(text)
     if not parts:
@@ -427,6 +473,8 @@ async def say(slug: str, body: TTSIn, sid: str | None = Cookie(None)) -> Respons
             if wav:
                 return Response(wav, media_type="audio/wav")
         except speech.VoiceQuotaError:
+            log.warning("gemini tts quota spent — falling back to edge voices "
+                        "for %ds (bot=%s)", speech.GEMINI_TTS_COOLDOWN, bot.slug)
             speech.note_tts_quota_hit()
     try:
         stream = edge_tts.Communicate(text, voice=bot.edge_voice,

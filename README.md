@@ -175,6 +175,17 @@ endpoint, and a bot without `"syllabus"` has no `/api/<slug>/syllabus`.
   default 8) and a daily ceiling (`PLATFORM_DAILY_CALLS`, default 600)
   protect the shared key. Hitting one gets an in-character "give me a sec"
   rather than an error, and the conversation is not lost.
+- **Size limits**: a message is capped at `PLATFORM_MAX_MESSAGE` characters
+  (default 4000) and a photo at 4 MB, so nothing unbounded reaches the model.
+  The composer carries the same number, so a real visitor is stopped at the
+  keyboard rather than trimmed on the way. The session store is capped too
+  (`PLATFORM_MAX_SESSIONS`, default 400): sessions expire after ~4 hours, but
+  age alone bounds how *long* a conversation is held rather than how many are
+  held at once, and each one holds a full chat history. Over the cap, the
+  least recently used are dropped. Suite in `tests/test_limits.py`.
+- **Logs**: startup and shutdown, API errors (429s and the rest), and TTS
+  fallbacks go to stdout alongside the `analytics ` lines — codes and bot
+  slugs only, never message content. `PLATFORM_LOG_LEVEL` sets the level.
 
 ### The web UI (`static/app.html`)
 
@@ -321,6 +332,7 @@ NODE_PATH=$(npm root -g) node tests/ui_test.js
 dashboard. Useful environment variables: `PLATFORM_EDGE_RATE` (and
 `PLATFORM_EDGE_RATE_<SLUG>`) to change how fast a bot speaks — the typing
 follows it — `PLATFORM_RATE_PER_MIN`, `PLATFORM_DAILY_CALLS`,
+`PLATFORM_MAX_MESSAGE`, `PLATFORM_MAX_SESSIONS`, `PLATFORM_LOG_LEVEL`,
 `PLATFORM_STATS_TOKEN` (**required** to open `/api/stats` at all),
 `PLATFORM_ANALYTICS_FILE`. Details in
 [docs/DEPLOY.md](docs/DEPLOY.md).
