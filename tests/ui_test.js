@@ -146,6 +146,18 @@ const check = (cond, name) => {
   );
   await page.fill("#msg", "");
 
+  /* ---- the composer carries the server's message cap ----
+     The server trims past it, so the composer has to stop you there or the
+     characters go missing silently on the way. Checked here because the unit
+     test for it needs app.py, which needs the SDK, so it skips in the job
+     that runs without one. */
+  const cap = await page.evaluate(() => ({
+    manifest: BOT.maxMessage,
+    field: document.getElementById("msg").maxLength,
+  }));
+  check(cap.manifest > 0 && cap.field === cap.manifest,
+    "limits: composer stops at the server's cap (" + cap.field + ")");
+
   /* ---- Enter sends; input clears and height resets ---- */
   await page.fill("#msg", "hi! reply with one short sentence please");
   await page.keyboard.press("Enter");

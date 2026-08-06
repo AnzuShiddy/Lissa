@@ -16,8 +16,16 @@ import sys
 import threading
 import time
 
-from google import genai
-from google.genai import errors, types
+try:
+    from google import genai
+    from google.genai import errors, types
+except ImportError:  # pragma: no cover - depends on the environment
+    # The unit job runs on the standard library alone — that is what makes it
+    # the gate that protects the branch, since it needs no key and no network.
+    # core.recall defers its import for the same reason and says so. Every use
+    # of these three is downstream of a live client, which cannot exist without
+    # the SDK, so a None here is unreachable rather than merely unlikely.
+    genai = errors = types = None
 
 from core import persona
 from core.persona import Bot
