@@ -30,10 +30,21 @@ jobs:
 
       # The suite drives the real Gemini API; without the secret we skip
       # gracefully instead of failing every fork/PR.
+      #
+      # GEMINI_API_KEY_CI, not GEMINI_API_KEY: one run fires ~20 chat calls
+      # plus TTS, embeddings and distillation, and a day of re-running this
+      # has already spent a free tier's daily quota — which, while the live
+      # site was served by the same key, meant the site answered real visitors
+      # with nothing until the reset. Testing must not be able to take
+      # production down. The key belongs to a *separate Google Cloud project*
+      # as well as being a separate key: free-tier quota is counted per
+      # project, so two keys in one project share the limit and split nothing.
       - name: Check for API key
         run: |
-          if [ -z "${{ secrets.GEMINI_API_KEY }}" ]; then
-            echo "GEMINI_API_KEY secret not set — skipping the UI suite."
+          if [ -z "${{ secrets.GEMINI_API_KEY_CI }}" ]; then
+            echo "GEMINI_API_KEY_CI secret not set — skipping the UI suite."
+            echo "See docs/DEPLOY.md: it must be a key from its own project,"
+            echo "never the one the live site runs on."
             echo "SKIP=1" >> "$GITHUB_ENV"
           fi
 
@@ -61,7 +72,8 @@ jobs:
       - name: Start the platform
         if: env.SKIP != '1'
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # the app still reads GEMINI_API_KEY — only where CI gets it changes
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY_CI }}
           # The suite fires ~20 real chat calls with none of the pacing a
           # human conversation has, easily exceeding the 8/min default
           # meant to protect the shared API key from real visitors — that
